@@ -10,7 +10,7 @@ target 'SyncManagerDemo' do
 
 end
 
-target 'RtmSyncManager' do
+target 'AgoraSyncManager' do
   use_frameworks!
 
   # Pods for RtmSyncManager

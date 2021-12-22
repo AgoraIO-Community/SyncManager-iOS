@@ -289,6 +289,16 @@ extension RtmSyncManager: ISyncManager {
         }
         rtmChannel.join(completion: nil)
         channels[reference.className + key] = rtmChannel
+        rtmKit?.getChannelAllAttributes(reference.className + key,
+                                        completion: { [weak self](attrs, code) in
+            if code != .attributeOperationErrorOk {
+                let error = SyncError(message: "get arttrs in id \(reference.className + key) fail",
+                                      code: code.rawValue)
+                fail?(error)
+                return
+            }
+            self?.cachedAttrs[rtmChannel] = attrs ?? []
+        })
         onCreateBlocks[rtmChannel] = onCreated
         onUpdatedBlocks[rtmChannel] = onUpdated
         onDeletedBlocks[rtmChannel] = onDeleted
