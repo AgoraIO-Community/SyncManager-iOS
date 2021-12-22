@@ -27,7 +27,7 @@
 		267F271A27630F9500733075 /* MainVC+Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F271927630F9500733075 /* MainVC+Show.swift */; };
 		267F271C276372D300733075 /* MainVC+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F271B276372D300733075 /* MainVC+Action.swift */; };
 		32E4FBB791D7DB2D64502D65 /* Pods_SyncManagerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 816CF7242DAC4571D3D1F0C2 /* Pods_SyncManagerDemo.framework */; };
-		5B9C77FBB4A871E38640A750 /* Pods_RtmSyncManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0390C02685219A32B2224BC0 /* Pods_RtmSyncManager.framework */; };
+		6AE91B64E3781838D070B0CD /* Pods_AgoraSyncManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8DF639838A47C38FBE6C985 /* Pods_AgoraSyncManager.framework */; };
 		8B4854B326EB506A00505A12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4854B226EB506A00505A12 /* AppDelegate.swift */; };
 		8B4854B526EB506A00505A12 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4854B426EB506A00505A12 /* SceneDelegate.swift */; };
 		8B4854BA26EB506A00505A12 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B4854B826EB506A00505A12 /* Main.storyboard */; };
@@ -70,7 +70,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0390C02685219A32B2224BC0 /* Pods_RtmSyncManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RtmSyncManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F6AC0C3A0BF5BE572ACDBE2 /* Pods-RtmSyncManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RtmSyncManager.debug.xcconfig"; path = "Target Support Files/Pods-RtmSyncManager/Pods-RtmSyncManager.debug.xcconfig"; sourceTree = "<group>"; };
 		263A8113274605890067E868 /* SyncManager+Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SyncManager+Info.swift"; sourceTree = "<group>"; };
 		263A8115274605890067E868 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -91,6 +90,7 @@
 		267F2717276304A500733075 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		267F271927630F9500733075 /* MainVC+Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+Show.swift"; sourceTree = "<group>"; };
 		267F271B276372D300733075 /* MainVC+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+Action.swift"; sourceTree = "<group>"; };
+		35AC2D7BF5ADFA93C789CDD1 /* Pods-AgoraSyncManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraSyncManager.release.xcconfig"; path = "Target Support Files/Pods-AgoraSyncManager/Pods-AgoraSyncManager.release.xcconfig"; sourceTree = "<group>"; };
 		816CF7242DAC4571D3D1F0C2 /* Pods_SyncManagerDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SyncManagerDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B4854AF26EB506A00505A12 /* SyncManagerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncManagerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B4854B226EB506A00505A12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,9 +103,11 @@
 		8BE1787B26ED1190005E0D4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BE9C5AE276470180083F0EC /* SyncManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BE9C5B0276470180083F0EC /* SyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
+		9212F29F33BD991DC0F8254D /* Pods-AgoraSyncManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraSyncManager.debug.xcconfig"; path = "Target Support Files/Pods-AgoraSyncManager/Pods-AgoraSyncManager.debug.xcconfig"; sourceTree = "<group>"; };
 		9BDF6424DAF7B62F82313172 /* Pods-SyncManagerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncManagerDemo.release.xcconfig"; path = "Target Support Files/Pods-SyncManagerDemo/Pods-SyncManagerDemo.release.xcconfig"; sourceTree = "<group>"; };
 		A3FBBE6724D0F441A6896D58 /* Pods-SyncManagerDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncManagerDemo.debug.xcconfig"; path = "Target Support Files/Pods-SyncManagerDemo/Pods-SyncManagerDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		BB0A5B8803766206D64C0464 /* Pods-RtmSyncManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RtmSyncManager.release.xcconfig"; path = "Target Support Files/Pods-RtmSyncManager/Pods-RtmSyncManager.release.xcconfig"; sourceTree = "<group>"; };
+		C8DF639838A47C38FBE6C985 /* Pods_AgoraSyncManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraSyncManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,7 +124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B9C77FBB4A871E38640A750 /* Pods_RtmSyncManager.framework in Frameworks */,
+				6AE91B64E3781838D070B0CD /* Pods_AgoraSyncManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				816CF7242DAC4571D3D1F0C2 /* Pods_SyncManagerDemo.framework */,
-				0390C02685219A32B2224BC0 /* Pods_RtmSyncManager.framework */,
+				C8DF639838A47C38FBE6C985 /* Pods_AgoraSyncManager.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -254,6 +256,8 @@
 				9BDF6424DAF7B62F82313172 /* Pods-SyncManagerDemo.release.xcconfig */,
 				0F6AC0C3A0BF5BE572ACDBE2 /* Pods-RtmSyncManager.debug.xcconfig */,
 				BB0A5B8803766206D64C0464 /* Pods-RtmSyncManager.release.xcconfig */,
+				9212F29F33BD991DC0F8254D /* Pods-AgoraSyncManager.debug.xcconfig */,
+				35AC2D7BF5ADFA93C789CDD1 /* Pods-AgoraSyncManager.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -431,7 +435,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-RtmSyncManager-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AgoraSyncManager-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -703,7 +707,7 @@
 		};
 		8BE1788226ED1190005E0D4F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0F6AC0C3A0BF5BE572ACDBE2 /* Pods-RtmSyncManager.debug.xcconfig */;
+			baseConfigurationReference = 9212F29F33BD991DC0F8254D /* Pods-AgoraSyncManager.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -736,7 +740,7 @@
 		};
 		8BE1788326ED1190005E0D4F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BB0A5B8803766206D64C0464 /* Pods-RtmSyncManager.release.xcconfig */;
+			baseConfigurationReference = 35AC2D7BF5ADFA93C789CDD1 /* Pods-AgoraSyncManager.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
