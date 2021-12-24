@@ -16,6 +16,7 @@ public class RtmSyncManager: NSObject {
     var cachedAttrs = [AgoraRtmChannel : [AgoraRtmChannelAttribute]]()
     var channels = [String : AgoraRtmChannel]()
     var channelName: String!
+    var sceneName: String!
     
     /// init
     /// - Parameters:
@@ -49,6 +50,12 @@ extension RtmSyncManager: AgoraRtmDelegate {
 
 extension RtmSyncManager: AgoraRtmChannelDelegate {
     public func channel(_ channel: AgoraRtmChannel, attributeUpdate attributes: [AgoraRtmChannelAttribute]) {
+        /// Log
+        let channelName = channels.filter({ $0.value == channel }).first?.key ?? "channel name not found"
+        let attributeStrings = attributes.map({ "\($0.key) : \($0.value)" })
+        Log.info(text: "--- attributeUpdate in channel \(channel.description), name: \(channelName)", tag: "RtmSyncManager")
+        Log.info(text: "--- attributeUpdate attrs: \(attributeStrings)", tag: "RtmSyncManager")
+        
         notifyObserver(channel: channel, attributes: attributes)
     }
     

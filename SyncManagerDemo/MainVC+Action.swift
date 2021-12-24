@@ -32,6 +32,10 @@ extension MainVC { /** 基础 **/
             if let str = obj.first?.toJson() { print(str) }
         }
     }
+    
+    func deleteScene() {
+        syncRef.delete(success: nil, fail: nil)
+    }
 }
 
 extension MainVC { /** 房间列表 **/
@@ -56,7 +60,8 @@ extension MainVC { /** 房间列表 **/
 
 extension MainVC { /** 房间信息 **/
     func updteRoomInfo() {
-        syncRef.update(data: ["color" : "red \(Int.random(in: 0...100))"],
+        syncRef.update(key: nil,
+                       data: ["color" : "red \(Int.random(in: 0...100))"],
                        success: nil,
                        fail: { [weak self] error in
             self?.show("fail: " + error.description)
@@ -64,7 +69,7 @@ extension MainVC { /** 房间信息 **/
     }
     
     func getRoomInfo() {
-        syncRef.get() { [weak self] obj in
+        syncRef.get(key: nil) { [weak self] obj in
             self?.show("success")
             if let str = obj?.toJson() { print(str) }
             else { print("no value for key (getRoomInfo)") }
@@ -74,17 +79,20 @@ extension MainVC { /** 房间信息 **/
     }
     
     func subscribeRoom() {
-        syncRef.subscribe(onUpdated: { obj in
-            print("\(obj.toJson() ?? "")")
+        syncRef.subscribe(key: nil,
+                          onCreated: { obj in
+            print("onCreated \(obj.toJson() ?? "")")
+        },onUpdated: { obj in
+            print("onUpdated \(obj.toJson() ?? "")")
         },onDeleted: { obj in
-            print("\(obj.toJson() ?? "")")
+            print("onDeleted \(obj.toJson() ?? "")")
         },fail: { error in
             print(error.description)
         })
     }
     
     func unsubscribeRoom() {
-        syncRef.unsubscribe()
+        syncRef.unsubscribe(key: nil)
     }
 }
 
@@ -135,7 +143,18 @@ extension MainVC { /** 成员信息 **/
     }
     
     func subscribeMember() {
-        
+        syncRef.collection(className: "member").document().subscribe(key: nil,
+                                                                     onCreated: { obj in
+            print("onCreated \(obj.toJson() ?? "")")
+        }, onUpdated: { obj in
+            print("onUpdated \(obj.toJson() ?? "")")
+        }, onDeleted: { obj in
+            print("onDeleted \(obj.toJson() ?? "")")
+        }, onSubscribed: {
+            print("onSubscribed")
+        }, fail: { error in
+            
+        })
     }
     
     func unsubscribeMember() {

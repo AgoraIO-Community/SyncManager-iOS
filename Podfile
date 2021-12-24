@@ -4,10 +4,6 @@
 target 'SyncManagerDemo' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
-  # Pods for SyncManagerDemo
-  pod 'AGEVideoLayout', '~> 1.0.2'
-
 end
 
 target 'AgoraSyncManager' do
@@ -15,6 +11,7 @@ target 'AgoraSyncManager' do
 
   # Pods for RtmSyncManager
   pod 'AgoraRtm_iOS', '~> 1.4.7'
+  pod 'AgoraLog'
   pod 'Toast-Swift'
 
 end

@@ -8,8 +8,8 @@
 import Foundation
 
 public class SyncError: NSObject, LocalizedError {
-    private let message: String
-    private let code: Int
+    public let message: String
+    public let code: Int
 
     override public var description: String {
         return message + "code: (\(code))"
