@@ -10,15 +10,17 @@ import AgoraSyncManager
 import AgoraRtmKit
 
 class MainVC: UIViewController, AgoraRtmChannelDelegate {
-    let sectionTitles = ["基础", "房间列表", "房间信息", "成员信息"]
+    let sectionTitles = ["基础", "房间列表", "房间信息(key = nil)", "房间信息(key = member)", "成员信息"]
     let list = [["初始化", "加入房间", "删除房间"],
                 ["读取房间列表", "删除房间列表中的房间"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
-                ["新增member", "更新member（无）", "删除member", "获取member列表", "订阅member更新事件(无)", "取消订阅memner更新事件(无)", "删除所有member"]]
+                ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
+                ["新增member", "更新member（无）", "删除member", "获取member列表", "订阅member更新事件", "取消订阅memner更新事件", "删除所有member"]]
     let tableView = UITableView(frame: .zero, style: .grouped)
     var syncManager: AgoraSyncManager!
     var syncRef: SceneReference!
     let channelName = "testDefaultScene"
+    let sceneId = "sceneId"
     var memberObjId: String?
     var rtm: AgoraRtmKit!
     var channel: AgoraRtmChannel!
@@ -72,29 +74,51 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
             }
         }
         
-        if indexPath.section == 2 {
+        if indexPath.section == 2 { /** key == nil **/
             if indexPath.row == 0 { /** 更新房间信息 **/
-                updteRoomInfo()
+                updteRoomInfo1()
                 return
             }
             
             if indexPath.row == 1 { /** 获取本房间信息 **/
-                getRoomInfo()
+                getRoomInfo1()
                 return
             }
             
             if indexPath.row == 2 { /** 订阅本房间信息更新事件 **/
-                subscribeRoom()
+                subscribeRoom1()
                 return
             }
             
             if indexPath.row == 3 { /** 取消订阅本房间信息更新事件 **/
-                unsubscribeRoom()
+                unsubscribeRoom1()
                 return
             }
         }
         
-        if indexPath.section == 3 {
+        if indexPath.section == 3 { /** key != nil **/
+            if indexPath.row == 0 { /** 更新房间信息 **/
+                updteRoomInfo2()
+                return
+            }
+            
+            if indexPath.row == 1 { /** 获取本房间信息 **/
+                getRoomInfo2()
+                return
+            }
+            
+            if indexPath.row == 2 { /** 订阅本房间信息更新事件 **/
+                subscribeRoom2()
+                return
+            }
+            
+            if indexPath.row == 3 { /** 取消订阅本房间信息更新事件 **/
+                unsubscribeRoom2()
+                return
+            }
+        }
+        
+        if indexPath.section == 4 {
             if indexPath.row == 0 { /** 新增member **/
                 addMember()
                 return

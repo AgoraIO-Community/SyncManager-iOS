@@ -26,7 +26,7 @@ extension MainVC { /** 基础 **/
     }
     
     func joinScene() {
-        let scene = Scene(id: "roomid", userId: "userid", property: nil)
+        let scene = Scene(id: sceneId, userId: "userid", property: nil)
         syncRef = syncManager.joinScene(scene: scene) { [weak self](obj) in
             self?.show("success")
             if let str = obj.first?.toJson() { print(str) }
@@ -50,7 +50,7 @@ extension MainVC { /** 房间列表 **/
     }
     
     func deleteScenes() {
-        syncManager.deleteScenes(sceneIds: ["roomid"]) { [weak self] in
+        syncManager.deleteScenes(sceneIds: [sceneId]) { [weak self] in
             self?.show("success")
         } fail: { [weak self](error) in
             self?.show("fail: " + error.description)
@@ -58,41 +58,83 @@ extension MainVC { /** 房间列表 **/
     }
 }
 
-extension MainVC { /** 房间信息 **/
-    func updteRoomInfo() {
-        syncRef.update(key: nil,
-                       data: ["color" : "red \(Int.random(in: 0...100))"],
-                       success: nil,
-                       fail: { [weak self] error in
+extension MainVC { /** 房间信息 key == nil **/
+    func updteRoomInfo1() {
+        syncRef.update(data: ["color" : "red \(Int.random(in: 0...100))"],
+                       success: { [weak self](objs) in
+            let string = "update success: " + "\(objs.first?.toJson() ?? "nil")"
+            self?.show(string)
+        }, fail: { [weak self] error in
             self?.show("fail: " + error.description)
         })
     }
     
-    func getRoomInfo() {
-        syncRef.get(key: nil) { [weak self] obj in
+    func getRoomInfo1() {
+        syncRef.get() { [weak self] obj in
             self?.show("success")
             if let str = obj?.toJson() { print(str) }
-            else { print("no value for key (getRoomInfo)") }
+            else { print("no value for key (getRoomInfo1)") }
         } fail: { [weak self] error in
             self?.show("fail: " + error.description)
         }
     }
     
-    func subscribeRoom() {
-        syncRef.subscribe(key: nil,
+    func subscribeRoom1() {
+        syncRef.subscribe(onCreated: { obj in
+            print("subscribeRoom1-onCreated \(obj.toJson() ?? "")")
+        }, onUpdated: { obj in
+            print("subscribeRoom1-onUpdated \(obj.toJson() ?? "")")
+        }, onDeleted: { obj in
+            print("subscribeRoom1-onDeleted \(obj.toJson() ?? "")")
+        }, onSubscribed: {
+            print("subscribeRoom1-onSubscribed")
+        }, fail: { error in
+            print("subscribeRoom1 " + error.description)
+        })
+    }
+    
+    func unsubscribeRoom1() {
+        syncRef.unsubscribe()
+    }
+}
+
+extension MainVC { /** 房间信息 key == member **/
+    func updteRoomInfo2() {
+        syncRef.update(key: "member",
+                       data: ["memberName" : "zhang \(Int.random(in: 0...100))"],
+                       success: { [weak self](objs) in
+            let string = "update success: " + "\(objs.first?.toJson() ?? "nil")"
+            self?.show(string)
+        }, fail: { [weak self] error in
+            self?.show("fail: " + error.description)
+        })
+    }
+    
+    func getRoomInfo2() {
+        syncRef.get(key: "member") { [weak self] obj in
+            self?.show("success")
+            if let str = obj?.toJson() { print(str) }
+            else { print("no value for key (getRoomInfo2)") }
+        } fail: { [weak self] error in
+            self?.show("fail: " + error.description)
+        }
+    }
+    
+    func subscribeRoom2() {
+        syncRef.subscribe(key: "member",
                           onCreated: { obj in
-            print("onCreated \(obj.toJson() ?? "")")
+            print("subscribeRoom2 onCreated \(obj.toJson() ?? "")")
         },onUpdated: { obj in
-            print("onUpdated \(obj.toJson() ?? "")")
+            print("subscribeRoom2 onUpdated \(obj.toJson() ?? "")")
         },onDeleted: { obj in
-            print("onDeleted \(obj.toJson() ?? "")")
+            print("subscribeRoom2 onDeleted \(obj.toJson() ?? "")")
         },fail: { error in
             print(error.description)
         })
     }
     
-    func unsubscribeRoom() {
-        syncRef.unsubscribe(key: nil)
+    func unsubscribeRoom2() {
+        syncRef.unsubscribe(key: "member")
     }
 }
 
@@ -158,7 +200,7 @@ extension MainVC { /** 成员信息 **/
     }
     
     func unsubscribeMember() {
-        
+        syncRef.collection(className: "member").document().unsubscribe(key: nil)
     }
     
     func deleteAllMemners() {

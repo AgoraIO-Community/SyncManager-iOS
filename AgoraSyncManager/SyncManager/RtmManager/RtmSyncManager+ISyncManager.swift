@@ -274,16 +274,27 @@ extension RtmSyncManager: ISyncManager {
                           onDeleted: OnSubscribeBlock?,
                           onSubscribed: OnSubscribeBlockVoid?,
                           fail: FailBlock?) {
-        /** 设置监听参数：scene.id + key **/
+        
         let key = key ?? ""
-        guard let rtmChannel = rtmKit?.createChannel(withId: reference.className + key, delegate: self) else {
+        let name = reference.className + key
+        
+        if name == sceneName, let channel = channels[sceneName] { /** 设置监听参数：scene.id **/
+            onCreateBlocks[channel] = onCreated
+            onUpdatedBlocks[channel] = onUpdated
+            onDeletedBlocks[channel] = onDeleted
+            onSubscribed?()
+            return
+        }
+        
+        /** 设置监听参数：scene.id + key **/
+        guard let rtmChannel = rtmKit?.createChannel(withId: name, delegate: self) else {
             let error = SyncError(message: "yet join channel",
                                   code: -1)
             fail?(error)
             return
         }
         rtmChannel.join(completion: nil)
-        channels[reference.className + key] = rtmChannel
+        channels[name] = rtmChannel
         onCreateBlocks[rtmChannel] = onCreated
         onUpdatedBlocks[rtmChannel] = onUpdated
         onDeletedBlocks[rtmChannel] = onDeleted
