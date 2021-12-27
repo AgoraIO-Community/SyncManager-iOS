@@ -54,6 +54,7 @@ extension RtmSyncManager: ISyncManager {
                     fail?(error)
                     return
                 }
+                channel.join(completion: nil)
                 self?.cachedAttrs[channel] = attrs
                 success?([attr.toAttribute()])
             })

@@ -23,6 +23,18 @@ public class SceneReference: DocumentReference {
                             parent: self,
                             className: className)
     }
+    
+    /// delete current scene
+    public override func delete(success: SuccessBlock?, fail: FailBlock?) {
+        manager.delete(documentRef: self,
+                       success: success,
+                       fail: fail)
+        manager.deleteScenes(sceneIds: [id], success: {
+            Log.info(text: "deleteScenes success", tag: "SceneReference")
+        }, fail: { error in
+            Log.error(error: error, tag: "SceneReference")
+        })
+    }
 }
 
 public class DocumentReference {

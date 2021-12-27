@@ -48,14 +48,6 @@ extension MainVC { /** 房间列表 **/
             self?.show("fail: " + error.description)
         }
     }
-    
-    func deleteScenes() {
-        syncManager.deleteScenes(sceneIds: [sceneId]) { [weak self] in
-            self?.show("success")
-        } fail: { [weak self](error) in
-            self?.show("fail: " + error.description)
-        }
-    }
 }
 
 extension MainVC { /** 房间信息 key == nil **/
