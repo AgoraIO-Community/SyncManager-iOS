@@ -10,7 +10,7 @@ import AgoraRtmKit
 
 /// 哪些行为会有回调事件？
 /// 1. sceneRef.delete() 没有回调事件
-/// 2. AgoraSyncManager.deleteScenes["id"] 删除房间列表的一个房间 监听subscribe key == nil 只有update事件
+/// 2. AgoraSyncManager.deleteScenes["id"] 删除房间列表的一个房间 监听subscribe key == nil 有onDeleted事件
 /// 3. sceneRef.update(key) 更新房间信息 只有update事件
 /// 4. syncRef.collection(className: "member").add(data: ["userName" : "UserName"])
 /// 监听syncRef.collection(className: "member").document().subscribe(key: nil) 有齐全的事件

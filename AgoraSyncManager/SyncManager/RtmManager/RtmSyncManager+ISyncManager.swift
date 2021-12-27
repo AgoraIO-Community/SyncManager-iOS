@@ -35,16 +35,28 @@ extension RtmSyncManager: ISyncManager {
         let option = AgoraRtmChannelAttributeOptions()
         option.enableNotificationToChannelMembers = false
 
-        rtmKit?.addOrUpdateChannel(channelName,
+        guard let name = channelName else {
+            fatalError("must set default channel name")
+        }
+        rtmKit?.addOrUpdateChannel(name,
                                    attributes: attributes,
                                    options:option,
-                                   completion: { code in
+                                   completion: { [weak self](code) in
             if code != .attributeOperationErrorOk {
                 let error = SyncError(message: "addOrUpdate fail in joinScene", code: code.rawValue)
                 fail?(error)
                 return
             }
-            success?([attr.toAttribute()])
+            self?.rtmKit?.getChannelAllAttributes(name,
+                                            completion: { (attrs, code) in
+                guard let channel = self?.rtmKit?.createChannel(withId: name, delegate: self) else {
+                    let error = SyncError(message: "createChannel fail in joinScene", code: -1)
+                    fail?(error)
+                    return
+                }
+                self?.cachedAttrs[channel] = attrs
+                success?([attr.toAttribute()])
+            })
         })
         return sceneRef
     }
