@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AgoraLog
 import UIKit
 
 class Log {
@@ -116,19 +115,20 @@ class LogProvider {
     }
 }
 
-extension AgoraLogType {
-    fileprivate var name: String {
-        switch self {
-        case .debug:
-            return "Debug"
-        case .info:
-            return "Info"
-        case .error:
-            return "Error"
-        case .warning:
-            return "Warning"
-        default:
-            return "none"
+extension LogProvider {
+    enum AgoraLogType {
+        case debug, info, warning, error
+        fileprivate var name: String {
+            switch self {
+            case .debug:
+                return "Debug"
+            case .info:
+                return "Info"
+            case .error:
+                return "Error"
+            case .warning:
+                return "Warning"
+            }
         }
     }
 }
