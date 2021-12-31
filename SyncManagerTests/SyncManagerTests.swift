@@ -58,17 +58,17 @@ class SyncManagerTests: XCTestCase, AgoraRtmChannelDelegate {
         /// 2. join
         let scene1 = Scene(id: "room1", userId: "user1", property: [:])
         syncRef1 = manager1?.joinScene(scene: scene1,
-                                       success: { (objs) in
-            let strs = objs.compactMap({ $0.toJson() })
-            print(strs)
+                                       success: { (obj) in
+            let str = obj.toJson() ?? ""
+            print(str)
             promise3.fulfill()
         })
         
         let scene2 = Scene(id: "room1", userId: "user2", property: [:])
         syncRef2 = manager2?.joinScene(scene: scene2,
-                                       success: { (objs) in
-            let strs = objs.compactMap({ $0.toJson() })
-            print(strs)
+                                       success: { (obj) in
+            let str = obj.toJson() ?? ""
+            print(str)
             promise4.fulfill()
         })
         

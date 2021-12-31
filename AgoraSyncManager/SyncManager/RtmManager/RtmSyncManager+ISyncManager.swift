@@ -11,7 +11,7 @@ import AgoraRtmKit
 extension RtmSyncManager: ISyncManager {    
     public func joinScene(scene: Scene,
                           manager: AgoraSyncManager,
-                          success: SuccessBlock?,
+                          success: SuccessBlockObj?,
                           fail: FailBlock? = nil) -> SceneReference {
         let sceneRef = SceneReference(manager: manager,
                                       id: scene.id)
@@ -25,9 +25,8 @@ extension RtmSyncManager: ISyncManager {
         }
         channel.join(completion: nil)
         channels[scene.id] = channel
-        rtmKit?.getChannelAllAttributes(scene.id, completion: { [weak self](list, errorCode) in
-            self?.cachedAttrs[channel] = list
-        })
+        sceneName = scene.id
+        Log.info(text: "didSet sceneName \(scene.id)", tag: "RtmSyncManager")
         
         /** add room in list **/
         let attr = AgoraRtmChannelAttribute()
@@ -37,7 +36,10 @@ extension RtmSyncManager: ISyncManager {
         let option = AgoraRtmChannelAttributeOptions()
         option.enableNotificationToChannelMembers = false
 
-        rtmKit?.addOrUpdateChannel(channelName,
+        guard let name = channelName else {
+            fatalError("must set default channel name")
+        }
+        rtmKit?.addOrUpdateChannel(name,
                                    attributes: attributes,
                                    options:option,
                                    completion: { [weak self](code) in
@@ -46,10 +48,17 @@ extension RtmSyncManager: ISyncManager {
                 fail?(error)
                 return
             }
-            if let name = self?.channelName, let channel = self?.channels[name] {
-                self?.cachedAttrs[channel] = attributes
-            }
-            success?([attr.toAttribute()])
+            self?.rtmKit?.getChannelAllAttributes(name,
+                                            completion: { (attrs, code) in
+                guard let channel = self?.rtmKit?.createChannel(withId: name, delegate: self) else {
+                    let error = SyncError(message: "createChannel fail in joinScene", code: -1)
+                    fail?(error)
+                    return
+                }
+                channel.join(completion: nil)
+                self?.cachedAttrs[channel] = attrs
+                success?(attr.toAttribute())
+            })
         })
         return sceneRef
     }
@@ -153,7 +162,7 @@ extension RtmSyncManager: ISyncManager {
                 else {
                     self?.cachedAttrs[channel] = [attr]
                 }
-                if let onCreateBlock = self?.onDeletedBlocks[channel] {
+                if let onCreateBlock = self?.onCreateBlocks[channel] {
                     onCreateBlock(attr.toAttribute())
                 }
             }
@@ -279,36 +288,30 @@ extension RtmSyncManager: ISyncManager {
                           onDeleted: OnSubscribeBlock?,
                           onSubscribed: OnSubscribeBlockVoid?,
                           fail: FailBlock?) {
-        /** 设置监听参数：scene.id + key **/
+        
         let key = key ?? ""
-        guard let rtmChannel = rtmKit?.createChannel(withId: reference.className + key, delegate: self) else {
+        let name = reference.className + key
+        
+        if name == sceneName, let channel = channels[sceneName] { /** 设置监听参数：scene.id **/
+            onCreateBlocks[channel] = onCreated
+            onUpdatedBlocks[channel] = onUpdated
+            onDeletedBlocks[channel] = onDeleted
+            onSubscribed?()
+            return
+        }
+        
+        /** 设置监听参数：scene.id + key **/
+        guard let rtmChannel = rtmKit?.createChannel(withId: name, delegate: self) else {
             let error = SyncError(message: "yet join channel",
                                   code: -1)
             fail?(error)
             return
         }
         rtmChannel.join(completion: nil)
-        channels[reference.className + key] = rtmChannel
-        rtmKit?.getChannelAllAttributes(reference.className + key,
-                                        completion: { [weak self](attrs, code) in
-            if code != .attributeOperationErrorOk {
-                let error = SyncError(message: "get arttrs in id \(reference.className + key) fail",
-                                      code: code.rawValue)
-                fail?(error)
-                return
-            }
-            self?.cachedAttrs[rtmChannel] = attrs ?? []
-        })
+        channels[name] = rtmChannel
         onCreateBlocks[rtmChannel] = onCreated
         onUpdatedBlocks[rtmChannel] = onUpdated
         onDeletedBlocks[rtmChannel] = onDeleted
-        
-        /** 设置监听参数：default channel **/
-        if let channel = channels[channelName] {
-            onCreateBlocks[channel] = onCreated
-            onUpdatedBlocks[channel] = onUpdated
-            onDeletedBlocks[channel] = onDeleted
-        }
         onSubscribed?()
     }
     
@@ -318,11 +321,6 @@ extension RtmSyncManager: ISyncManager {
             onCreateBlocks.removeValue(forKey: rtmChannel)
             onUpdatedBlocks.removeValue(forKey: rtmChannel)
             onDeletedBlocks.removeValue(forKey: rtmChannel)
-        }
-        if let channel = channels[channelName] {
-            onCreateBlocks.removeValue(forKey: channel)
-            onUpdatedBlocks.removeValue(forKey: channel)
-            onDeletedBlocks.removeValue(forKey: channel)
         }
     }
 }
