@@ -16,7 +16,7 @@ public class CollectionReference {
                 parent: SceneReference,
                 className: String) {
         self.manager = manager
-        self.className = className
+        self.className = parent.id + className
         self.parent = parent
     }
     
