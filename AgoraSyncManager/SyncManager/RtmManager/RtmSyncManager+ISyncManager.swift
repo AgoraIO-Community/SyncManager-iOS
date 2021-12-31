@@ -11,7 +11,7 @@ import AgoraRtmKit
 extension RtmSyncManager: ISyncManager {    
     public func joinScene(scene: Scene,
                           manager: AgoraSyncManager,
-                          success: SuccessBlock?,
+                          success: SuccessBlockObj?,
                           fail: FailBlock? = nil) -> SceneReference {
         let sceneRef = SceneReference(manager: manager,
                                       id: scene.id)
@@ -26,6 +26,7 @@ extension RtmSyncManager: ISyncManager {
         channel.join(completion: nil)
         channels[scene.id] = channel
         sceneName = scene.id
+        Log.info(text: "didSet sceneName \(scene.id)", tag: "RtmSyncManager")
         
         /** add room in list **/
         let attr = AgoraRtmChannelAttribute()
@@ -56,7 +57,7 @@ extension RtmSyncManager: ISyncManager {
                 }
                 channel.join(completion: nil)
                 self?.cachedAttrs[channel] = attrs
-                success?([attr.toAttribute()])
+                success?(attr.toAttribute())
             })
         })
         return sceneRef

@@ -44,6 +44,10 @@ extension RtmSyncManager {
             }
             
             /** cache 不存在的情况下，onOpdate **/
+            if sceneName == nil {
+                Log.info(text: "sceneName == nil", tag: "RtmSyncManager")
+                return
+            }
             Log.info(text: "--- [defaultChannel, no cache]", tag: "RtmSyncManager")
             guard let tempChannel = channels[sceneName] else {
                 Log.errorText(text: "can not find scene channel", tag: "RtmSyncManager")

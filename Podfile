@@ -10,8 +10,7 @@ target 'AgoraSyncManager' do
   use_frameworks!
 
   # Pods for RtmSyncManager
-  pod 'AgoraRtm_iOS', '~> 1.4.7'
-  pod 'AgoraLog'
+  pod 'AgoraRtm_iOS', '~> 1.4.9'
   pod 'Toast-Swift'
 
 end
