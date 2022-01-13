@@ -56,7 +56,7 @@ extension RtmSyncManager: ISyncManager {
                     return
                 }
                 channel.join(completion: nil)
-                self?.cachedAttrs[channel] = attrs
+                self?.cachedAttrs[channel] = attrs?.count ?? 0 > 0 ? attrs : attributes
                 success?(attr.toAttribute())
             })
         })
