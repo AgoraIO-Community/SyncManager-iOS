@@ -7,13 +7,14 @@
 
 import Foundation
 import AgoraSyncManager
+import AgoraSyncKit
 
 extension MainVC { /** 基础 **/
     func initManager() {
-        let config = AgoraSyncManager.RtmConfig(appId: Config.appId,
-                                           channelName: channelName)
-        syncManager = AgoraSyncManager(config: config,
-                                  complete: { code in
+        let config = AgoraSyncManager.AskConfig(appId: Config.appId,
+                                                channelName: channelName)
+        syncManager = AgoraSyncManager(askConfig: config,
+                                       complete: { code in
             if code == 0 {
                 self.show("success")
                 print("SyncManager init success")

@@ -8,6 +8,7 @@
 import UIKit
 import AgoraSyncManager
 import AgoraRtmKit
+import AgoraSyncKit
 
 class MainVC: UIViewController, AgoraRtmChannelDelegate {
     let sectionTitles = ["基础", "房间列表", "房间信息(key = nil)", "房间信息(key = member)", "成员信息"]
@@ -25,6 +26,13 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
     var rtm: AgoraRtmKit!
     var channel: AgoraRtmChannel!
     var channel2: AgoraRtmChannel!
+    
+    var askKit: AgoraSyncKit!
+    var askContext: AgoraSyncContext!
+    var roomsCollection: AgoraSyncCollection!
+    var membersCollection: AgoraSyncCollection!
+    let roomListKey = "rooms"
+    let memberListKey = "members"
     
     override func viewDidLoad() {
         super.viewDidLoad()

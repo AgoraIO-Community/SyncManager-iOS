@@ -24,6 +24,5 @@ extension AgoraSyncManager {
         }
     }
     
-    // public struct FireBaseConfig: ConfigProtocol {}
-    // public struct LearnCloudConfig: ConfigProtocol {}
+    public typealias AskConfig = RtmConfig
 }
