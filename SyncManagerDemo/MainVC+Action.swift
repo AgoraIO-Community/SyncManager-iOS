@@ -143,7 +143,18 @@ extension MainVC { /** 成员信息 **/
     }
     
     func updateMember() {
-        
+        guard let id = memberObjId else {
+            show("请先进行 add member 操作")
+            return
+        }
+        syncRef.collection(className: "member")
+            .update(key: id,
+                    data: ["userName" : "UserName update \(Int.random(in: 0...100))"],
+                    success: { [weak self] in
+                self?.show("success")
+            }, fail: { [weak self](error) in
+                self?.show("fail: " + error.description)
+            })
     }
     
     func deleteMember() {
@@ -152,12 +163,12 @@ extension MainVC { /** 成员信息 **/
             return
         }
         syncRef.collection(className: "member")
-            .document(id: id)
-            .delete { [weak self](_) in
+            .delete(key: id,
+                    success: { [weak self] in
                 self?.show("success")
-            } fail: { [weak self](error) in
+            }, fail: { [weak self](error) in
                 self?.show("fail: " + error.description)
-            }
+            })
     }
     
     func getMember() {

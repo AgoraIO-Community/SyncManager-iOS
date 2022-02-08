@@ -33,6 +33,26 @@ public class CollectionReference {
                     fail: fail)
     }
     
+    public func update(key: String,
+                       data: [String: Any?],
+                       success: SuccessBlockVoid?,
+                       fail: FailBlock?) {
+        manager.update(reference: self,
+                       key: key,
+                       data: data,
+                       success: success,
+                       fail: fail)
+    }
+    
+    public func delete(key: String,
+                       success: SuccessBlockVoid?,
+                       fail: FailBlock?) {
+        manager.delete(reference: self,
+                       key: key,
+                       success: success,
+                       fail: fail)
+    }
+    
     public func get(success: SuccessBlock?,
                     fail: FailBlock?) {
         manager.get(collectionRef: self,
