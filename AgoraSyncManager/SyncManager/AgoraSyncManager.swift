@@ -93,23 +93,23 @@ public class AgoraSyncManager: NSObject {
     }
     
     func update(reference: CollectionReference,
-                key: String,
+                id: String,
                 data: [String : Any?],
                 success: SuccessBlockVoid?,
                 fail: FailBlock?) {
         proxy.update(reference: reference,
-                     key: key,
+                     id: id,
                      data: data,
                      success: success,
                      fail: fail)
     }
     
     func delete(reference: CollectionReference,
-                key: String,
+                id: String,
                 success: SuccessBlockVoid?,
                 fail: FailBlock?) {
         proxy.delete(reference: reference,
-                     key: key,
+                     id: id,
                      success: success,
                      fail: fail)
     }

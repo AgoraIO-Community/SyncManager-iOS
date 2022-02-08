@@ -148,7 +148,7 @@ extension MainVC { /** 成员信息 **/
             return
         }
         syncRef.collection(className: "member")
-            .update(key: id,
+            .update(id: id,
                     data: ["userName" : "UserName update \(Int.random(in: 0...100))"],
                     success: { [weak self] in
                 self?.show("success")
@@ -163,7 +163,7 @@ extension MainVC { /** 成员信息 **/
             return
         }
         syncRef.collection(className: "member")
-            .delete(key: id,
+            .delete(id: id,
                     success: { [weak self] in
                 self?.show("success")
             }, fail: { [weak self](error) in

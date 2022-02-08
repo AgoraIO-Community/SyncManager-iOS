@@ -29,12 +29,12 @@ protocol ISyncManager {
              success: SuccessBlockObj?,
              fail: FailBlock?)
     func update(reference: CollectionReference,
-                key: String,
+                id: String,
                 data: [String : Any?],
                 success: SuccessBlockVoid?,
                 fail: FailBlock?)
     func delete(reference: CollectionReference,
-                key: String,
+                id: String,
                 success: SuccessBlockVoid?,
                 fail: FailBlock?)
     func update(reference: DocumentReference,

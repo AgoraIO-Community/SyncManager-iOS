@@ -174,15 +174,15 @@ extension RtmSyncManager: ISyncManager {
         })
     }
     
-    /// key 是Collection item 的obj id
+    /// id 是Collection item 的obj id
     public func update(reference: CollectionReference,
-                       key: String,
+                       id: String,
                        data: [String : Any?],
                        success: SuccessBlockVoid?,
                        fail: FailBlock?) {
         let attr = AgoraRtmChannelAttribute()
         let item = Utils.getJson(dict: data as NSDictionary)
-        attr.key = key
+        attr.key = id
         attr.value = item
         let option = AgoraRtmChannelAttributeOptions()
         option.enableNotificationToChannelMembers = true
@@ -197,15 +197,15 @@ extension RtmSyncManager: ISyncManager {
         })
     }
     
-    /// key 是Collection item 的obj id
+    /// id 是Collection item 的obj id
     public func delete(reference: CollectionReference,
-                       key: String,
+                       id: String,
                        success: SuccessBlockVoid?,
                        fail: FailBlock?) {
         let option = AgoraRtmChannelAttributeOptions()
         option.enableNotificationToChannelMembers = true
         rtmKit?.deleteChannel(reference.className,
-                              attributesByKeys: [key],
+                              attributesByKeys: [id],
                               options: option,
                               completion: { code in
             guard code == .attributeOperationErrorOk else {
