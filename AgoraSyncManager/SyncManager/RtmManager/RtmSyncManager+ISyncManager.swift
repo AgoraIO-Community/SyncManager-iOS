@@ -69,6 +69,7 @@ extension RtmSyncManager: ISyncManager {
                 return
             }
             
+            
             guard let `self` = self else { return }
             channel.join(completion: nil)
             self.cachedAttrs[channel] = attrs?.count ?? 0 > 0 ? attrs : self.createdRoomItems
