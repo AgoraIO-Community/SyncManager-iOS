@@ -39,8 +39,8 @@ public class AgoraSyncManager: NSObject {
     ///   - scene: 房间实体
     /// - Returns: `SceneReference`
     public func joinScene(scene: Scene,
-                          success: SuccessBlockObj?,
-                          fail: FailBlock? = nil) -> SceneReference {
+                          success: SuccessBlockObjSceneRef?,
+                          fail: FailBlock? = nil) {
         proxy.joinScene(scene: scene,
                         manager: self,
                         success: success,

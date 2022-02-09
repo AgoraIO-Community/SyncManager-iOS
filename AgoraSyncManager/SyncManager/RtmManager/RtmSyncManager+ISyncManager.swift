@@ -8,25 +8,11 @@
 import Foundation
 import AgoraRtmKit
 
-extension RtmSyncManager: ISyncManager {    
-    public func joinScene(scene: Scene,
-                          manager: AgoraSyncManager,
-                          success: SuccessBlockObj?,
-                          fail: FailBlock? = nil) -> SceneReference {
-        let sceneRef = SceneReference(manager: manager,
-                                      id: scene.id)
-        
-        /** scene init **/
-        guard let channel = rtmKit?.createChannel(withId: scene.id,
-                                                  delegate: self) else {
-            let error = SyncError(message: "createChannel fail \(scene.id)", code: -1)
-            fail?(error)
-            return sceneRef
-        }
-        channel.join(completion: nil)
-        channels[scene.id] = channel
-        sceneName = scene.id
-        Log.info(text: "didSet sceneName \(scene.id)", tag: "RtmSyncManager")
+extension RtmSyncManager: ISyncManager {
+    
+    public func createScene(scene: Scene,
+                            success: SuccessBlockVoid?,
+                            fail: FailBlock?) {
         
         /** add room in list **/
         let attr = AgoraRtmChannelAttribute()
@@ -35,32 +21,59 @@ extension RtmSyncManager: ISyncManager {
         let attributes = [attr]
         let option = AgoraRtmChannelAttributeOptions()
         option.enableNotificationToChannelMembers = false
-
         guard let name = channelName else {
             fatalError("must set default channel name")
         }
+        createdRoomItems = attributes
         rtmKit?.addOrUpdateChannel(name,
                                    attributes: attributes,
-                                   options:option,
-                                   completion: { [weak self](code) in
+                                   options: option,
+                                   completion: { (code) in
             if code != .attributeOperationErrorOk {
                 let error = SyncError(message: "addOrUpdate fail in joinScene", code: code.rawValue)
                 fail?(error)
                 return
             }
-            self?.rtmKit?.getChannelAllAttributes(name,
-                                            completion: { (attrs, code) in
-                guard let channel = self?.rtmKit?.createChannel(withId: name, delegate: self) else {
-                    let error = SyncError(message: "createChannel fail in joinScene", code: -1)
-                    fail?(error)
-                    return
-                }
-                channel.join(completion: nil)
-                self?.cachedAttrs[channel] = attrs?.count ?? 0 > 0 ? attrs : attributes
-                success?(attr.toAttribute())
-            })
+            success?()
         })
-        return sceneRef
+    }
+    
+    public func joinScene(sceneId: String,
+                          manager: AgoraSyncManager,
+                          success: SuccessBlockObjSceneRef?,
+                          fail: FailBlock? = nil) {
+        let sceneRef = SceneReference(manager: manager,
+                                      id: sceneId)
+        
+        /** scene init **/
+        guard let channel = rtmKit?.createChannel(withId: sceneId,
+                                                  delegate: self) else {
+            let error = SyncError(message: "createChannel fail \(sceneId)", code: -1)
+            fail?(error)
+            return
+        }
+        channel.join(completion: nil)
+        channels[sceneId] = channel
+        sceneName = sceneId
+        Log.info(text: "didSet sceneName \(sceneId)", tag: "RtmSyncManager")
+        
+        /** get room list cached **/
+        guard let name = channelName else {
+            fatalError("must set default channel name")
+        }
+        rtmKit?.getChannelAllAttributes(name,
+                                        completion: { [weak self](attrs, code) in
+            guard let channel = self?.rtmKit?.createChannel(withId: name, delegate: self) else {
+                let error = SyncError(message: "createChannel fail in joinScene", code: -1)
+                fail?(error)
+                return
+            }
+            
+            guard let `self` = self else { return }
+            channel.join(completion: nil)
+            self.cachedAttrs[channel] = attrs?.count ?? 0 > 0 ? attrs : self.createdRoomItems
+            success?(sceneRef)
+        })
     }
     
     public func getScenes(success: SuccessBlock?,

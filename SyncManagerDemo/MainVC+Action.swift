@@ -28,9 +28,9 @@ extension MainVC { /** 基础 **/
     
     func joinScene() {
         let scene = Scene(id: sceneId, userId: "userid", property: nil)
-        syncRef = syncManager.joinScene(scene: scene) { [weak self](obj) in
+        syncManager.joinScene(scene: scene) { [weak self](obj) in
             self?.show("success")
-            if let str = obj.toJson() { print(str) }
+            self?.syncRef = obj
         }
     }
     

@@ -11,7 +11,12 @@ import AgoraSyncKit
 extension AgoraJson {
     func getJsonString() -> String {
         var str: NSString = ""
-        let ret = getString(&str)
+        var json = AgoraJson()
+        var ret = getField("", agoraJson: &json)
+        if ret != 0 {
+            Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
+        }
+        ret = json.getString(&str)
         if ret != 0 {
             Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
         }

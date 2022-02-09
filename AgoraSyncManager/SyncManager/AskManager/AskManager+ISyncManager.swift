@@ -11,23 +11,22 @@ import AgoraRtmKit /// will not use it
 
 extension AskManager: ISyncManager {
     
+    /// TODO: SceneReference通过block传递出去
     func joinScene(scene: Scene,
                    manager: AgoraSyncManager,
-                   success: SuccessBlockObj?,
-                   fail: FailBlock?) -> SceneReference {
-        let sceneRef = SceneReference(manager: manager,
-                                      id: scene.id)
-        
+                   success: SuccessBlockObjSceneRef?,
+                   fail: FailBlock?) {
         roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
-        membersCollection = roomsCollection.createDocument(withName: scene.id)?.createCollection(withName: memberListKey)
-        
+        let sceneDocument = roomsCollection.createDocument(withName: scene.id)
         let queue = DispatchQueue(label: "AskManager.queue", attributes: .concurrent)
+        let sceneRef = SceneReference(manager: manager,
+                                      document: sceneDocument!)
         queue.async { [weak self] in
             self?.addSceneInfoInListIfNeed(scene: scene,
+                                           sceneRef: sceneRef,
                                            success: success,
                                            fail: fail)
         }
-        return sceneRef
     }
     
     func getScenes(success: SuccessBlock?, fail: FailBlock?) {

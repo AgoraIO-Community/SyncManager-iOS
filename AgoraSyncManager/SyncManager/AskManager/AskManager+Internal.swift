@@ -11,7 +11,8 @@ import AgoraSyncKit
 
 extension AskManager {
     func addSceneInfoInListIfNeed(scene: Scene,
-                                  success: SuccessBlockObj?,
+                                  sceneRef: SceneReference,
+                                  success: SuccessBlockObjSceneRef?,
                                   fail: FailBlock?) {
         /** read room list **/
         var shouldAddRoomInfoInList = true
@@ -68,10 +69,7 @@ extension AskManager {
         }
         
         if !shouldAddRoomInfoInList {
-            let attr = AgoraRtmChannelAttribute()
-            attr.key = scene.id
-            attr.value = scene.toJson()
-            success?(attr.toAttribute())
+            success?(sceneRef)
             return
         }
         
@@ -82,10 +80,7 @@ extension AskManager {
         roomsCollection?.add(roomJson, completion: { [weak self](errorCode, document) in
             if errorCode == 0 {
                 self?.roomDocument = document
-                let attr = AgoraRtmChannelAttribute()
-                attr.key = scene.id
-                attr.value = scene.toJson()
-                success?(attr.toAttribute())
+                success?(sceneRef)
                 return
             }
             else {
