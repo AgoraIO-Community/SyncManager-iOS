@@ -14,7 +14,7 @@ extension AskManager {
                                   success: SuccessBlockObj?,
                                   fail: FailBlock?) {
         /** read room list **/
-        var shouldAddRoomInfoInList = false
+        var shouldAddRoomInfoInList = true
         let semp = DispatchSemaphore(value: 0)
         var error: SyncError?
         Log.info(text: "start get scene list", tag: "AskManager.addSceneInfoInListIfNeed")
@@ -27,7 +27,6 @@ extension AskManager {
                 }
                 let jsonStrings = list.compactMap({ $0.data() }).map({ $0.getJsonString() })
                 guard !jsonStrings.isEmpty else { /** list is empty **/
-                    shouldAddRoomInfoInList = true
                     semp.signal()
                     return
                 }
@@ -41,7 +40,7 @@ extension AskManager {
                             let sceneObj = try decoder.decode(Scene.self, from: data)
                             currentRooms.append(sceneObj)
                         } catch let error {
-                            Log.errorText(text: "decode error \(error.localizedDescription)", tag: "AskManager.joinScene")
+                            Log.errorText(text: "decode error \(error.localizedDescription)", tag: "AskManager.addSceneInfoInListIfNeed")
                         }
                     }
                 }
@@ -49,8 +48,8 @@ extension AskManager {
                 /// check isContainRoom
                 if !currentRooms.isEmpty {
                     let isContainRoom = currentRooms.map({ $0.id }).contains(scene.id)
-                    if !isContainRoom {
-                        shouldAddRoomInfoInList = true
+                    if isContainRoom {
+                        shouldAddRoomInfoInList = false
                     }
                 }
                 semp.signal()
@@ -80,8 +79,9 @@ extension AskManager {
         let roomJson = AgoraJson()
         let roomString = scene.toJson()
         roomJson.setString(roomString)
-        roomsCollection?.add(roomJson, completion: { errorCode, _ in
+        roomsCollection?.add(roomJson, completion: { [weak self](errorCode, document) in
             if errorCode == 0 {
+                self?.roomDocument = document
                 let attr = AgoraRtmChannelAttribute()
                 attr.key = scene.id
                 attr.value = scene.toJson()
@@ -89,6 +89,7 @@ extension AskManager {
                 return
             }
             else {
+                Log.errorText(text: "roomsCollection add \(errorCode)", tag: "AskManager.addSceneInfoInListIfNeed")
                 let error = SyncError(message: "joinScene fail", code: errorCode)
                 fail?(error)
                 return

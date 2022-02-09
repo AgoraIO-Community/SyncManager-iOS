@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraSyncKit
 
 public class SceneReference: DocumentReference {
     override public var className: String {
@@ -14,6 +15,10 @@ public class SceneReference: DocumentReference {
     
     init(manager: AgoraSyncManager, id: String) {
         super.init(manager: manager, parent: nil, id: id)
+    }
+    
+    init(manager: AgoraSyncManager, document: AgoraSyncDocument) {
+        super.init(manager: manager, parent: nil, document: document)
     }
     
     /// 创建一个CollectionReference实体
@@ -42,6 +47,7 @@ public class DocumentReference {
     public let id: String
     public let parent: CollectionReference?
     let manager: AgoraSyncManager
+    let internalDocument: AgoraSyncDocument
     
     public var className: String {
         return parent!.className
@@ -51,6 +57,17 @@ public class DocumentReference {
         self.manager = manager
         self.parent = parent
         self.id = id
+        
+        self.internalDocument = AgoraSyncDocument()
+    }
+    
+    init(manager: AgoraSyncManager,
+         parent: CollectionReference?,
+         document: AgoraSyncDocument) {
+        self.manager = manager
+        self.parent = parent
+        self.id = ""
+        self.internalDocument = document
     }
     
     /// 获取指定属性值

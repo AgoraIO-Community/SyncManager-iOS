@@ -14,8 +14,15 @@ class AskManager: NSObject {
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
     var membersCollection: AgoraSyncCollection!
+    var roomDocument: AgoraSyncDocument?
     let roomListKey = "rooms"
     let memberListKey = "members"
+    var documentDict = [String : AgoraSyncDocument]()
+    
+    var onCreateBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
+    var onUpdatedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
+    var onDeletedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
+    
     /// init
     /// - Parameters:
     ///   - config: config

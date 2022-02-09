@@ -18,6 +18,7 @@
 		2628FC5727B12A5100D7097D /* AgoraSyncKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2628FC5827B12A5200D7097D /* Agoraffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; };
 		2628FC5927B12A5200D7097D /* Agoraffmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2628FC5D27B265D200D7097D /* TestX.m in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC5C27B265D200D7097D /* TestX.m */; };
 		263A8123274605890067E868 /* SyncManager+Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8113274605890067E868 /* SyncManager+Info.swift */; };
 		263A8124274605890067E868 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8115274605890067E868 /* Utils.swift */; };
 		263A8125274605890067E868 /* Blocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8117274605890067E868 /* Blocks.swift */; };
@@ -102,6 +103,9 @@
 		2628FC4027B0F9D400D7097D /* AskManager+ISyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskManager+ISyncManager.swift"; sourceTree = "<group>"; };
 		2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgoraJson+Extension.swift"; sourceTree = "<group>"; };
 		2628FC4C27B11C1500D7097D /* AskManager+Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskManager+Internal.swift"; sourceTree = "<group>"; };
+		2628FC5A27B265D100D7097D /* SyncManagerDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SyncManagerDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		2628FC5B27B265D200D7097D /* TestX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestX.h; sourceTree = "<group>"; };
+		2628FC5C27B265D200D7097D /* TestX.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestX.m; sourceTree = "<group>"; };
 		263A8113274605890067E868 /* SyncManager+Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SyncManager+Info.swift"; sourceTree = "<group>"; };
 		263A8115274605890067E868 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		263A8117274605890067E868 /* Blocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
@@ -281,6 +285,9 @@
 				267F271B276372D300733075 /* MainVC+Action.swift */,
 				267F271927630F9500733075 /* MainVC+Show.swift */,
 				267F2717276304A500733075 /* Config.swift */,
+				2628FC5B27B265D200D7097D /* TestX.h */,
+				2628FC5C27B265D200D7097D /* TestX.m */,
+				2628FC5A27B265D100D7097D /* SyncManagerDemo-Bridging-Header.h */,
 			);
 			path = SyncManagerDemo;
 			sourceTree = "<group>";
@@ -401,6 +408,7 @@
 				TargetAttributes = {
 					8B4854AE26EB506A00505A12 = {
 						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1310;
 					};
 					8BE1787726ED1190005E0D4F = {
 						CreatedOnToolsVersion = 12.5;
@@ -534,6 +542,7 @@
 				267F2718276304A500733075 /* Config.swift in Sources */,
 				8B4854B326EB506A00505A12 /* AppDelegate.swift in Sources */,
 				8B4854B526EB506A00505A12 /* SceneDelegate.swift in Sources */,
+				2628FC5D27B265D200D7097D /* TestX.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -731,6 +740,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HFDBB878GT;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -745,6 +755,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.syncmanager.demoz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SyncManagerDemo/SyncManagerDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -757,6 +769,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HFDBB878GT;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -771,6 +784,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.syncmanager.demoz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SyncManagerDemo/SyncManagerDemo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
