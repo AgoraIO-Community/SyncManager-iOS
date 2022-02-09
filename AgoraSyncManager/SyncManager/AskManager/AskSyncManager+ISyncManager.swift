@@ -9,62 +9,33 @@ import Foundation
 import AgoraSyncKit
 import AgoraRtmKit /// will not use it
 
-extension AskManager: ISyncManager {
+extension AskSyncManager: ISyncManager {
     
-    /// TODO: SceneReference通过block传递出去
-    func joinScene(scene: Scene,
+    func createScene(scene: Scene,
+                     success: SuccessBlockVoid?,
+                     fail: FailBlock?) {
+        queue.async { [weak self] in
+            self?.createSceneSync(scene: scene,
+                                  success: success,
+                                  fail: fail)
+        }
+    }
+    
+    func joinScene(sceneId: String,
                    manager: AgoraSyncManager,
                    success: SuccessBlockObjSceneRef?,
                    fail: FailBlock?) {
-        roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
-        let sceneDocument = roomsCollection.createDocument(withName: scene.id)
-        let queue = DispatchQueue(label: "AskManager.queue", attributes: .concurrent)
-        let sceneRef = SceneReference(manager: manager,
-                                      document: sceneDocument!)
         queue.async { [weak self] in
-            self?.addSceneInfoInListIfNeed(scene: scene,
-                                           sceneRef: sceneRef,
-                                           success: success,
-                                           fail: fail)
+            self?.joinSceneSync(sceneId: sceneId,
+                                manager: manager,
+                                success: success,
+                                fail: fail)
         }
     }
     
     func getScenes(success: SuccessBlock?, fail: FailBlock?) {
-        roomsCollection.getRemote { errorCode, snapshots in
-            if errorCode == 0 {
-                guard let list = snapshots else { /** can not get list **/
-                    assertionFailure("snapshots must not nil")
-                    return
-                }
-                
-                let jsonStrings = list.compactMap({ $0.data() }).map({ $0.getJsonString() })
-                guard !jsonStrings.isEmpty else { /** list is empty **/
-                    success?([])
-                    return
-                }
-                
-                /// decode scene
-                let decoder = JSONDecoder()
-                var currentRooms = [Scene]()
-                for str in jsonStrings {
-                    if let data = str.data(using: .utf8) {
-                        do {
-                            let sceneObj = try decoder.decode(Scene.self, from: data)
-                            currentRooms.append(sceneObj)
-                        } catch let error {
-                            Log.errorText(text: "decode error \(error.localizedDescription)", tag: "AskManager.joinScene")
-                        }
-                    }
-                }
-                
-                let results = currentRooms.map({ Attribute(key: $0.id, value: $0.toJson()) })
-                success?(results)
-                return
-            }
-            else {
-                let error = SyncError(message: "joinScene fail", code: errorCode)
-                fail?(error)
-            }
+        queue.async { [weak self] in
+            self?.getScenes(success: success, fail: fail)
         }
     }
     
@@ -78,23 +49,11 @@ extension AskManager: ISyncManager {
              key: String?,
              success: SuccessBlockObjOptional?,
              fail: FailBlock?) {
-        let field = key ?? ""
-        documentRef.internalDocument.getRemote(field) { errorCode, json in
-            if errorCode == 0 {
-                guard let result = json else {
-                    Log.info(text: "json is nil", tag: "AskManager.get(documentRef)")
-                    success?(nil)
-                    return
-                }
-                
-                let string = result.getJsonString()
-                let attr = Attribute(key: field, value: string)
-                success?(attr)
-            }
-            else {
-                let error = SyncError(message: "get(documentRef) fail", code: errorCode)
-                fail?(error)
-            }
+        queue.async { [weak self] in
+            self?.getSync(documentRef: documentRef,
+                          key: key,
+                          success: success,
+                          fail: fail)
         }
     }
     
@@ -142,6 +101,21 @@ extension AskManager: ISyncManager {
                 fail?(error)
             }
         }
+    }
+    
+    func update(reference: CollectionReference,
+                id: String,
+                data: [String : Any?],
+                success: SuccessBlockVoid?,
+                fail: FailBlock?) {
+        
+    }
+    
+    func delete(reference: CollectionReference,
+                id: String,
+                success: SuccessBlockVoid?,
+                fail: FailBlock?) {
+        
     }
     
     func update(reference: DocumentReference,

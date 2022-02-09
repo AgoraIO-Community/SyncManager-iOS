@@ -8,7 +8,7 @@
 import Foundation
 import AgoraSyncKit
 
-class AskManager: NSObject {
+class AskSyncManager: NSObject {
     var defaultChannelName: String!
     var askKit: AgoraSyncKit!
     var askContext: AgoraSyncContext!
@@ -18,6 +18,7 @@ class AskManager: NSObject {
     let roomListKey = "rooms"
     let memberListKey = "members"
     var documentDict = [String : AgoraSyncDocument]()
+    let queue = DispatchQueue(label: "AskManager.queue")
     
     var onCreateBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
     var onUpdatedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
@@ -32,5 +33,6 @@ class AskManager: NSObject {
         self.defaultChannelName = config.channelName
         askKit = AgoraSyncKit(appId: config.appId)
         askContext = askKit.createContext()
+        roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
     }
 }

@@ -12,7 +12,7 @@ import AgoraSyncKit
 
 class MainVC: UIViewController, AgoraRtmChannelDelegate {
     let sectionTitles = ["基础", "房间列表", "房间信息(key = nil)", "房间信息(key = member)", "成员信息"]
-    let list = [["初始化", "加入房间", "删除房间"],
+    let list = [["初始化", "创建房间", "加入房间", "删除房间"],
                 ["读取房间列表"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
@@ -60,11 +60,15 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
                 return
             }
             
-            if indexPath.row == 1 { /** 加入房间 **/
+            if indexPath.row == 1 { /** 创建房间 **/
+                createScene()
+                return
+            }
+            if indexPath.row == 2 { /** 加入房间 **/
                 joinScene()
                 return
             }
-            if indexPath.row == 2 { /** 删除房间 **/
+            if indexPath.row == 3 { /** 删除房间 **/
                 deleteScene()
                 return
             }

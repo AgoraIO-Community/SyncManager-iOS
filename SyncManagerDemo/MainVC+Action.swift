@@ -11,9 +11,10 @@ import AgoraSyncKit
 
 extension MainVC { /** 基础 **/
     func initManager() {
-        let config = AgoraSyncManager.AskConfig(appId: Config.appId,
+        /** provide by rtm **/
+        let config = AgoraSyncManager.RtmConfig(appId: Config.appId,
                                                 channelName: channelName)
-        syncManager = AgoraSyncManager(askConfig: config,
+        syncManager = AgoraSyncManager(config: config,
                                        complete: { code in
             if code == 0 {
                 self.show("success")
@@ -24,18 +25,46 @@ extension MainVC { /** 基础 **/
                 print("SyncManager init error")
             }
         })
+        
+        /** provide by ask **/
+//        let config = AgoraSyncManager.AskConfig(appId: Config.appId,
+//                                                channelName: channelName)
+//        syncManager = AgoraSyncManager(askConfig: config,
+//                                       complete: { code in
+//            if code == 0 {
+//                self.show("success")
+//                print("SyncManager init success")
+//            }
+//            else {
+//                self.show("fail (\(code)")
+//                print("SyncManager init error")
+//            }
+//        })
+        
+    }
+    
+    func createScene() {
+        let scene = Scene(id: sceneId, userId: "userid", property: nil)
+        syncManager.createScene(scene: scene,
+                                success: {  [weak self] in
+            self?.show("success")
+        },fail: { [weak self](error) in
+            self?.show("fail: \(error.description)")
+        })
     }
     
     func joinScene() {
-        let scene = Scene(id: sceneId, userId: "userid", property: nil)
-        syncManager.joinScene(scene: scene) { [weak self](obj) in
+        syncManager.joinScene(sceneId: sceneId,
+                              success: { [weak self](obj) in
             self?.show("success")
             self?.syncRef = obj
-        }
+        }, fail: { [weak self](error) in
+            self?.show("fail: \(error.description)")
+        })
     }
     
     func deleteScene() {
-        syncRef.delete(success: nil, fail: nil)
+        syncRef.delete()
     }
 }
 

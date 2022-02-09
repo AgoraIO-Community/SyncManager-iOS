@@ -28,20 +28,26 @@ public class AgoraSyncManager: NSObject {
     ///   - complete: `code = 0` is success, else error
     public init(askConfig: AskConfig,
                 complete: @escaping SuccessBlockInt) {
-        let tempConfig = AskManager.Config(appId: askConfig.appId,
+        let tempConfig = AskSyncManager.Config(appId: askConfig.appId,
                                            channelName: askConfig.channelName)
-        proxy = AskManager(config: tempConfig,
+        proxy = AskSyncManager(config: tempConfig,
                            complete: complete)
     }
     
+    
+    public func createScene(scene: Scene,
+                     success: SuccessBlockVoid?,
+                     fail: FailBlock?) {
+        proxy.createScene(scene: scene,
+                          success: success,
+                          fail: fail)
+    }
+    
     /// 加入房间
-    /// - Parameters:
-    ///   - scene: 房间实体
-    /// - Returns: `SceneReference`
-    public func joinScene(scene: Scene,
-                          success: SuccessBlockObjSceneRef?,
-                          fail: FailBlock? = nil) {
-        proxy.joinScene(scene: scene,
+    public func joinScene(sceneId: String,
+                   success: SuccessBlockObjSceneRef?,
+                   fail: FailBlock?) {
+        proxy.joinScene(sceneId: sceneId,
                         manager: self,
                         success: success,
                         fail: fail)
