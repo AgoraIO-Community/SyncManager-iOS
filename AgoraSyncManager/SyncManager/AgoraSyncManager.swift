@@ -22,13 +22,25 @@ public class AgoraSyncManager: NSObject {
                                complete: complete)
     }
     
+    /// init
+    /// - Parameters:
+    ///   - config: config of ask
+    ///   - complete: `code = 0` is success, else error
+    public init(askConfig: AskConfig,
+                complete: @escaping SuccessBlockInt) {
+        let tempConfig = AskManager.Config(appId: askConfig.appId,
+                                           channelName: askConfig.channelName)
+        proxy = AskManager(config: tempConfig,
+                           complete: complete)
+    }
+    
     /// 加入房间
     /// - Parameters:
     ///   - scene: 房间实体
     /// - Returns: `SceneReference`
     public func joinScene(scene: Scene,
-                          success: SuccessBlockObj?,
-                          fail: FailBlock? = nil) -> SceneReference {
+                          success: SuccessBlockObjSceneRef?,
+                          fail: FailBlock? = nil) {
         proxy.joinScene(scene: scene,
                         manager: self,
                         success: success,

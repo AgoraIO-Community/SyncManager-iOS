@@ -3,10 +3,22 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2628FC4127B0F9D400D7097D /* AskManager+ISyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4027B0F9D400D7097D /* AskManager+ISyncManager.swift */; };
+		2628FC4B27B116D500D7097D /* AgoraJson+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */; };
+		2628FC4D27B11C1500D7097D /* AskManager+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4C27B11C1500D7097D /* AskManager+Internal.swift */; };
+		2628FC4F27B129CB00D7097D /* AgoraSyncKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; };
+		2628FC5027B129CB00D7097D /* AgoraSyncKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2628FC5227B129CD00D7097D /* Agoraffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; };
+		2628FC5327B129CD00D7097D /* Agoraffmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2628FC5627B12A5100D7097D /* AgoraSyncKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; };
+		2628FC5727B12A5100D7097D /* AgoraSyncKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2628FC5827B12A5200D7097D /* Agoraffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; };
+		2628FC5927B12A5200D7097D /* Agoraffmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2628FC5D27B265D200D7097D /* TestX.m in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC5C27B265D200D7097D /* TestX.m */; };
 		263A8123274605890067E868 /* SyncManager+Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8113274605890067E868 /* SyncManager+Info.swift */; };
 		263A8124274605890067E868 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8115274605890067E868 /* Utils.swift */; };
 		263A8125274605890067E868 /* Blocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8117274605890067E868 /* Blocks.swift */; };
@@ -27,6 +39,8 @@
 		267F2718276304A500733075 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F2717276304A500733075 /* Config.swift */; };
 		267F271A27630F9500733075 /* MainVC+Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F271927630F9500733075 /* MainVC+Show.swift */; };
 		267F271C276372D300733075 /* MainVC+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F271B276372D300733075 /* MainVC+Action.swift */; };
+		26FF3C5027B0D53D009B66E3 /* AskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FF3C4F27B0D53D009B66E3 /* AskManager.swift */; };
+		26FF3C5227B0D56D009B66E3 /* AskManager+Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FF3C5127B0D56D009B66E3 /* AskManager+Info.swift */; };
 		32E4FBB791D7DB2D64502D65 /* Pods_SyncManagerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 816CF7242DAC4571D3D1F0C2 /* Pods_SyncManagerDemo.framework */; };
 		6AE91B64E3781838D070B0CD /* Pods_AgoraSyncManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8DF639838A47C38FBE6C985 /* Pods_AgoraSyncManager.framework */; };
 		8B4854B326EB506A00505A12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4854B226EB506A00505A12 /* AppDelegate.swift */; };
@@ -57,6 +71,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		2628FC5127B129CB00D7097D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2628FC5327B129CD00D7097D /* Agoraffmpeg.framework in Embed Frameworks */,
+				2628FC5027B129CB00D7097D /* AgoraSyncKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8BE1788426ED1190005E0D4F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -64,6 +90,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				8BE1788026ED1190005E0D4F /* AgoraSyncManager.framework in Embed Frameworks */,
+				2628FC5927B12A5200D7097D /* Agoraffmpeg.framework in Embed Frameworks */,
+				2628FC5727B12A5100D7097D /* AgoraSyncKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -72,6 +100,12 @@
 
 /* Begin PBXFileReference section */
 		0F6AC0C3A0BF5BE572ACDBE2 /* Pods-RtmSyncManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RtmSyncManager.debug.xcconfig"; path = "Target Support Files/Pods-RtmSyncManager/Pods-RtmSyncManager.debug.xcconfig"; sourceTree = "<group>"; };
+		2628FC4027B0F9D400D7097D /* AskManager+ISyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskManager+ISyncManager.swift"; sourceTree = "<group>"; };
+		2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgoraJson+Extension.swift"; sourceTree = "<group>"; };
+		2628FC4C27B11C1500D7097D /* AskManager+Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskManager+Internal.swift"; sourceTree = "<group>"; };
+		2628FC5A27B265D100D7097D /* SyncManagerDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SyncManagerDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		2628FC5B27B265D200D7097D /* TestX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestX.h; sourceTree = "<group>"; };
+		2628FC5C27B265D200D7097D /* TestX.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestX.m; sourceTree = "<group>"; };
 		263A8113274605890067E868 /* SyncManager+Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SyncManager+Info.swift"; sourceTree = "<group>"; };
 		263A8115274605890067E868 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		263A8117274605890067E868 /* Blocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
@@ -92,6 +126,10 @@
 		267F2717276304A500733075 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		267F271927630F9500733075 /* MainVC+Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+Show.swift"; sourceTree = "<group>"; };
 		267F271B276372D300733075 /* MainVC+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+Action.swift"; sourceTree = "<group>"; };
+		26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Agoraffmpeg.framework; sourceTree = "<group>"; };
+		26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSyncKit.framework; sourceTree = "<group>"; };
+		26FF3C4F27B0D53D009B66E3 /* AskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskManager.swift; sourceTree = "<group>"; };
+		26FF3C5127B0D56D009B66E3 /* AskManager+Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskManager+Info.swift"; sourceTree = "<group>"; };
 		35AC2D7BF5ADFA93C789CDD1 /* Pods-AgoraSyncManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraSyncManager.release.xcconfig"; path = "Target Support Files/Pods-AgoraSyncManager/Pods-AgoraSyncManager.release.xcconfig"; sourceTree = "<group>"; };
 		816CF7242DAC4571D3D1F0C2 /* Pods_SyncManagerDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SyncManagerDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B4854AF26EB506A00505A12 /* SyncManagerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncManagerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,7 +155,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2628FC5827B12A5200D7097D /* Agoraffmpeg.framework in Frameworks */,
 				32E4FBB791D7DB2D64502D65 /* Pods_SyncManagerDemo.framework in Frameworks */,
+				2628FC5627B12A5100D7097D /* AgoraSyncKit.framework in Frameworks */,
 				8BE1787F26ED1190005E0D4F /* AgoraSyncManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -126,6 +166,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2628FC4F27B129CB00D7097D /* AgoraSyncKit.framework in Frameworks */,
+				2628FC5227B129CD00D7097D /* Agoraffmpeg.framework in Frameworks */,
 				6AE91B64E3781838D070B0CD /* Pods_AgoraSyncManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,9 +230,22 @@
 				265F4F14276B4FB2009A096B /* DocumentReference.swift */,
 				265F4F16276B5004009A096B /* CollectionReference.swift */,
 				263A811A274605890067E868 /* Protocols.swift */,
+				26FF3C4A27B0D46F009B66E3 /* AskManager */,
 				263A811C274605890067E868 /* RtmManager */,
 			);
 			path = SyncManager;
+			sourceTree = "<group>";
+		};
+		26FF3C4A27B0D46F009B66E3 /* AskManager */ = {
+			isa = PBXGroup;
+			children = (
+				26FF3C4F27B0D53D009B66E3 /* AskManager.swift */,
+				26FF3C5127B0D56D009B66E3 /* AskManager+Info.swift */,
+				2628FC4C27B11C1500D7097D /* AskManager+Internal.swift */,
+				2628FC4027B0F9D400D7097D /* AskManager+ISyncManager.swift */,
+				2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */,
+			);
+			path = AskManager;
 			sourceTree = "<group>";
 		};
 		8B4854A626EB506A00505A12 = {
@@ -218,6 +273,8 @@
 		8B4854B126EB506A00505A12 /* SyncManagerDemo */ = {
 			isa = PBXGroup;
 			children = (
+				26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */,
+				26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */,
 				8B4854B226EB506A00505A12 /* AppDelegate.swift */,
 				8B4854B426EB506A00505A12 /* SceneDelegate.swift */,
 				8B4854B826EB506A00505A12 /* Main.storyboard */,
@@ -228,6 +285,9 @@
 				267F271B276372D300733075 /* MainVC+Action.swift */,
 				267F271927630F9500733075 /* MainVC+Show.swift */,
 				267F2717276304A500733075 /* Config.swift */,
+				2628FC5B27B265D200D7097D /* TestX.h */,
+				2628FC5C27B265D200D7097D /* TestX.m */,
+				2628FC5A27B265D100D7097D /* SyncManagerDemo-Bridging-Header.h */,
 			);
 			path = SyncManagerDemo;
 			sourceTree = "<group>";
@@ -308,6 +368,7 @@
 				8BE1787426ED1190005E0D4F /* Sources */,
 				8BE1787526ED1190005E0D4F /* Frameworks */,
 				8BE1787626ED1190005E0D4F /* Resources */,
+				2628FC5127B129CB00D7097D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -347,10 +408,11 @@
 				TargetAttributes = {
 					8B4854AE26EB506A00505A12 = {
 						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1310;
 					};
 					8BE1787726ED1190005E0D4F = {
 						CreatedOnToolsVersion = 12.5;
-						LastSwiftMigration = 1250;
+						LastSwiftMigration = 1310;
 					};
 					8BE9C5AD276470180083F0EC = {
 						CreatedOnToolsVersion = 13.0;
@@ -480,6 +542,7 @@
 				267F2718276304A500733075 /* Config.swift in Sources */,
 				8B4854B326EB506A00505A12 /* AppDelegate.swift in Sources */,
 				8B4854B526EB506A00505A12 /* SceneDelegate.swift in Sources */,
+				2628FC5D27B265D200D7097D /* TestX.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,16 +555,21 @@
 				263A812B274605890067E868 /* RtmSyncManager+Info.swift in Sources */,
 				263A812E274605890067E868 /* RtmSyncManager.swift in Sources */,
 				263A812A274605890067E868 /* RtmSyncManager+Handle.swift in Sources */,
+				26FF3C5027B0D53D009B66E3 /* AskManager.swift in Sources */,
+				2628FC4127B0F9D400D7097D /* AskManager+ISyncManager.swift in Sources */,
 				265F4F29277495D0009A096B /* Log.swift in Sources */,
 				265F4F15276B4FB2009A096B /* DocumentReference.swift in Sources */,
 				263A8125274605890067E868 /* Blocks.swift in Sources */,
 				265F4F17276B5004009A096B /* CollectionReference.swift in Sources */,
 				263A8123274605890067E868 /* SyncManager+Info.swift in Sources */,
 				263A8124274605890067E868 /* Utils.swift in Sources */,
+				26FF3C5227B0D56D009B66E3 /* AskManager+Info.swift in Sources */,
+				2628FC4D27B11C1500D7097D /* AskManager+Internal.swift in Sources */,
 				263A8128274605890067E868 /* Protocols.swift in Sources */,
 				263A8129274605890067E868 /* SyncError.swift in Sources */,
 				263A8126274605890067E868 /* Extensions.swift in Sources */,
 				263A8127274605890067E868 /* Models.swift in Sources */,
+				2628FC4B27B116D500D7097D /* AgoraJson+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,8 +740,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HFDBB878GT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SyncManagerDemo",
+				);
 				INFOPLIST_FILE = SyncManagerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -682,6 +755,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.syncmanager.demoz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SyncManagerDemo/SyncManagerDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -694,8 +769,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HFDBB878GT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SyncManagerDemo",
+				);
 				INFOPLIST_FILE = SyncManagerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -704,6 +784,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.syncmanager.demoz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SyncManagerDemo/SyncManagerDemo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -721,6 +802,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SyncManagerDemo",
+				);
 				INFOPLIST_FILE = AgoraSyncManager/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -754,6 +839,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SyncManagerDemo",
+				);
 				INFOPLIST_FILE = AgoraSyncManager/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

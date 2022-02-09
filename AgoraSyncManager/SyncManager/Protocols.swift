@@ -8,10 +8,13 @@
 import Foundation
 
 protocol ISyncManager {
-    func joinScene(scene: Scene,
+    func createScene(scene: Scene,
+                     success: SuccessBlockVoid?,
+                     fail: FailBlock?)
+    func joinScene(sceneId: String,
                    manager: AgoraSyncManager,
-                   success: SuccessBlockObj?,
-                   fail: FailBlock?) -> SceneReference
+                   success: SuccessBlockObjSceneRef?,
+                   fail: FailBlock?)
     func getScenes(success: SuccessBlock?,
                    fail: FailBlock?)
     func deleteScenes(sceneIds: [String],
