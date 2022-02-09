@@ -15,7 +15,7 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
                 ["读取房间列表"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
-                ["新增member", "更新member（无）", "删除member", "获取member列表", "订阅member更新事件", "取消订阅memner更新事件", "删除所有member"]]
+                ["新增member", "更新member", "删除member", "获取member列表", "订阅member更新事件", "取消订阅memner更新事件", "删除所有member"]]
     let tableView = UITableView(frame: .zero, style: .grouped)
     var syncManager: AgoraSyncManager!
     var syncRef: SceneReference!
@@ -120,6 +120,7 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
             }
             
             if indexPath.row == 1 { /** 更新member **/
+                updateMember()
                 return
             }
             
