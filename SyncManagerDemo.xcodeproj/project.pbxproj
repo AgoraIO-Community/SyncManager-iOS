@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		2628FC4127B0F9D400D7097D /* AskSyncManager+ISyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4027B0F9D400D7097D /* AskSyncManager+ISyncManager.swift */; };
 		2628FC4B27B116D500D7097D /* AgoraJson+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */; };
-		2628FC4D27B11C1500D7097D /* AskSyncManager+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4C27B11C1500D7097D /* AskSyncManager+Internal.swift */; };
+		2628FC4D27B11C1500D7097D /* AskSyncManager+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628FC4C27B11C1500D7097D /* AskSyncManager+Sync.swift */; };
 		2628FC4F27B129CB00D7097D /* AgoraSyncKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; };
 		2628FC5027B129CB00D7097D /* AgoraSyncKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2628FC5227B129CD00D7097D /* Agoraffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */; platformFilter = ios; };
@@ -101,7 +101,7 @@
 		0F6AC0C3A0BF5BE572ACDBE2 /* Pods-RtmSyncManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RtmSyncManager.debug.xcconfig"; path = "Target Support Files/Pods-RtmSyncManager/Pods-RtmSyncManager.debug.xcconfig"; sourceTree = "<group>"; };
 		2628FC4027B0F9D400D7097D /* AskSyncManager+ISyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskSyncManager+ISyncManager.swift"; sourceTree = "<group>"; };
 		2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgoraJson+Extension.swift"; sourceTree = "<group>"; };
-		2628FC4C27B11C1500D7097D /* AskSyncManager+Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskSyncManager+Internal.swift"; sourceTree = "<group>"; };
+		2628FC4C27B11C1500D7097D /* AskSyncManager+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskSyncManager+Sync.swift"; sourceTree = "<group>"; };
 		263A8113274605890067E868 /* SyncManager+Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SyncManager+Info.swift"; sourceTree = "<group>"; };
 		263A8115274605890067E868 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		263A8117274605890067E868 /* Blocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
@@ -237,7 +237,7 @@
 			children = (
 				26FF3C4F27B0D53D009B66E3 /* AskSyncManager.swift */,
 				26FF3C5127B0D56D009B66E3 /* AskSyncManager+Info.swift */,
-				2628FC4C27B11C1500D7097D /* AskSyncManager+Internal.swift */,
+				2628FC4C27B11C1500D7097D /* AskSyncManager+Sync.swift */,
 				2628FC4027B0F9D400D7097D /* AskSyncManager+ISyncManager.swift */,
 				2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */,
 			);
@@ -556,7 +556,7 @@
 				263A8123274605890067E868 /* SyncManager+Info.swift in Sources */,
 				263A8124274605890067E868 /* Utils.swift in Sources */,
 				26FF3C5227B0D56D009B66E3 /* AskSyncManager+Info.swift in Sources */,
-				2628FC4D27B11C1500D7097D /* AskSyncManager+Internal.swift in Sources */,
+				2628FC4D27B11C1500D7097D /* AskSyncManager+Sync.swift in Sources */,
 				263A8128274605890067E868 /* Protocols.swift in Sources */,
 				263A8129274605890067E868 /* SyncError.swift in Sources */,
 				263A8126274605890067E868 /* Extensions.swift in Sources */,

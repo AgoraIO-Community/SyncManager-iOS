@@ -22,8 +22,7 @@ extension AskSyncManager {
             Log.info(text: "get scene list block invoke", tag: "AskManager.addSceneInfoInListIfNeed")
             if errorCode == 0 {
                 guard let list = snapshots else { /** can not get list **/
-                    assertionFailure("snapshots must not nil")
-                    return
+                    fatalError("snapshots must not nil")
                 }
                 let jsonStrings = list.compactMap({ $0.data() }).map({ $0.getJsonString() })
                 guard !jsonStrings.isEmpty else { /** list is empty **/
@@ -55,7 +54,7 @@ extension AskSyncManager {
                 semp.signal()
             }
             else {
-                error = SyncError(message: "joinScene fail", code: errorCode)
+                error = SyncError.ask(message: "getRemote fail ", code: errorCode)
                 semp.signal()
             }
         }
@@ -88,15 +87,13 @@ extension AskSyncManager {
                 DispatchQueue.main.async {
                     success?()
                 }
-                return
             }
             else {
                 Log.errorText(text: "roomsCollection add \(errorCode)", tag: "AskManager.addSceneInfoInListIfNeed")
-                let e = SyncError(message: "joinScene fail", code: errorCode)
+                let e = SyncError.ask(message: "add json in collection fail ", code: errorCode)
                 DispatchQueue.main.async {
                     fail?(e)
                 }
-                return
             }
         })
     }
@@ -106,14 +103,15 @@ extension AskSyncManager {
                        success: SuccessBlockObjSceneRef?,
                        fail: FailBlock?) {
         guard let sceneDocument = roomDocument else {
-            let e = SyncError(message: "can not find roomDocument", code: -1)
+            let e = SyncError.ask(message: "can not find roomDocument", code: -1)
             DispatchQueue.main.async {
                 fail?(e)
             }
             return
         }
         let sceneRef = SceneReference(manager: manager,
-                                      document: sceneDocument)
+                                      document: sceneDocument,
+                                      id: sceneId)
         DispatchQueue.main.async {
             success?(sceneRef)
         }
@@ -123,8 +121,7 @@ extension AskSyncManager {
         roomsCollection.getRemote { errorCode, snapshots in
             if errorCode == 0 {
                 guard let list = snapshots else { /** can not get list **/
-                    assertionFailure("snapshots must not nil")
-                    return
+                    fatalError("snapshots must not nil")
                 }
                 
                 let jsonStrings = list.compactMap({ $0.data() }).map({ $0.getJsonString() })
@@ -156,7 +153,7 @@ extension AskSyncManager {
                 return
             }
             else {
-                let e = SyncError(message: "joinScene fail", code: errorCode)
+                let e = SyncError.ask(message: "joinScene fail", code: errorCode)
                 DispatchQueue.main.async {
                     fail?(e)
                 }
@@ -165,9 +162,9 @@ extension AskSyncManager {
     }
     
     func getSync(documentRef: DocumentReference,
-             key: String?,
-             success: SuccessBlockObjOptional?,
-             fail: FailBlock?) {
+                 key: String?,
+                 success: SuccessBlockObjOptional?,
+                 fail: FailBlock?) {
         let field = key ?? ""
         documentRef.internalDocument.getRemote(field) { errorCode, json in
             if errorCode == 0 {
@@ -187,7 +184,121 @@ extension AskSyncManager {
                 }
             }
             else {
-                let e = SyncError(message: "get(documentRef) fail", code: errorCode)
+                let e = SyncError.ask(message: "get(documentRef) fail", code: errorCode)
+                DispatchQueue.main.async {
+                    fail?(e)
+                }
+            }
+        }
+    }
+    
+    func getSync(collectionRef: CollectionReference,
+                 success: SuccessBlock?,
+                 fail: FailBlock?) {
+        collectionRef.internalCollection.getRemote { errorCode, snapshots in
+            if errorCode == 0 {
+                guard let list = snapshots else {
+                    fatalError("snapshots should not nil when errorCode equal 0")
+                }
+                let strings = list.compactMap({ $0.data() }).map({ $0.getJsonString() })
+                let attrs = strings.map({ Attribute(key: "", value: $0) })
+                DispatchQueue.main.async {
+                    success?(attrs)
+                }
+            }
+            else {
+                let e = SyncError.ask(message: "get(collectionRef) fail", code: errorCode)
+                DispatchQueue.main.async {
+                    fail?(e)
+                }
+            }
+        }
+    }
+    
+    func addSync(reference: CollectionReference,
+                 data: [String : Any?],
+                 success: SuccessBlockObj?,
+                 fail: FailBlock?) {
+        let value = Utils.getJson(dict: data as NSDictionary)
+        let json = AgoraJson()
+        json.setString(value)
+        reference.internalCollection.add(json) { [weak self](errorCode, document) in
+            if errorCode == 0 {
+                guard let doc = document else {
+                    assertionFailure("document should not nil when errorCode equal 0")
+                    return
+                }
+                
+                let uid = UUID().uuid16string()
+                let attr = Attribute(key: uid, value: value)
+                self?.documentDict[uid] = doc
+                DispatchQueue.main.async {
+                    success?(attr)
+                }
+            }
+            else {
+                let e = SyncError.ask(message: "get(collectionRef) fail", code: errorCode)
+                DispatchQueue.main.async {
+                    fail?(e)
+                }
+            }
+        }
+    }
+    
+    func updateSync(reference: DocumentReference,
+                    key: String?,
+                    data: [String : Any?],
+                    success: SuccessBlock?,
+                    fail: FailBlock?) {
+        let field = key ?? ""
+        let json = AgoraJson()
+        let value = Utils.getJson(dict: data as NSDictionary)
+        json.setString(value)
+        reference.internalDocument.set(field, json: json) { errorCode in
+            if errorCode == 0 {
+                let attr = Attribute(key: "", value: value)
+                DispatchQueue.main.async {
+                    success?([attr])
+                }
+            }
+            else {
+                let e = SyncError.ask(message: "update(reference) fail", code: errorCode)
+                DispatchQueue.main.async {
+                    fail?(e)
+                }
+            }
+        }
+    }
+    
+    func deleteSync(documentRef: DocumentReference,
+                    success: SuccessBlock?,
+                    fail: FailBlock?) {
+        documentRef.internalDocument.set("", json: AgoraJson()) { errorCode in
+            if errorCode == 0 {
+                DispatchQueue.main.async {
+                    success?([])
+                }
+            }
+            else {
+                let e = SyncError.ask(message: "delete(documentRef) fail", code: errorCode)
+                DispatchQueue.main.async {
+                    fail?(e)
+                }
+            }
+        }
+    }
+    
+    func deleteSync(collectionRef: CollectionReference,
+                    success: SuccessBlock?,
+                    fail: FailBlock?) {
+        collectionRef.internalCollection.remove { errorCode in
+            if errorCode == 0 {
+                DispatchQueue.main.async {
+                    success?([])
+                }
+            }
+            else {
+                let e = SyncError.ask(message: "delete(collectionRef) fail", code: errorCode)
                 DispatchQueue.main.async {
                     fail?(e)
                 }

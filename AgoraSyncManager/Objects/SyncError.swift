@@ -10,18 +10,48 @@ import Foundation
 public class SyncError: NSObject, LocalizedError {
     public let message: String
     public let code: Int
-
+    let domain: SyncErrorDomain
+    public var domainName: String { domain.name }
+    
     override public var description: String {
-        return message + "code: (\(code))"
+        return "[\(domainName)]: " + "(\(code))" + message
     }
-
+    
     public var errorDescription: String? {
-        return message
+        return description
     }
-
-    public init(message: String,
-                code: Int) {
+    
+    convenience init(message: String,
+                     code: Int) {
+        self.init(message: message,
+                  code: code,
+                  domain: .rtm)
+    }
+    
+    required init(message: String,
+                  code: Int,
+                  domain: SyncErrorDomain) {
         self.message = message
         self.code = code
+        self.domain = domain
+    }
+    
+    static func ask(message: String,
+                    code: Int) -> SyncError {
+        SyncError(message: message, code: code, domain: .ask)
+    }
+}
+
+enum SyncErrorDomain {
+    case rtm
+    case ask
+    
+    var name: String {
+        switch self {
+        case .rtm:
+            return "Agora Rtm"
+        case .ask:
+            return "Agora Ask"
+        }
     }
 }

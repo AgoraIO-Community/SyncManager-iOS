@@ -12,24 +12,9 @@ import AgoraSyncKit
 extension MainVC { /** 基础 **/
     func initManager() {
         /** provide by rtm **/
-        let config = AgoraSyncManager.RtmConfig(appId: Config.appId,
-                                                channelName: channelName)
-        syncManager = AgoraSyncManager(config: config,
-                                       complete: { code in
-            if code == 0 {
-                self.show("success")
-                print("SyncManager init success")
-            }
-            else {
-                self.show("fail (\(code)")
-                print("SyncManager init error")
-            }
-        })
-        
-        /** provide by ask **/
-//        let config = AgoraSyncManager.AskConfig(appId: Config.appId,
+//        let config = AgoraSyncManager.RtmConfig(appId: Config.appId,
 //                                                channelName: channelName)
-//        syncManager = AgoraSyncManager(askConfig: config,
+//        syncManager = AgoraSyncManager(config: config,
 //                                       complete: { code in
 //            if code == 0 {
 //                self.show("success")
@@ -40,6 +25,21 @@ extension MainVC { /** 基础 **/
 //                print("SyncManager init error")
 //            }
 //        })
+        
+        /** provide by ask **/
+        let config = AgoraSyncManager.AskConfig(appId: Config.appId,
+                                                channelName: channelName)
+        syncManager = AgoraSyncManager(askConfig: config,
+                                       complete: { code in
+            if code == 0 {
+                self.show("success")
+                print("SyncManager init success")
+            }
+            else {
+                self.show("fail (\(code)")
+                print("SyncManager init error")
+            }
+        })
         
     }
     

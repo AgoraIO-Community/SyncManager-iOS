@@ -61,11 +61,6 @@ protocol ISyncManager {
     func unsubscribe(reference: DocumentReference, key: String?) -> Void
 }
 
-protocol IAgoraModel {
-    var sceneId: String { get set }
-    func toDictionary() -> [String: Any?]
-}
-
 public protocol IObject {
     func getId() -> String
     func toObject<T>() throws -> T? where T: Decodable

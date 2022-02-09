@@ -24,10 +24,11 @@ public class CollectionReference {
     }
     
     init(manager: AgoraSyncManager,
-                parent: SceneReference,
-                collection: AgoraSyncCollection) {
+         parent: SceneReference,
+         collection: AgoraSyncCollection,
+         className: String) {
         self.manager = manager
-        self.className = ""
+        self.className = className
         self.parent = parent
         self.internalCollection = collection
     }

@@ -17,8 +17,13 @@ public class SceneReference: DocumentReference {
         super.init(manager: manager, parent: nil, id: id)
     }
     
-    init(manager: AgoraSyncManager, document: AgoraSyncDocument) {
-        super.init(manager: manager, parent: nil, document: document)
+    init(manager: AgoraSyncManager,
+         document: AgoraSyncDocument,
+         id: String) {
+        super.init(manager: manager,
+                   parent: nil,
+                   document: document,
+                   id: id)
     }
     
     /// 创建一个CollectionReference实体
@@ -63,10 +68,11 @@ public class DocumentReference {
     
     init(manager: AgoraSyncManager,
          parent: CollectionReference?,
-         document: AgoraSyncDocument) {
+         document: AgoraSyncDocument,
+         id: String) {
         self.manager = manager
         self.parent = parent
-        self.id = ""
+        self.id = id
         self.internalDocument = document
     }
     
