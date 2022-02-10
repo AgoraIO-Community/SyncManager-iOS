@@ -12,7 +12,9 @@ public class Scene: Codable {
     let userId: String
     let property: [String : String]?
     
-    public init(id: String, userId: String, property: [String : String]?) {
+    public init(id: String,
+                userId: String,
+                property: [String : String]?) {
         self.id = id
         self.userId = userId
         self.property = property

@@ -76,6 +76,7 @@ public class DocumentReference {
         self.internalDocument = document
     }
     
+    // TODO: -- key不允许为nil?
     /// 获取指定属性值
     /// - Parameters:
     ///   - key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
@@ -88,6 +89,7 @@ public class DocumentReference {
                     fail: fail)
     }
     
+    // TODO: -- key不允许为nil?
     /// 更新指定属性值
     /// - Parameters:
     ///   - key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
@@ -129,6 +131,7 @@ public class DocumentReference {
                           fail: fail)
     }
     
+    // TODO: -- key不允许为nil?
     /// 取消订阅
     /// - Parameter key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
     public func unsubscribe(key: String? = nil) {
