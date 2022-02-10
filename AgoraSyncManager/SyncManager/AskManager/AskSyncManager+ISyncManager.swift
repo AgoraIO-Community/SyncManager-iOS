@@ -7,13 +7,14 @@
 
 import Foundation
 import AgoraSyncKit
-import AgoraRtmKit /// will not use it
+
 
 extension AskSyncManager: ISyncManager {
-    
     func createScene(scene: Scene,
                      success: SuccessBlockVoid?,
                      fail: FailBlock?) {
+        Log.info(text: "scene.id = \(scene.id)",
+                 tag: "AskSyncManager.createScene")
         queue.async { [weak self] in
             self?.createSceneSync(scene: scene,
                                   success: success,
@@ -25,6 +26,8 @@ extension AskSyncManager: ISyncManager {
                    manager: AgoraSyncManager,
                    success: SuccessBlockObjSceneRef?,
                    fail: FailBlock?) {
+        Log.info(text: "scene.id = \(sceneId)",
+                 tag: "AskSyncManager.joinScene")
         queue.async { [weak self] in
             self?.joinSceneSync(sceneId: sceneId,
                                 manager: manager,
@@ -35,7 +38,7 @@ extension AskSyncManager: ISyncManager {
     
     func getScenes(success: SuccessBlock?, fail: FailBlock?) {
         queue.async { [weak self] in
-            self?.getScenes(success: success, fail: fail)
+            self?.getScenesSync(success: success, fail: fail)
         }
     }
     
@@ -135,11 +138,11 @@ extension AskSyncManager: ISyncManager {
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?) {
-        reference.internalDocument.subscribe { errorCode in
-            
-        } eventCompletion: { type, snapshots, detail in
-            
-        }
+//        reference.internalDocument.subscribe { errorCode in
+//
+//        } eventCompletion: { type, snapshots, detail in
+//
+//        }
     }
     
     func unsubscribe(reference: DocumentReference, key: String?) {

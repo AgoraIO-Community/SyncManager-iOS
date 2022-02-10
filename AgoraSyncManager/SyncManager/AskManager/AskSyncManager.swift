@@ -10,6 +10,7 @@ import AgoraSyncKit
 
 class AskSyncManager: NSObject {
     var defaultChannelName: String!
+    var sceneId: String!
     var askKit: AgoraSyncKit!
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
@@ -34,5 +35,6 @@ class AskSyncManager: NSObject {
         askKit = AgoraSyncKit(appId: config.appId)
         askContext = askKit.createContext()
         roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
+        Log.info(text: "defaultChannelName = \(config.channelName)", tag: "AskSyncManager.init")
     }
 }

@@ -9,10 +9,10 @@ import Foundation
 import AgoraSyncKit
 
 extension AgoraJson {
-    func getJsonString() -> String {
+    func getJsonString(field: String) -> String {
         var str: NSString = ""
         var json = AgoraJson()
-        var ret = getField("", agoraJson: &json)
+        var ret = getField(field, agoraJson: &json)
         if ret != 0 {
             Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
         }

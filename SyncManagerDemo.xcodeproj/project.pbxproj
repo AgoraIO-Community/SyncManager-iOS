@@ -38,6 +38,7 @@
 		267F2718276304A500733075 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F2717276304A500733075 /* Config.swift */; };
 		267F271A27630F9500733075 /* MainVC+Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F271927630F9500733075 /* MainVC+Show.swift */; };
 		267F271C276372D300733075 /* MainVC+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267F271B276372D300733075 /* MainVC+Action.swift */; };
+		26BCC4A727B4ECD900A058C8 /* AskSyncManager+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCC4A627B4ECD900A058C8 /* AskSyncManager+Internal.swift */; };
 		26FF3C5027B0D53D009B66E3 /* AskSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FF3C4F27B0D53D009B66E3 /* AskSyncManager.swift */; };
 		26FF3C5227B0D56D009B66E3 /* AskSyncManager+Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FF3C5127B0D56D009B66E3 /* AskSyncManager+Info.swift */; };
 		32E4FBB791D7DB2D64502D65 /* Pods_SyncManagerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 816CF7242DAC4571D3D1F0C2 /* Pods_SyncManagerDemo.framework */; };
@@ -122,6 +123,7 @@
 		267F2717276304A500733075 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		267F271927630F9500733075 /* MainVC+Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+Show.swift"; sourceTree = "<group>"; };
 		267F271B276372D300733075 /* MainVC+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+Action.swift"; sourceTree = "<group>"; };
+		26BCC4A627B4ECD900A058C8 /* AskSyncManager+Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AskSyncManager+Internal.swift"; sourceTree = "<group>"; };
 		26FF3C4627B0D382009B66E3 /* Agoraffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Agoraffmpeg.framework; sourceTree = "<group>"; };
 		26FF3C4727B0D384009B66E3 /* AgoraSyncKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSyncKit.framework; sourceTree = "<group>"; };
 		26FF3C4F27B0D53D009B66E3 /* AskSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskSyncManager.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				26FF3C4F27B0D53D009B66E3 /* AskSyncManager.swift */,
 				26FF3C5127B0D56D009B66E3 /* AskSyncManager+Info.swift */,
 				2628FC4C27B11C1500D7097D /* AskSyncManager+Sync.swift */,
+				26BCC4A627B4ECD900A058C8 /* AskSyncManager+Internal.swift */,
 				2628FC4027B0F9D400D7097D /* AskSyncManager+ISyncManager.swift */,
 				2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */,
 			);
@@ -561,6 +564,7 @@
 				263A8129274605890067E868 /* SyncError.swift in Sources */,
 				263A8126274605890067E868 /* Extensions.swift in Sources */,
 				263A8127274605890067E868 /* Models.swift in Sources */,
+				26BCC4A727B4ECD900A058C8 /* AskSyncManager+Internal.swift in Sources */,
 				2628FC4B27B116D500D7097D /* AgoraJson+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
