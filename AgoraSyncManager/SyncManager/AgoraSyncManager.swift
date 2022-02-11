@@ -201,11 +201,7 @@ public class AgoraSyncManager: NSObject {
         proxy.unsubscribe(reference: reference, key: key)
     }
     
-    func createCollection(className: String) -> AgoraSyncCollection? {
-        return proxy.createCollection(className: className)
-    }
-    
-    func deleteCollection(className: String) {
-        proxy.deleteCollection(className: className)
+    func createCollection(internalClassName: String) -> AgoraSyncCollection? {
+        return proxy.createCollection(internalClassName: internalClassName)
     }
 }

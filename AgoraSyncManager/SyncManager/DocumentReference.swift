@@ -35,17 +35,15 @@ public class SceneReference: DocumentReference {
                                        parent: self,
                                        className: className)
         case .ask:
-            guard let collection = manager.createCollection(className: className) else {
+            guard let collection = manager.createCollection(internalClassName: id + className) else {
                 fatalError("never call this")
             }
-            /// 在这里创建collection 是否合理呢？
             return CollectionReference(manager: manager,
                                        parent: self,
                                        collection: collection,
                                        className: className)
             
         }
-        
     }
     
     /// delete current scene
@@ -73,7 +71,9 @@ public class DocumentReference {
         return parent!.className
     }
     
-    init(manager: AgoraSyncManager, parent: CollectionReference?, id: String) {
+    init(manager: AgoraSyncManager,
+         parent: CollectionReference?,
+         id: String) {
         self.manager = manager
         self.parent = parent
         self.id = id

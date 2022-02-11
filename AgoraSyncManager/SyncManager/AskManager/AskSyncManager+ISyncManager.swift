@@ -8,7 +8,6 @@
 import Foundation
 import AgoraSyncKit
 
-
 extension AskSyncManager: ISyncManager {
     
     func createScene(scene: Scene,
@@ -45,9 +44,7 @@ extension AskSyncManager: ISyncManager {
     
     func deleteScenes(sceneIds: [String],
                       success: SuccessBlockVoid?,
-                      fail: FailBlock?) {
-        assertionFailure("deleteScenes not implete")
-    }
+                      fail: FailBlock?) {}
     
     func get(documentRef: DocumentReference,
              key: String?,
@@ -88,14 +85,25 @@ extension AskSyncManager: ISyncManager {
                 data: [String : Any?],
                 success: SuccessBlockVoid?,
                 fail: FailBlock?) {
-        
+        queue.async { [weak self] in
+            self?.updateSync(reference: reference,
+                             id: id,
+                             data: data,
+                             success: success,
+                             fail: fail)
+        }
     }
     
     func delete(reference: CollectionReference,
                 id: String,
                 success: SuccessBlockVoid?,
                 fail: FailBlock?) {
-        
+        queue.async { [weak self] in
+            self?.deleteSync(reference: reference,
+                             id: id,
+                             success: success,
+                             fail: fail)
+        }
     }
     
     func update(reference: DocumentReference,
@@ -139,28 +147,34 @@ extension AskSyncManager: ISyncManager {
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?) {
-//        reference.internalDocument.subscribe { errorCode in
-//
-//        } eventCompletion: { type, snapshots, detail in
-//
-//        }
+        
+        queue.async { [weak self] in
+            self?.subscribeSync(reference: reference,
+                                key: key,
+                                onCreated: onCreated,
+                                onUpdated: onUpdated,
+                                onDeleted: onDeleted,
+                                onSubscribed: onSubscribed,
+                                fail: fail)
+        }
     }
     
     func unsubscribe(reference: DocumentReference, key: String?) {
-        
+        queue.async { [weak self] in
+            self?.unsubscribe(reference: reference, key: key)
+        }
     }
     
-    func createCollection(className: String) -> AgoraSyncCollection? {
-        if let collection = collections[className] {
+    func createCollection(internalClassName: String) -> AgoraSyncCollection? {
+        if let collection = collections[internalClassName] {
             return collection
         }
+        guard let sceneDocument = roomDocument else {
+            fatalError("never call this")
+        }
         
-        let collection = roomDocument?.createCollection(with: askContext, documentName: className)
-        collections[className] = collection
+        let collection = sceneDocument.createCollection(with: askContext, documentName: internalClassName)
+        collections[internalClassName] = collection
         return collection
-    }
-    
-    func deleteCollection(className: String) {
-        
     }
 }

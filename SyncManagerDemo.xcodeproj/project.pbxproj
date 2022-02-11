@@ -238,10 +238,10 @@
 			isa = PBXGroup;
 			children = (
 				26FF3C4F27B0D53D009B66E3 /* AskSyncManager.swift */,
-				26FF3C5127B0D56D009B66E3 /* AskSyncManager+Info.swift */,
+				2628FC4027B0F9D400D7097D /* AskSyncManager+ISyncManager.swift */,
 				2628FC4C27B11C1500D7097D /* AskSyncManager+Sync.swift */,
 				26BCC4A627B4ECD900A058C8 /* AskSyncManager+Internal.swift */,
-				2628FC4027B0F9D400D7097D /* AskSyncManager+ISyncManager.swift */,
+				26FF3C5127B0D56D009B66E3 /* AskSyncManager+Info.swift */,
 				2628FC4A27B116D500D7097D /* AgoraJson+Extension.swift */,
 			);
 			path = AskManager;

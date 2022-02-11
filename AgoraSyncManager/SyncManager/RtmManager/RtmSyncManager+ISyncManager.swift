@@ -385,9 +385,7 @@ extension RtmSyncManager: ISyncManager {
         }
     }
     
-    public func createCollection(className: String) -> AgoraSyncCollection? {
+    public func createCollection(internalClassName: String) -> AgoraSyncCollection? {
         return nil
     }
-    
-    public func deleteCollection(className: String) {}
 }

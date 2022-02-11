@@ -77,14 +77,14 @@ extension AskSyncManager {
         let sceneRef = SceneReference(manager: manager,
                                       document: sceneDocument,
                                       id: sceneId)
-        self.sceneId = sceneId
+        self.sceneName = sceneId
         DispatchQueue.main.async {
             success?(sceneRef)
         }
     }
     
     func getScenesSync(success: SuccessBlock?, fail: FailBlock?) {
-        guard let field = sceneId else {
+        guard let field = sceneName else {
             fatalError("must call joinSceneSync method")
         }
         
@@ -170,8 +170,14 @@ extension AskSyncManager {
                 guard let list = snapshots else {
                     fatalError("snapshots should not nil when errorCode equal 0")
                 }
+                let jsonDecoder = JSONDecoder()
                 let strings = list.compactMap({ $0.data() }).map({ $0.getJsonString(field: "") })
-                let attrs = strings.map({ Attribute(key: "", value: $0) })
+                let attrs = strings.map({ str -> Attribute? in
+                    guard let id = CollectionItem.getObjId(jsonString:str, decoder:jsonDecoder) else {
+                        return nil
+                    }
+                    return Attribute(key: id, value: str)
+                }).compactMap({ $0 })
                 DispatchQueue.main.async {
                     success?(attrs)
                 }
@@ -189,8 +195,12 @@ extension AskSyncManager {
                  data: [String : Any?],
                  success: SuccessBlockObj?,
                  fail: FailBlock?) {
-        let value = Utils.getJson(dict: data as NSDictionary)
+        let uid = UUID().uuid16string()
+        var temp = data
+        temp["objectId"] = uid
+        let value = Utils.getJson(dict: temp as NSDictionary)
         let json = AgoraJson()
+        json.setField("", agoraJson: AgoraJson())
         json.setString(value)
         reference.internalCollection.add(json) { [weak self](errorCode, document) in
             if errorCode == 0 {
@@ -199,7 +209,6 @@ extension AskSyncManager {
                     return
                 }
                 
-                let uid = UUID().uuid16string()
                 let attr = Attribute(key: uid, value: value)
                 self?.documentDict[uid] = doc
                 DispatchQueue.main.async {
@@ -213,6 +222,59 @@ extension AskSyncManager {
                 }
             }
         }
+    }
+    
+    func updateSync(reference: CollectionReference,
+                    id: String,
+                    data: [String : Any?],
+                    success: SuccessBlockVoid?,
+                    fail: FailBlock?) {
+        guard let document = documentDict[id] else {
+            let e = SyncError.ask(message: "id not found in local, it is add by remote?", code: -1)
+            fail?(e)
+            return
+        }
+        var temp = data
+        temp["objectId"] = id
+        let value = Utils.getJson(dict: temp as NSDictionary)
+        let json = AgoraJson()
+        json.setField("", agoraJson: AgoraJson())
+        json.setString(value)
+        document.set("", json: json) { errorCode in
+            if errorCode == 0 {
+                success?()
+            }
+            else {
+                let e = SyncError.ask(message: "updateSync(reference: CollectionReference) fail", code: errorCode)
+                fail?(e)
+            }
+        }
+    }
+    
+    func deleteSync(reference: CollectionReference,
+                    id: String,
+                    success: SuccessBlockVoid?,
+                    fail: FailBlock?) {
+        guard let document = documentDict[id] else {
+            let e = SyncError.ask(message: "id not found in local, it is add by remote?", code: -1)
+            fail?(e)
+            return
+        }
+        document.set("",
+                     json: AgoraJson(),
+                     completion: { errorCode in
+            if errorCode == 0 {
+                DispatchQueue.main.async {
+                    success?()
+                }
+            }
+            else {
+                let e = SyncError.ask(message: "delete(collectionRef) fail", code: errorCode)
+                DispatchQueue.main.async {
+                    fail?(e)
+                }
+            }
+        })
     }
     
     // TODO: -- key不允许为nil?
@@ -259,6 +321,14 @@ extension AskSyncManager {
                 }
             }
         }
+        
+        /// delete collection
+        for collection in collections.values {
+            collection.remove { errorCode in
+                Log.info(text: "delete collection ret \(errorCode)", tag: "AskSyncManager.deleteSync")
+            }
+        }
+        collections.removeAll()
     }
     
     func deleteSync(collectionRef: CollectionReference,
@@ -276,6 +346,105 @@ extension AskSyncManager {
                     fail?(e)
                 }
             }
+        }
+    }
+    
+    func subscribeSync(reference: DocumentReference,
+                       key: String?,
+                       onCreated: OnSubscribeBlock?,
+                       onUpdated: OnSubscribeBlock?,
+                       onDeleted: OnSubscribeBlock?,
+                       onSubscribed: OnSubscribeBlockVoid?,
+                       fail: FailBlock?) {
+        let key = key ?? ""
+        let name = reference.className + key
+        
+        if name == sceneName, let sceneDocument = roomDocument { /** 监听sceneRef 事件 **/
+            sceneDocument.subscribe({ errorCode in
+                if errorCode != 0 {
+                    let e = SyncError.ask(message: "subscribe scene \(name) fail", code: errorCode)
+                    fail?(e)
+                    return
+                }
+                onSubscribed?()
+            }, eventCompletion: { (eventType, snapshot, details) in
+                guard let value = snapshot?.data()?.getJsonString(field: name) else {
+                    Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
+                    return
+                }
+                let attr = Attribute(key: name, value: value)
+                switch eventType {
+                case .addDocumentEvent:
+                    break
+                case .modifyDocumentEvent:
+                    onUpdated?(attr)
+                    break
+                case .removeDocumentEvent:
+                    onDeleted?(attr)
+                    break
+                @unknown default:
+                    fatalError("never call this")
+                }
+            })
+            return
+        }
+        
+        
+        /** 监听 collection 事件 **/
+        guard let collection = collections[name] else {
+            let e = SyncError.ask(message: "subscribe collection \(name) not find", code: -1)
+            fail?(e)
+            return
+        }
+        
+        collection.subscribe { errorCode, _ in
+            if errorCode != 0 {
+                let e = SyncError.ask(message: "subscribe collection \(name) fail", code: errorCode)
+                fail?(e)
+                return
+            }
+            onSubscribed?()
+        } eventCompletion: { (eventType, snapshot, details) in
+            guard let value = snapshot?.data()?.getJsonString(field: name) else {
+                Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
+                return
+            }
+            let attr = Attribute(key: name, value: value)
+            switch eventType {
+            case .addDocumentEvent:
+                onCreated?(attr)
+                break
+            case .modifyDocumentEvent:
+                onUpdated?(attr)
+                break
+            case .removeDocumentEvent:
+                onDeleted?(attr)
+                break
+            @unknown default:
+                fatalError("never call this")
+            }
+        }
+    }
+    
+    func unsubscribeSync(reference: DocumentReference, key: String?) {
+        let key = key ?? ""
+        let name = reference.className + key
+        
+        if name == sceneName, let sceneDocument = roomDocument { /** 取消监听sceneRef 事件 **/
+            sceneDocument.unsubscribe { errorCode in
+                Log.errorText(text: "unsubscribeSync scene \(name) errorCode: \(errorCode)", tag: "AskSyncManager.unsubscribeSync")
+            }
+            return
+        }
+        
+        /** 监听 collection 事件 **/
+        guard let collection = collections[name] else {
+            Log.errorText(text: "subscribe collection \(name) not find", tag: "AskSyncManager.unsubscribeSync")
+            return
+        }
+        
+        collection.unsubscribe { errorCode in
+            Log.errorText(text: "unsubscribeSync collection \(name) errorCode: \(errorCode)", tag: "AskSyncManager.unsubscribeSync")
         }
     }
 }

@@ -13,6 +13,7 @@ public class CollectionReference {
     public let className: String
     public let parent: SceneReference
     let internalCollection: AgoraSyncCollection
+    let inertnalClassName: String
     
     public init(manager: AgoraSyncManager,
                 parent: SceneReference,
@@ -21,6 +22,7 @@ public class CollectionReference {
         self.className = parent.id + className
         self.parent = parent
         self.internalCollection = AgoraSyncCollection()
+        self.inertnalClassName = parent.id + className
     }
     
     init(manager: AgoraSyncManager,
@@ -29,6 +31,7 @@ public class CollectionReference {
          className: String) {
         self.manager = manager
         self.className = className
+        self.inertnalClassName = parent.id + className
         self.parent = parent
         self.internalCollection = collection
     }

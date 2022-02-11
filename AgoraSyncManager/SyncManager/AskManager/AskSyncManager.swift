@@ -11,7 +11,7 @@ import AgoraSyncKit
 class AskSyncManager: NSObject {
     typealias DocumentName = String
     var defaultChannelName: String!
-    var sceneId: String!
+    var sceneName: String!
     var askKit: AgoraSyncKit!
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
@@ -19,6 +19,7 @@ class AskSyncManager: NSObject {
     var roomDocument: AgoraSyncDocument?
     let roomListKey = "rooms"
     let memberListKey = "members"
+    /// 保存在collection的doc
     var documentDict = [String : AgoraSyncDocument]()
     let queue = DispatchQueue(label: "AskManager.queue")
     
@@ -37,8 +38,5 @@ class AskSyncManager: NSObject {
         askContext = askKit.createContext()
         roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
         Log.info(text: "defaultChannelName = \(config.channelName)", tag: "AskSyncManager.init")
-        roomsCollection.remove { code in
-            print("clear ok")
-        }
     }
 }

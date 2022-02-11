@@ -61,8 +61,7 @@ protocol ISyncManager {
                    fail: FailBlock?)
     func unsubscribe(reference: DocumentReference, key: String?) -> Void
     
-    func createCollection(className: String) -> AgoraSyncCollection?
-    func deleteCollection(className: String)
+    func createCollection(internalClassName: String) -> AgoraSyncCollection?
 }
 
 public protocol IObject {

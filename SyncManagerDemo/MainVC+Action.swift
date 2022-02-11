@@ -163,7 +163,7 @@ extension MainVC { /** 房间信息 key == member **/
 extension MainVC { /** 成员信息 **/
     func addMember() {
         syncRef.collection(className: "member")
-            .add(data: ["userName" : "UserName"]) { [weak self](obj) in
+            .add(data: ["userName" : "UserName \(Int.random(in: 0...100))"]) { [weak self](obj) in
                 self?.show("success")
                 if let str = obj.toJson() { print(str) }
                 self?.memberObjId = obj.getId()

@@ -20,8 +20,8 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
     let tableView = UITableView(frame: .zero, style: .grouped)
     var syncManager: AgoraSyncManager!
     var syncRef: SceneReference!
-    let channelName = "testDefaultScene"
-    let sceneId = "sceneId"
+    let channelName = "testDefaultScene2"
+    let sceneId = "sceneId2"
     var memberObjId: String?
     var rtm: AgoraRtmKit!
     var channel: AgoraRtmChannel!
