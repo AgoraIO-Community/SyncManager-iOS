@@ -222,8 +222,10 @@ extension AskSyncManager {
                     success: SuccessBlock?,
                     fail: FailBlock?) {
         let field = key ?? ""
+        if field == "" { fatalError("key must not empty") }
         let json = AgoraJson()
         let value = Utils.getJson(dict: data as NSDictionary)
+        json.setField("", agoraJson: AgoraJson())
         json.setString(value)
         reference.internalDocument.set(field, json: json) { errorCode in
             if errorCode == 0 {

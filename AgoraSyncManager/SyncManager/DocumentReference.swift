@@ -29,9 +29,18 @@ public class SceneReference: DocumentReference {
     /// 创建一个CollectionReference实体
     /// - Parameter className: CollectionReference 的 id
     public func collection(className: String) -> CollectionReference {
-        CollectionReference(manager: manager,
-                            parent: self,
-                            className: className)
+        switch providerType {
+        case .rtm:
+            return CollectionReference(manager: manager,
+                                       parent: self,
+                                       className: className)
+        case .ask:
+            return CollectionReference(manager: manager,
+                                       parent: self,
+                                       className: className)
+            
+        }
+        
     }
     
     /// delete current scene
@@ -53,6 +62,7 @@ public class DocumentReference {
     public let parent: CollectionReference?
     let manager: AgoraSyncManager
     let internalDocument: AgoraSyncDocument
+    let providerType: ProviderType
     
     public var className: String {
         return parent!.className
@@ -62,7 +72,7 @@ public class DocumentReference {
         self.manager = manager
         self.parent = parent
         self.id = id
-        
+        providerType = .rtm
         self.internalDocument = AgoraSyncDocument()
     }
     
@@ -74,6 +84,7 @@ public class DocumentReference {
         self.parent = parent
         self.id = id
         self.internalDocument = document
+        providerType = .ask
     }
     
     // TODO: -- key不允许为nil?
@@ -139,3 +150,7 @@ public class DocumentReference {
     }
 }
 
+enum ProviderType {
+    case rtm
+    case ask
+}
