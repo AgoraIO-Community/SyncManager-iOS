@@ -7,6 +7,7 @@
 
 import Foundation
 import AgoraRtmKit
+import AgoraSyncKit // 如何做到这个文件不引用这里？
 
 extension RtmSyncManager: ISyncManager {
     
@@ -383,4 +384,10 @@ extension RtmSyncManager: ISyncManager {
             onDeletedBlocks.removeValue(forKey: rtmChannel)
         }
     }
+    
+    public func createCollection(className: String) -> AgoraSyncCollection? {
+        return nil
+    }
+    
+    public func deleteCollection(className: String) {}
 }

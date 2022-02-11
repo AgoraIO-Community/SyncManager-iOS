@@ -9,6 +9,7 @@ import Foundation
 import AgoraSyncKit
 
 extension AgoraJson {
+    /// 嵌套json的String
     func getJsonString(field: String) -> String {
         var str: NSString = ""
         var json = AgoraJson()

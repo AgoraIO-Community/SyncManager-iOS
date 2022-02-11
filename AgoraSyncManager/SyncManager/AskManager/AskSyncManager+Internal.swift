@@ -59,7 +59,6 @@ extension AskSyncManager {
             }
         }
         
-        
         return nil /// can not find a typical snapshot
     }
     

@@ -35,8 +35,13 @@ public class SceneReference: DocumentReference {
                                        parent: self,
                                        className: className)
         case .ask:
+            guard let collection = manager.createCollection(className: className) else {
+                fatalError("never call this")
+            }
+            /// 在这里创建collection 是否合理呢？
             return CollectionReference(manager: manager,
                                        parent: self,
+                                       collection: collection,
                                        className: className)
             
         }

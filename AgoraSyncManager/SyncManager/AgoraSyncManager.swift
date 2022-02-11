@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraSyncKit
 
 public class AgoraSyncManager: NSObject {
     private var proxy: ISyncManager
@@ -198,5 +199,13 @@ public class AgoraSyncManager: NSObject {
     func unsubscribe(reference: DocumentReference,
                      key: String? = nil) {
         proxy.unsubscribe(reference: reference, key: key)
+    }
+    
+    func createCollection(className: String) -> AgoraSyncCollection? {
+        return proxy.createCollection(className: className)
+    }
+    
+    func deleteCollection(className: String) {
+        proxy.deleteCollection(className: className)
     }
 }

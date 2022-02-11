@@ -10,6 +10,7 @@ import AgoraSyncKit
 
 
 extension AskSyncManager: ISyncManager {
+    
     func createScene(scene: Scene,
                      success: SuccessBlockVoid?,
                      fail: FailBlock?) {
@@ -146,6 +147,20 @@ extension AskSyncManager: ISyncManager {
     }
     
     func unsubscribe(reference: DocumentReference, key: String?) {
+        
+    }
+    
+    func createCollection(className: String) -> AgoraSyncCollection? {
+        if let collection = collections[className] {
+            return collection
+        }
+        
+        let collection = roomDocument?.createCollection(with: askContext, documentName: className)
+        collections[className] = collection
+        return collection
+    }
+    
+    func deleteCollection(className: String) {
         
     }
 }
