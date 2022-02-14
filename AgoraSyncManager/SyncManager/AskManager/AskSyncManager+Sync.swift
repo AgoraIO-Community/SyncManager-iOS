@@ -157,7 +157,7 @@ extension AskSyncManager {
                     return
                 }
                 
-                let string = result.getStringValue()
+                let string = result.getJsonString(field: field)
                 let attr = Attribute(key: field, value: string)
                 Log.info(text: "get ok", tag: "AskSyncManager.getSync(document)")
                 DispatchQueue.main.async {
@@ -309,7 +309,10 @@ extension AskSyncManager {
         let json = AgoraJson()
         let value = Utils.getJson(dict: data as NSDictionary)
         json.setString(value)
-        reference.internalDocument.set(field, json: json) { errorCode in
+        let jsonWapper = AgoraJson()
+        jsonWapper.setObject()
+        jsonWapper.setField(field, agoraJson: json)
+        reference.internalDocument.set(field, json: jsonWapper) { errorCode in
             if errorCode == 0 {
                 let attr = Attribute(key: "", value: value)
                 DispatchQueue.main.async {
@@ -395,7 +398,7 @@ extension AskSyncManager {
                 Log.info(text: "subscribe scene success", tag: "AskSyncManager.subscribe")
             }, eventCompletion: { (eventType, snapshot, details) in
                 Log.info(text: " scene eventCompletion", tag: "AskSyncManager.subscribe")
-                guard let value = snapshot?.data()?.getStringValue() else {
+                guard let value = snapshot?.data()?.getJsonString(field: key!) else {
                     Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
                     return
                 }
