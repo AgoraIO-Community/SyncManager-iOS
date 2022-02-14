@@ -167,6 +167,3 @@ extension RtmSyncManager {
         }
     }
 }
-
-
-

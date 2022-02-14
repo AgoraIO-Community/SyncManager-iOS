@@ -23,4 +23,13 @@ extension AgoraJson {
         }
         return str as String
     }
+    
+    func getStringValue() -> String {
+        var str: NSString = ""
+        let ret = getString(&str)
+        if ret != 0 {
+            Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
+        }
+        return str as String
+    }
 }

@@ -11,10 +11,9 @@ import AgoraRtmKit
 import AgoraSyncKit
 
 class MainVC: UIViewController, AgoraRtmChannelDelegate {
-    let sectionTitles = ["基础", "房间列表", "房间信息(key = nil)", "房间信息(key = member)", "成员信息"]
+    let sectionTitles = ["基础", "房间列表", "房间信息(key = roomInfo)", "成员信息"]
     let list = [["初始化", "创建房间", "加入房间", "删除房间"],
                 ["读取房间列表"],
-                ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
                 ["新增member", "更新member", "删除member", "获取member列表", "订阅member更新事件", "取消订阅memner更新事件", "删除所有member"]]
     let tableView = UITableView(frame: .zero, style: .grouped)
@@ -81,29 +80,7 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
             }
         }
         
-        if indexPath.section == 2 { /** key == nil **/
-            if indexPath.row == 0 { /** 更新房间信息 **/
-                updteRoomInfo1()
-                return
-            }
-            
-            if indexPath.row == 1 { /** 获取本房间信息 **/
-                getRoomInfo1()
-                return
-            }
-            
-            if indexPath.row == 2 { /** 订阅本房间信息更新事件 **/
-                subscribeRoom1()
-                return
-            }
-            
-            if indexPath.row == 3 { /** 取消订阅本房间信息更新事件 **/
-                unsubscribeRoom1()
-                return
-            }
-        }
-        
-        if indexPath.section == 3 { /** key != nil **/
+        if indexPath.section == 2 { /** key != nil **/
             if indexPath.row == 0 { /** 更新房间信息 **/
                 updteRoomInfo2()
                 return
@@ -125,7 +102,7 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
             }
         }
         
-        if indexPath.section == 4 {
+        if indexPath.section == 3 {
             if indexPath.row == 0 { /** 新增member **/
                 addMember()
                 return

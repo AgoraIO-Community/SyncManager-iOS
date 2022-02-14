@@ -161,7 +161,7 @@ extension AskSyncManager: ISyncManager {
     
     func unsubscribe(reference: DocumentReference, key: String?) {
         queue.async { [weak self] in
-            self?.unsubscribe(reference: reference, key: key)
+            self?.unsubscribeSync(reference: reference, key: key)
         }
     }
     

@@ -167,6 +167,7 @@ extension MainVC { /** 成员信息 **/
                 self?.show("success")
                 if let str = obj.toJson() { print(str) }
                 self?.memberObjId = obj.getId()
+                print("update member collection success")
             } fail: { [weak self](error) in
                 self?.show("fail: " + error.description)
             }
@@ -220,13 +221,13 @@ extension MainVC { /** 成员信息 **/
     func subscribeMember() {
         syncRef.collection(className: "member").document().subscribe(key: nil,
                                                                      onCreated: { obj in
-            print("onCreated \(obj.toJson() ?? "")")
+            print("Recv event onCreated \(obj.toJson() ?? "")")
         }, onUpdated: { obj in
-            print("onUpdated \(obj.toJson() ?? "")")
+            print("Recv event onUpdated \(obj.toJson() ?? "")")
         }, onDeleted: { obj in
-            print("onDeleted \(obj.toJson() ?? "")")
+            print("Recv event onDeleted \(obj.toJson() ?? "")")
         }, onSubscribed: {
-            print("onSubscribed")
+            print("Recv event onSubscribed")
         }, fail: { error in
             
         })
