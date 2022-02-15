@@ -101,7 +101,7 @@ extension AskSyncManager {
                     fatalError("snapshots must not nil")
                 }
                 
-                let jsonStrings = list.compactMap({ $0.data() }).map({ $0.getJsonString(field: field) })
+                let jsonStrings = list.compactMap({ $0.data() }).map({ $0.getJsonString(field: field) }).compactMap({ $0 })
                 guard !jsonStrings.isEmpty else { /** list is empty **/
                     Log.info(text: "getScenes success, jsonStrings is empty", tag: "AskSyncManager.getScenesSync")
                     DispatchQueue.main.async {
@@ -157,7 +157,14 @@ extension AskSyncManager {
                     return
                 }
                 
-                let string = result.getJsonString(field: field)
+                guard let string = result.getJsonString(field: field) else {
+                    Log.info(text: "can not get json value", tag: "AskManager.get(documentRef)")
+                    DispatchQueue.main.async {
+                        success?(nil)
+                    }
+                    return
+                }
+                
                 let attr = Attribute(key: field, value: string)
                 Log.info(text: "get ok", tag: "AskSyncManager.getSync(document)")
                 DispatchQueue.main.async {
@@ -183,7 +190,7 @@ extension AskSyncManager {
                     fatalError("snapshots should not nil when errorCode equal 0")
                 }
                 let jsonDecoder = JSONDecoder()
-                let strings = list.compactMap({ $0.data() }).map({ $0.getJsonString(field: "") })
+                let strings = list.compactMap({ $0.data() }).map({ $0.getJsonString(field: "") }).compactMap({ $0 })
                 let attrs = strings.map({ str -> Attribute? in
                     guard let id = CollectionItem.getObjId(jsonString:str, decoder:jsonDecoder) else {
                         return nil
