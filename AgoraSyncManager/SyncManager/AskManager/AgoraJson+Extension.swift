@@ -14,23 +14,24 @@ extension AgoraJson {
         var str: NSString = ""
         var json = AgoraJson()
         var ret = getField(field, agoraJson: &json)
-        if ret != 0 {
+        if ret != .noError {
             Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
             return nil
         }
         ret = json.getString(&str)
-        if ret != 0 {
+        if ret != .noError {
             Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
             return nil
         }
         return str as String
     }
     
-    func getStringValue() -> String {
+    func getStringValue() -> String? {
         var str: NSString = ""
         let ret = getString(&str)
-        if ret != 0 {
+        if ret != .noError {
             Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
+            return nil
         }
         return str as String
     }

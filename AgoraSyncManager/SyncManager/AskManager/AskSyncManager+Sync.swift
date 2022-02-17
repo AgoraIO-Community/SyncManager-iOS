@@ -13,7 +13,7 @@ extension AskSyncManager {
                          success: SuccessBlockVoid?,
                          fail: FailBlock?) {
         /// fetch and find a special one with scene.id
-        let result = fetchRoomSnapshot(with: scene.id, in: roomsCollection)
+        let result = fetchSceneSnapshot(with: scene.id, in: roomsCollection)
         if let result = result { /** result is not nil **/
             switch result {
             case .failure(let error): /** get room list error **/
@@ -33,7 +33,7 @@ extension AskSyncManager {
         }
         
         ///  add room
-        let ret = addRoom(id: scene.id, data: scene.toJson())
+        let ret = addScene(id: scene.id, data: scene.toJson())
         switch ret {
         case .success(let document):
             roomDocument = document
@@ -57,7 +57,7 @@ extension AskSyncManager {
                        success: SuccessBlockObjSceneRef?,
                        fail: FailBlock?) {
         if roomDocument == nil { /** get current room info while role is not a host **/
-            let result = fetchRoomSnapshot(with: sceneId, in: roomsCollection)
+            let result = fetchSceneSnapshot(with: sceneId, in: roomsCollection)
             
             guard let result = result else {
                 fatalError("should have a room item")
@@ -96,7 +96,7 @@ extension AskSyncManager {
         }
         
         roomsCollection.getRemote { errorCode, snapshots in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 guard let list = snapshots else { /** can not get list **/
                     fatalError("snapshots must not nil")
                 }
@@ -132,7 +132,7 @@ extension AskSyncManager {
                 return
             }
             else {
-                let e = SyncError.ask(message: "getScenesSync fail", code: errorCode)
+                let e = SyncError.ask(message: "getScenesSync fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.getScenesSync")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -147,7 +147,7 @@ extension AskSyncManager {
                  fail: FailBlock?) {
         let field = key ?? ""
         documentRef.internalDocument.getRemote(field) { errorCode, json in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 guard let result = json else {
                     Log.info(text: "json is nil", tag: "AskManager.get(documentRef)")
                     
@@ -157,7 +157,7 @@ extension AskSyncManager {
                     return
                 }
                 
-                guard let string = result.getJsonString(field: field) else {
+                guard let string = result.getStringValue() else {
                     Log.info(text: "can not get json value", tag: "AskManager.get(documentRef)")
                     DispatchQueue.main.async {
                         success?(nil)
@@ -172,7 +172,7 @@ extension AskSyncManager {
                 }
             }
             else {
-                let e = SyncError.ask(message: "get(documentRef) fail", code: errorCode)
+                let e = SyncError.ask(message: "get(documentRef) fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.getSync(document)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -185,7 +185,7 @@ extension AskSyncManager {
                  success: SuccessBlock?,
                  fail: FailBlock?) {
         collectionRef.internalCollection.getRemote { errorCode, snapshots in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 guard let list = snapshots else {
                     fatalError("snapshots should not nil when errorCode equal 0")
                 }
@@ -203,7 +203,7 @@ extension AskSyncManager {
                 }
             }
             else {
-                let e = SyncError.ask(message: "get(collectionRef) fail", code: errorCode)
+                let e = SyncError.ask(message: "get(collectionRef) fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.getSync(collection)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -224,7 +224,7 @@ extension AskSyncManager {
         json.setString(value)
         Log.info(text: "will add \(value)", tag: "AskSyncManager.addSync(collection)")
         reference.internalCollection.add(json) { [weak self](errorCode, document) in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 guard let doc = document else {
                     assertionFailure("document should not nil when errorCode equal 0")
                     return
@@ -238,7 +238,7 @@ extension AskSyncManager {
                 }
             }
             else {
-                let e = SyncError.ask(message: "add fail \(value)", code: errorCode)
+                let e = SyncError.ask(message: "add fail \(value)", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.addSync(collection)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -265,12 +265,12 @@ extension AskSyncManager {
         json.setString(value)
         Log.info(text: "will update collection \(value)", tag: "AskSyncManager.updateSync(collection)")
         document.set("", json: json) { errorCode in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 Log.info(text: "update success \(value)", tag: "AskSyncManager.updateSync(collection)")
                 success?()
             }
             else {
-                let e = SyncError.ask(message: "document.set fail: \(value)", code: errorCode)
+                let e = SyncError.ask(message: "document.set fail: \(value)", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.updateSync(collection)")
                 fail?(e)
             }
@@ -289,14 +289,14 @@ extension AskSyncManager {
         document.set("",
                      json: AgoraJson(),
                      completion: { errorCode in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 DispatchQueue.main.async {
                     Log.info(text: "delete success \(id)", tag: "AskSyncManager.deleteSync(collection)")
                     success?()
                 }
             }
             else {
-                let e = SyncError.ask(message: "delete(collectionRef) fail", code: errorCode)
+                let e = SyncError.ask(message: "delete(collectionRef) fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.deleteSync(CollectionReference)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -316,11 +316,8 @@ extension AskSyncManager {
         let json = AgoraJson()
         let value = Utils.getJson(dict: data as NSDictionary)
         json.setString(value)
-        let jsonWapper = AgoraJson()
-        jsonWapper.setObject()
-        jsonWapper.setField(field, agoraJson: json)
-        reference.internalDocument.set(field, json: jsonWapper) { errorCode in
-            if errorCode == 0 {
+        reference.internalDocument.set(field, json: json) { errorCode in
+            if errorCode == .codeNoError {
                 let attr = Attribute(key: "", value: value)
                 DispatchQueue.main.async {
                     Log.info(text: "updateSync success \(value)", tag: "AskSyncManager.updateSync(document)")
@@ -328,7 +325,7 @@ extension AskSyncManager {
                 }
             }
             else {
-                let e = SyncError.ask(message: "updateSync(reference) fail", code: errorCode)
+                let e = SyncError.ask(message: "updateSync(reference) fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.updateSync(document)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -341,14 +338,14 @@ extension AskSyncManager {
                     success: SuccessBlock?,
                     fail: FailBlock?) {
         documentRef.internalDocument.set("", json: AgoraJson()) { errorCode in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 DispatchQueue.main.async {
                     Log.info(text: "deleteSync success", tag: "AskSyncManager.deleteSync(document)")
                     success?([])
                 }
             }
             else {
-                let e = SyncError.ask(message: "delete(documentRef) fail", code: errorCode)
+                let e = SyncError.ask(message: "delete(documentRef) fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.deleteSync(document)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -369,14 +366,14 @@ extension AskSyncManager {
                     success: SuccessBlock?,
                     fail: FailBlock?) {
         collectionRef.internalCollection.remove { errorCode in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 DispatchQueue.main.async {
                     Log.info(text: "deleteSync success", tag: "AskSyncManager.deleteSync(collection)")
                     success?([])
                 }
             }
             else {
-                let e = SyncError.ask(message: "delete(collectionRef) fail", code: errorCode)
+                let e = SyncError.ask(message: "delete(collectionRef) fail", code: errorCode.rawValue)
                 Log.errorText(text: e.description, tag: "AskSyncManager.deleteSync(collection)")
                 DispatchQueue.main.async {
                     fail?(e)
@@ -396,8 +393,8 @@ extension AskSyncManager {
         
         if reference.className == sceneName, let sceneDocument = roomDocument { /** 监听sceneRef 事件 **/
             sceneDocument.subscribe({ errorCode in
-                if errorCode != 0 {
-                    let e = SyncError.ask(message: "subscribe scene \(sceneId) fail", code: errorCode)
+                if errorCode != .codeNoError {
+                    let e = SyncError.ask(message: "subscribe scene \(sceneId) fail", code: errorCode.rawValue)
                     fail?(e)
                     return
                 }
@@ -437,8 +434,8 @@ extension AskSyncManager {
         }
         
         collection.subscribe { errorCode, _ in
-            if errorCode != 0 {
-                let e = SyncError.ask(message: "subscribe collection \(name) fail", code: errorCode)
+            if errorCode != .codeNoError {
+                let e = SyncError.ask(message: "subscribe collection \(name) fail", code: errorCode.rawValue)
                 fail?(e)
                 return
             }
@@ -447,10 +444,18 @@ extension AskSyncManager {
         } eventCompletion: { (eventType, snapshot, details) in
             Log.info(text: "collection eventCompletion", tag: "AskSyncManager.subscribe")
             guard let value = snapshot?.data()?.getStringValue() else {
-                Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
+                Log.errorText(text: "get snapshot data fail",
+                              tag: "AskSyncManager.subscribe")
                 return
             }
-            let attr = Attribute(key: name, value: value)
+            guard let item = CollectionItem.decodeWithString(jsonString: value,
+                                                             decoder: .init()) else {
+                Log.errorText(text: "can not decode CollectionItem",
+                              tag: "AskSyncManager.subscribe")
+                return
+            }
+            let objId = item.objectId
+            let attr = Attribute(key: objId, value: value)
             switch eventType {
             case .addDocumentEvent:
                 onCreated?(attr)

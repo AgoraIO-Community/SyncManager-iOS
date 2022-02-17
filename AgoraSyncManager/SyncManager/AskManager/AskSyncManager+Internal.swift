@@ -11,14 +11,14 @@ import AgoraSyncKit
 extension AskSyncManager {
     /// fetchRoomSnapshot in remote
     /// - Returns: will retuen `nil` when remote has no this field in collection
-    func fetchRoomSnapshot(with filed: String, in collection: AgoraSyncCollection) -> Result<AgoraDocumentSnapshot, SyncError>? {
+    func fetchSceneSnapshot(with filed: String, in collection: AgoraSyncCollection) -> Result<AgoraDocumentSnapshot, SyncError>? {
         /** 1. get room list **/
         let semp = DispatchSemaphore(value: 0)
         var error: SyncError?
         var snapshots = [AgoraDocumentSnapshot]()
         roomsCollection.getRemote { errorCode, datas in
             Log.info(text: "get scene list block invoke", tag: "AskManager.fetchRoomSnapshot")
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 guard let list = datas else { /** can not get list **/
                     fatalError("snapshots must not nil")
                 }
@@ -26,7 +26,7 @@ extension AskSyncManager {
                 semp.signal()
             }
             else {
-                error = SyncError.ask(message: "getRemote fail ", code: errorCode)
+                error = SyncError.ask(message: "getRemote fail ", code: errorCode.rawValue)
                 semp.signal()
             }
         }
@@ -67,7 +67,7 @@ extension AskSyncManager {
     ///   - id: scene id
     ///   - data: scene data
     /// - Returns: result
-    func addRoom(id: String, data: String) -> Result<AgoraSyncDocument, SyncError> {
+    func addScene(id: String, data: String) -> Result<AgoraSyncDocument, SyncError> {
         let roomString = data
         let json = AgoraJson()
         json.setString(roomString)
@@ -78,12 +78,12 @@ extension AskSyncManager {
         var targetDocument: AgoraSyncDocument?
         var error: SyncError?
         roomsCollection.add(roomJson, completion: { (errorCode, document) in
-            if errorCode == 0 {
+            if errorCode == .codeNoError {
                 targetDocument = document
                 semp.signal()
             }
             else {
-                let e = SyncError.ask(message: "addRoom fail ", code: errorCode)
+                let e = SyncError.ask(message: "addRoom fail ", code: errorCode.rawValue)
                 error = e
                 semp.signal()
             }

@@ -120,9 +120,9 @@ extension MainVC { /** 房间信息 key == nil **/
     }
 }
 
-extension MainVC { /** 房间信息 key == member **/
+extension MainVC { /** 房间信息 key == roomInfo **/
     func updteRoomInfo2() {
-        syncRef.update(key: "member",
+        syncRef.update(key: "roomInfo",
                        data: ["memberName" : "zhang \(Int.random(in: 0...100))"],
                        success: { [weak self](objs) in
             let string = "update success: " + "\(objs.first?.toJson() ?? "nil")"
@@ -133,7 +133,7 @@ extension MainVC { /** 房间信息 key == member **/
     }
     
     func getRoomInfo2() {
-        syncRef.get(key: "member") { [weak self] obj in
+        syncRef.get(key: "roomInfo") { [weak self] obj in
             self?.show("success")
             if let str = obj?.toJson() { print(str) }
             else { print("no value for key (getRoomInfo2)") }
@@ -143,7 +143,7 @@ extension MainVC { /** 房间信息 key == member **/
     }
     
     func subscribeRoom2() {
-        syncRef.subscribe(key: "member",
+        syncRef.subscribe(key: "roomInfo",
                           onCreated: { obj in
             print("subscribeRoom2 onCreated \(obj.toJson() ?? "")")
         },onUpdated: { obj in
@@ -156,7 +156,7 @@ extension MainVC { /** 房间信息 key == member **/
     }
     
     func unsubscribeRoom2() {
-        syncRef.unsubscribe(key: "member")
+        syncRef.unsubscribe(key: "roomInfo")
     }
 }
 
