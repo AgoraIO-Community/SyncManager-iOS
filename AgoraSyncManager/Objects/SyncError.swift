@@ -21,7 +21,7 @@ public class SyncError: NSObject, LocalizedError {
         return description
     }
     
-    convenience init(message: String,
+    public convenience init(message: String,
                      code: Int) {
         self.init(message: message,
                   code: code,
