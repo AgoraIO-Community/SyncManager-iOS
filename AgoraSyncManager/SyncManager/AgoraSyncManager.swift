@@ -11,6 +11,10 @@ import AgoraSyncKit
 public class AgoraSyncManager: NSObject {
     private var proxy: ISyncManager
     
+    deinit {
+        Log.info(text: "AgoraSyncManager deinit", tag: "AgoraSyncManager")
+    }
+    
     /// init
     /// - Parameters:
     ///   - config: config of rtm
@@ -77,7 +81,7 @@ public class AgoraSyncManager: NSObject {
     ///   - documentRef: `Document`类型实体
     ///   - key: 键值
     func get(documentRef: DocumentReference,
-             key: String? = nil,
+             key: String,
              success: SuccessBlockObjOptional?,
              fail: FailBlock?) {
         proxy.get(documentRef: documentRef,
@@ -139,7 +143,7 @@ public class AgoraSyncManager: NSObject {
     ///   - key: 键值
     ///   - data: 数据
     func update(reference: DocumentReference,
-                key: String? = nil,
+                key: String,
                 data: [String: Any?],
                 success: SuccessBlock?,
                 fail: FailBlock?) {
@@ -177,7 +181,7 @@ public class AgoraSyncManager: NSObject {
     ///   - reference: `Document`类型
     ///   - key: 键值
     func subscribe(reference: DocumentReference,
-                   key: String? = nil,
+                   key: String,
                    onCreated: OnSubscribeBlock?,
                    onUpdated: OnSubscribeBlock?,
                    onDeleted: OnSubscribeBlock?,
@@ -197,7 +201,7 @@ public class AgoraSyncManager: NSObject {
     ///   - reference: `Document`类型
     ///   - key: 键值
     func unsubscribe(reference: DocumentReference,
-                     key: String? = nil) {
+                     key: String) {
         proxy.unsubscribe(reference: reference, key: key)
     }
     

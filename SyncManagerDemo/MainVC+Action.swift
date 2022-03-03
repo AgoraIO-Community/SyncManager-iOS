@@ -80,45 +80,6 @@ extension MainVC { /** 房间列表 **/
     }
 }
 
-extension MainVC { /** 房间信息 key == nil **/
-    func updteRoomInfo1() {
-        syncRef.update(data: ["color" : "red \(Int.random(in: 0...100))"],
-                       success: { [weak self](objs) in
-            let string = "update success: " + "\(objs.first?.toJson() ?? "nil")"
-            self?.show(string)
-        }, fail: { [weak self] error in
-            self?.show("fail: " + error.description)
-        })
-    }
-    
-    func getRoomInfo1() {
-        syncRef.get() { [weak self] obj in
-            self?.show("success")
-            if let str = obj?.toJson() { print(str) }
-            else { print("no value for key (getRoomInfo1)") }
-        } fail: { [weak self] error in
-            self?.show("fail: " + error.description)
-        }
-    }
-    
-    func subscribeRoom1() {
-        syncRef.subscribe(onCreated: { obj in
-            print("subscribeRoom1-onCreated \(obj.toJson() ?? "")")
-        }, onUpdated: { obj in
-            print("subscribeRoom1-onUpdated \(obj.toJson() ?? "")")
-        }, onDeleted: { obj in
-            print("subscribeRoom1-onDeleted \(obj.toJson() ?? "")")
-        }, onSubscribed: {
-            print("subscribeRoom1-onSubscribed")
-        }, fail: { error in
-            print("subscribeRoom1 " + error.description)
-        })
-    }
-    
-    func unsubscribeRoom1() {
-        syncRef.unsubscribe()
-    }
-}
 
 extension MainVC { /** 房间信息 key == roomInfo **/
     func updteRoomInfo2() {
@@ -219,7 +180,7 @@ extension MainVC { /** 成员信息 **/
     }
     
     func subscribeMember() {
-        syncRef.collection(className: "member").document().subscribe(key: nil,
+        syncRef.collection(className: "member").document().subscribe(key: "",
                                                                      onCreated: { obj in
             print("Recv event onCreated \(obj.toJson() ?? "")")
         }, onUpdated: { obj in
@@ -234,7 +195,7 @@ extension MainVC { /** 成员信息 **/
     }
     
     func unsubscribeMember() {
-        syncRef.collection(className: "member").document().unsubscribe(key: nil)
+        syncRef.collection(className: "member").document().unsubscribe(key: "")
     }
     
     func deleteAllMemners() {

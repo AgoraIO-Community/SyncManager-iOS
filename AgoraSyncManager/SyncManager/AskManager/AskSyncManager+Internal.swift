@@ -73,7 +73,7 @@ extension AskSyncManager {
         json.setString(roomString)
         let roomJson = AgoraJson()
         roomJson.setObject()
-        roomJson.setField(id, agoraJson: json)
+        roomJson.setField("scene", agoraJson: json)
         let semp = DispatchSemaphore(value: 0)
         var targetDocument: AgoraSyncDocument?
         var error: SyncError?

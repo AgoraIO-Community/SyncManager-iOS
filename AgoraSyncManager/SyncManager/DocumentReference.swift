@@ -92,11 +92,10 @@ public class DocumentReference {
         providerType = .ask
     }
     
-    // TODO: -- key不允许为nil?
     /// 获取指定属性值
     /// - Parameters:
-    ///   - key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
-    public func get(key: String? = nil,
+    ///   - key: 非空字符串
+    public func get(key: String,
                     success: SuccessBlockObjOptional? = nil,
                     fail: FailBlock? = nil) {
         manager.get(documentRef: self,
@@ -105,12 +104,11 @@ public class DocumentReference {
                     fail: fail)
     }
     
-    // TODO: -- key不允许为nil?
     /// 更新指定属性值
     /// - Parameters:
-    ///   - key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
+    ///   - key: 键值 非空字符串
     ///   - data: value
-    public func update(key: String? = nil,
+    public func update(key: String,
                        data: [String : Any?],
                        success: SuccessBlock? = nil,
                        fail: FailBlock? = nil) {
@@ -131,8 +129,8 @@ public class DocumentReference {
     
     /// 订阅属性更新事件
     /// - Parameters:
-    ///   - key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
-    public func subscribe(key: String? = nil,
+    ///   - key: 键值 非空字符串。(当监听collection的时候可以使用空字符串)
+    public func subscribe(key: String,
                           onCreated: OnSubscribeBlock? = nil,
                           onUpdated: OnSubscribeBlock? = nil,
                           onDeleted: OnSubscribeBlock? = nil,
@@ -147,10 +145,9 @@ public class DocumentReference {
                           fail: fail)
     }
     
-    // TODO: -- key不允许为nil?
     /// 取消订阅
-    /// - Parameter key: 键值 为nil或空字符串时，使用scene作为保存。非空字符串时候使用scene的子集保存。
-    public func unsubscribe(key: String? = nil) {
+    /// - Parameter key: 键值 非空字符串 (当监听collection的时候可以使用空字符串)
+    public func unsubscribe(key: String) {
         manager.unsubscribe(reference: self, key: key)
     }
 }

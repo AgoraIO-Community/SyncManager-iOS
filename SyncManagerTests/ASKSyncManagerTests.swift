@@ -15,7 +15,7 @@ class ASKSyncManagerTests: XCTestCase {
     var syncRef2: SceneReference?
     let appId = Config.appId
     let channelName = "testScene"
-    var promise: XCTestExpectation!
+    var promise: XCTestExpectation?
     
     override func setUpWithError() throws {}
     
@@ -43,11 +43,11 @@ class ASKSyncManagerTests: XCTestCase {
         /// 1. init
         let config = AgoraSyncManager.AskConfig(appId: appId,
                                                 channelName: channelName)
-        manager1 = AgoraSyncManager(config: config) { code in
+        manager1 = AgoraSyncManager(askConfig: config) { code in
             promise1.fulfill()
         }
         
-        manager2 = AgoraSyncManager(config: config) { code in
+        manager2 = AgoraSyncManager(askConfig: config) { code in
             promise2.fulfill()
         }
         
@@ -87,7 +87,7 @@ class ASKSyncManagerTests: XCTestCase {
                             onCreated: nil,
                             onUpdated: { [weak self](obj) in
             print("onUpdated \(obj.toJson() ?? "")")
-            self?.promise.fulfill()
+            self?.promise?.fulfill()
         },
                             onDeleted: nil,
                             onSubscribed: nil,
@@ -96,6 +96,7 @@ class ASKSyncManagerTests: XCTestCase {
     
     func update() {
         promise = expectation(description: "update data check")
+        wait(for: [promise!], timeout: 5)
         syncRef2?.update(key: "test",
                          data: ["testdata" : "testdata \(Int.random(in: 0...100))"],
                          success: { objs in
@@ -103,7 +104,7 @@ class ASKSyncManagerTests: XCTestCase {
             XCTFail("update error \(error.description)")
         })
         
-        wait(for: [promise], timeout: 5)
+        
     }
 
 }

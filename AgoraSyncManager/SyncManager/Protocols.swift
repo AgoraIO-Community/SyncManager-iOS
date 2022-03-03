@@ -22,7 +22,7 @@ protocol ISyncManager {
                       success: SuccessBlockVoid?,
                       fail: FailBlock?)
     func get(documentRef: DocumentReference,
-             key: String?,
+             key: String,
              success: SuccessBlockObjOptional?,
              fail: FailBlock?)
     func get(collectionRef: CollectionReference,
@@ -42,7 +42,7 @@ protocol ISyncManager {
                 success: SuccessBlockVoid?,
                 fail: FailBlock?)
     func update(reference: DocumentReference,
-                key: String?,
+                key: String,
                 data: [String: Any?],
                 success: SuccessBlock?,
                 fail: FailBlock?)
@@ -53,13 +53,13 @@ protocol ISyncManager {
                 success: SuccessBlock?,
                 fail: FailBlock?)
     func subscribe(reference: DocumentReference,
-                   key: String?,
+                   key: String,
                    onCreated: OnSubscribeBlock?,
                    onUpdated: OnSubscribeBlock?,
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?)
-    func unsubscribe(reference: DocumentReference, key: String?) -> Void
+    func unsubscribe(reference: DocumentReference, key: String) -> Void
     
     func createCollection(internalClassName: String) -> AgoraSyncCollection?
 }

@@ -99,10 +99,9 @@ extension RtmSyncManager: ISyncManager {
     }
     
     public func get(documentRef reference: DocumentReference,
-                    key: String?,
+                    key: String,
                     success: SuccessBlockObjOptional?,
                     fail: FailBlock?) {
-        let key = key ?? ""
         rtmKit?.getChannelAllAttributes(reference.className + key, completion: { res, error in
             if let res = res, res.count == 0 {
                 success?(nil)
@@ -234,11 +233,10 @@ extension RtmSyncManager: ISyncManager {
     }
     
     public func update(reference: DocumentReference,
-                       key: String?,
+                       key: String,
                        data: [String : Any?],
                        success: SuccessBlock?,
                        fail: FailBlock?) {
-        let key = key ?? ""
         let attr = AgoraRtmChannelAttribute()
         let item = Utils.getJson(dict: data as NSDictionary)
         attr.key = reference.className + key
@@ -343,14 +341,12 @@ extension RtmSyncManager: ISyncManager {
     }
     
     public func subscribe(reference: DocumentReference,
-                          key: String?,
+                          key: String,
                           onCreated: OnSubscribeBlock?,
                           onUpdated: OnSubscribeBlock?,
                           onDeleted: OnSubscribeBlock?,
                           onSubscribed: OnSubscribeBlockVoid?,
                           fail: FailBlock?) {
-        
-        let key = key ?? ""
         let name = reference.className + key
         
         if name == sceneName, let channel = channels[sceneName] { /** 设置监听参数：scene.id **/
@@ -376,8 +372,7 @@ extension RtmSyncManager: ISyncManager {
         onSubscribed?()
     }
     
-    public func unsubscribe(reference: DocumentReference, key: String?) {
-        let key = key ?? ""
+    public func unsubscribe(reference: DocumentReference, key: String) {
         if let rtmChannel = channels[reference.className + key] {
             onCreateBlocks.removeValue(forKey: rtmChannel)
             onUpdatedBlocks.removeValue(forKey: rtmChannel)

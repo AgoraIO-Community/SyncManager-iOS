@@ -47,7 +47,7 @@ extension AskSyncManager: ISyncManager {
                       fail: FailBlock?) {}
     
     func get(documentRef: DocumentReference,
-             key: String?,
+             key: String,
              success: SuccessBlockObjOptional?,
              fail: FailBlock?) {
         queue.async { [weak self] in
@@ -107,7 +107,7 @@ extension AskSyncManager: ISyncManager {
     }
     
     func update(reference: DocumentReference,
-                key: String?,
+                key: String,
                 data: [String : Any?],
                 success: SuccessBlock?,
                 fail: FailBlock?) {
@@ -141,7 +141,7 @@ extension AskSyncManager: ISyncManager {
     }
     
     func subscribe(reference: DocumentReference,
-                   key: String?,
+                   key: String,
                    onCreated: OnSubscribeBlock?,
                    onUpdated: OnSubscribeBlock?,
                    onDeleted: OnSubscribeBlock?,
@@ -159,7 +159,7 @@ extension AskSyncManager: ISyncManager {
         }
     }
     
-    func unsubscribe(reference: DocumentReference, key: String?) {
+    func unsubscribe(reference: DocumentReference, key: String) {
         queue.async { [weak self] in
             self?.unsubscribeSync(reference: reference, key: key)
         }
