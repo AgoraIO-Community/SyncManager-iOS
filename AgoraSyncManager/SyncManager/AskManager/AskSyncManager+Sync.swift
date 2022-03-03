@@ -13,24 +13,24 @@ extension AskSyncManager {
                          success: SuccessBlockVoid?,
                          fail: FailBlock?) {
         /// fetch and find a special one with scene.id
-        let result = fetchSceneSnapshot(with: scene.id, in: roomsCollection)
-        if let result = result { /** result is not nil **/
-            switch result {
-            case .failure(let error): /** get room list error **/
-                Log.errorText(text: error.description, tag: "AskSyncManager.createSceneSync")
-                DispatchQueue.main.async {
-                    fail?(error)
-                }
-                return
-            case .success(let snapshot): /** has this room **/
-                roomDocument = snapshot.createDocument()
-                Log.info(text: "createScene ok", tag: "AskSyncManager.createSceneSync.fetchRoomSnapshot")
-                DispatchQueue.main.async {
-                    success?()
-                }
-                return
-            }
-        }
+//        let result = fetchSceneSnapshot(with: scene.id, in: roomsCollection)
+//        if let result = result { /** result is not nil **/
+//            switch result {
+//            case .failure(let error): /** get room list error **/
+//                Log.errorText(text: error.description, tag: "AskSyncManager.createSceneSync")
+//                DispatchQueue.main.async {
+//                    fail?(error)
+//                }
+//                return
+//            case .success(let snapshot): /** has this room **/
+//                roomDocument = snapshot.createDocument()
+//                Log.info(text: "createScene ok", tag: "AskSyncManager.createSceneSync.fetchRoomSnapshot")
+//                DispatchQueue.main.async {
+//                    success?()
+//                }
+//                return
+//            }
+//        }
         
         ///  add room
         let ret = addScene(id: scene.id, data: scene.toJson())

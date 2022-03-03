@@ -1,15 +1,14 @@
 //
-//  SyncManagerTests.swift
+//  ASKSyncManagerTests.swift
 //  SyncManagerTests
 //
-//  Created by xianing on 2021/12/11.
+//  Created by ZYP on 2022/2/22.
 //
 
 import XCTest
 import AgoraSyncManager
-import AgoraRtmKit
 
-class SyncManagerTests: XCTestCase, AgoraRtmChannelDelegate {
+class ASKSyncManagerTests: XCTestCase {
     var manager1: AgoraSyncManager?
     var manager2: AgoraSyncManager?
     var syncRef1: SceneReference?
@@ -17,8 +16,6 @@ class SyncManagerTests: XCTestCase, AgoraRtmChannelDelegate {
     let appId = Config.appId
     let channelName = "testScene"
     var promise: XCTestExpectation!
-    var rtm: AgoraRtmKit!
-    var channel: AgoraRtmChannel!
     
     override func setUpWithError() throws {}
     
@@ -41,10 +38,10 @@ class SyncManagerTests: XCTestCase, AgoraRtmChannelDelegate {
         let promise2 = expectation(description: "init check 2")
         let promise3 = expectation(description: "join check 1")
         let promise4 = expectation(description: "join check 2")
-        let promise5 = expectation(description: "create check 1")
+        let promise5 = expectation(description: "create check")
         
         /// 1. init
-        let config = AgoraSyncManager.RtmConfig(appId: appId,
+        let config = AgoraSyncManager.AskConfig(appId: appId,
                                                 channelName: channelName)
         manager1 = AgoraSyncManager(config: config) { code in
             promise1.fulfill()
@@ -81,12 +78,17 @@ class SyncManagerTests: XCTestCase, AgoraRtmChannelDelegate {
     }
     
     func subscribe() {
+        syncRef2?.update(key: "test",
+                         data: ["testdata" : "testdata \(Int.random(in: 0...100))"],
+                         success:nil,
+                         fail: nil)
+        
         syncRef1?.subscribe(key: "test",
                             onCreated: nil,
                             onUpdated: { [weak self](obj) in
-                                print("onUpdated \(obj.toJson() ?? "")")
-                                self?.promise.fulfill()
-                            },
+            print("onUpdated \(obj.toJson() ?? "")")
+            self?.promise.fulfill()
+        },
                             onDeleted: nil,
                             onSubscribed: nil,
                             fail: nil)
@@ -103,4 +105,5 @@ class SyncManagerTests: XCTestCase, AgoraRtmChannelDelegate {
         
         wait(for: [promise], timeout: 5)
     }
+
 }

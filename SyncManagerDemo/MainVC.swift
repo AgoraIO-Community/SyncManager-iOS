@@ -26,7 +26,7 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
     var channel: AgoraRtmChannel!
     var channel2: AgoraRtmChannel!
     
-    var askKit: AgoraSyncKit!
+    var askKit: AgoraSyncEngineKit!
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
     var membersCollection: AgoraSyncCollection!

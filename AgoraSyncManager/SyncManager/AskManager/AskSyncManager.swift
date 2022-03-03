@@ -12,7 +12,7 @@ class AskSyncManager: NSObject {
     typealias DocumentName = String
     var defaultChannelName: String!
     var sceneName: String!
-    var askKit: AgoraSyncKit!
+    var askKit: AgoraSyncEngineKit!
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
     var collections = [DocumentName : AgoraSyncCollection]()
@@ -34,13 +34,10 @@ class AskSyncManager: NSObject {
          complete: SuccessBlockInt?) {
         super.init()
         self.defaultChannelName = config.channelName
-        askKit = AgoraSyncKit(appId: config.appId)
+        askKit = AgoraSyncEngineKit(appId: config.appId)
         askContext = askKit.createContext()
         roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
         Log.info(text: "defaultChannelName = \(config.channelName)", tag: "AskSyncManager.init")
         Log.info(text: "init ok", tag: "AskSyncManager.init")
-        roomsCollection.remove { code in
-            Log.info(text: "remove ok", tag: "AskSyncManager.init")
-        }
     }
 }

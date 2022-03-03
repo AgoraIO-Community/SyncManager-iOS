@@ -15,4 +15,5 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = '11.0'
   spec.swift_versions = "5.0"
   spec.dependency "AgoraRtm_iOS", "1.4.9"
+  spec.dependency "AgoraSyncKit"
 end
