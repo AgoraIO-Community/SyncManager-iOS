@@ -41,6 +41,7 @@ extension MainVC { /** 基础 **/
             }
         })
         
+        
     }
     
     func createScene() {
@@ -77,6 +78,7 @@ extension MainVC { /** 房间列表 **/
         } fail: { [weak self](error) in
             self?.show("fail: " + error.description)
         }
+        syncManager = nil
     }
 }
 
