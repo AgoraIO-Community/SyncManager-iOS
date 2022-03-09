@@ -39,5 +39,6 @@ class AskSyncManager: NSObject {
         roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
         Log.info(text: "defaultChannelName = \(config.channelName)", tag: "AskSyncManager.init")
         Log.info(text: "init ok", tag: "AskSyncManager.init")
+        complete?(0)
     }
 }

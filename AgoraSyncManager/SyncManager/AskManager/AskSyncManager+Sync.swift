@@ -12,26 +12,6 @@ extension AskSyncManager {
     func createSceneSync(scene: Scene,
                          success: SuccessBlockVoid?,
                          fail: FailBlock?) {
-        /// fetch and find a special one with scene.id
-//        let result = fetchSceneSnapshot(with: scene.id, in: roomsCollection)
-//        if let result = result { /** result is not nil **/
-//            switch result {
-//            case .failure(let error): /** get room list error **/
-//                Log.errorText(text: error.description, tag: "AskSyncManager.createSceneSync")
-//                DispatchQueue.main.async {
-//                    fail?(error)
-//                }
-//                return
-//            case .success(let snapshot): /** has this room **/
-//                roomDocument = snapshot.createDocument()
-//                Log.info(text: "createScene ok", tag: "AskSyncManager.createSceneSync.fetchRoomSnapshot")
-//                DispatchQueue.main.async {
-//                    success?()
-//                }
-//                return
-//            }
-//        }
-        
         ///  add room
         let ret = addScene(id: scene.id, data: scene.toJson())
         switch ret {
@@ -288,7 +268,6 @@ extension AskSyncManager {
         })
     }
     
-    // TODO: -- key不允许为nil?
     func updateSync(reference: DocumentReference,
                     key: String,
                     data: [String : Any?],
@@ -381,10 +360,31 @@ extension AskSyncManager {
                     fail?(e)
                     return
                 }
-                onSubscribed?()
+                if Thread.isMainThread {
+                    onSubscribed?()
+                }
+                else {
+                    DispatchQueue.main.async {
+                        onSubscribed?()
+                    }
+                }
                 Log.info(text: "subscribe scene success", tag: "AskSyncManager.subscribe")
             }, eventCompletion: { (eventType, snapshot, details) in
                 Log.info(text: " scene eventCompletion", tag: "AskSyncManager.subscribe")
+                
+                guard let tempDetail = details else {
+                    Log.errorText(text: "not detail", tag: "AskSyncManager.subscribe")
+                    return
+                }
+                
+                guard tempDetail.fieldsModified?.contains(key) ?? false ||
+                        tempDetail.fieldsAdded?.contains(key) ?? false ||
+                        tempDetail.fieldsRemoved?.contains(key) ?? false else {
+                            let string = "can not mach key:\(key) fieldsModified:\(tempDetail.fieldsModified ?? []) fieldsAdded:\(tempDetail.fieldsAdded ?? []) fieldsRemoved:\(tempDetail.fieldsRemoved ?? [])"
+                            Log.errorText(text: string, tag: "AskSyncManager.subscribe")
+                            return
+                        }
+                
                 guard let value = snapshot?.data()?.getJsonString(field: key) else {
                     Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
                     return
@@ -394,10 +394,24 @@ extension AskSyncManager {
                 case .addDocumentEvent:
                     break
                 case .modifyDocumentEvent:
-                    onUpdated?(attr)
+                    if Thread.isMainThread {
+                        onUpdated?(attr)
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            onUpdated?(attr)
+                        }
+                    }
                     break
                 case .removeDocumentEvent:
-                    onDeleted?(attr)
+                    if Thread.isMainThread {
+                        onDeleted?(attr)
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            onDeleted?(attr)
+                        }
+                    }
                     break
                 @unknown default:
                     fatalError("never call this")
@@ -440,13 +454,34 @@ extension AskSyncManager {
             let attr = Attribute(key: objId, value: value)
             switch eventType {
             case .addDocumentEvent:
-                onCreated?(attr)
+                if Thread.isMainThread {
+                    onCreated?(attr)
+                }
+                else {
+                    DispatchQueue.main.async {
+                        onCreated?(attr)
+                    }
+                }
                 break
             case .modifyDocumentEvent:
-                onUpdated?(attr)
+                if Thread.isMainThread {
+                    onUpdated?(attr)
+                }
+                else {
+                    DispatchQueue.main.async {
+                        onUpdated?(attr)
+                    }
+                }
                 break
             case .removeDocumentEvent:
-                onDeleted?(attr)
+                if Thread.isMainThread {
+                    onDeleted?(attr)
+                }
+                else {
+                    DispatchQueue.main.async {
+                        onDeleted?(attr)
+                    }
+                }
                 break
             @unknown default:
                 fatalError("never call this")

@@ -12,5 +12,5 @@ target 'AgoraSyncManager' do
   # Pods for RtmSyncManager
   pod 'AgoraRtm_iOS', '~> 1.4.9'
   pod 'Toast-Swift'
-#  pod 'AgoraSyncKit', :path => '/Users/zyp/Desktop/SyncKit/AgoraSyncKit.podspec'
+  pod 'AgoraSyncKit', :path => '/Users/zyp/Desktop/SyncKit/AgoraSyncKit.podspec'
 end
