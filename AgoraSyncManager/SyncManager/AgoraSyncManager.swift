@@ -181,12 +181,13 @@ public class AgoraSyncManager: NSObject {
     ///   - reference: `Document`类型
     ///   - key: 键值
     func subscribe(reference: DocumentReference,
-                   key: String,
+                   key: String?,
                    onCreated: OnSubscribeBlock?,
                    onUpdated: OnSubscribeBlock?,
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?) {
+        let key = key ?? "scene"
         return proxy.subscribe(reference: reference,
                                key: key,
                                onCreated: onCreated,
@@ -207,5 +208,14 @@ public class AgoraSyncManager: NSObject {
     
     func createCollection(internalClassName: String) -> AgoraSyncCollection? {
         return proxy.createCollection(internalClassName: internalClassName)
+    }
+    
+    func subscribeScene(onDeleted: OnSubscribeBlockVoid? = nil,
+                        fail: FailBlock? = nil) {
+        proxy.subscribeScene(onDeleted: onDeleted, fail: fail)
+    }
+    
+    func unsubscribeScene(fail: FailBlock? = nil) {
+        proxy.unsubscribeScene(fail: fail)
     }
 }

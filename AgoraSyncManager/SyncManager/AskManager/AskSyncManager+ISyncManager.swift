@@ -9,7 +9,6 @@ import Foundation
 import AgoraSyncKit
 
 extension AskSyncManager: ISyncManager {
-    
     func createScene(scene: Scene,
                      success: SuccessBlockVoid?,
                      fail: FailBlock?) {
@@ -147,7 +146,6 @@ extension AskSyncManager: ISyncManager {
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?) {
-        
         queue.async { [weak self] in
             self?.subscribeSync(reference: reference,
                                 key: key,
@@ -176,5 +174,18 @@ extension AskSyncManager: ISyncManager {
         let collection = sceneDocument.createCollection(with: askContext, documentName: internalClassName)
         collections[internalClassName] = collection
         return collection
+    }
+    
+    func subscribeScene(onDeleted: OnSubscribeBlockVoid?,
+                        fail: FailBlock?) {
+        queue.async { [weak self] in
+            self?.subscribeSceneSync(onDeleted: onDeleted, fail: fail)
+        }
+    }
+    
+    func unsubscribeScene(fail: FailBlock?) {
+        queue.async { [weak self] in
+            self?.unsubscribeSceneSync(fail: fail)
+        }
     }
 }

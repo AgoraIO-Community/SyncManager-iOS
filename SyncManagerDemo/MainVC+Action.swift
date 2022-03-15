@@ -40,13 +40,11 @@ extension MainVC { /** 基础 **/
                 print("SyncManager init error")
             }
         })
-        
-        
     }
     
     func createScene() {
         let scene = Scene(id: sceneId, userId: "userid", property: nil)
-        syncManager.createScene(scene: scene,
+        syncManager?.createScene(scene: scene,
                                 success: {  [weak self] in
             self?.show("success")
         },fail: { [weak self](error) in
@@ -55,7 +53,7 @@ extension MainVC { /** 基础 **/
     }
     
     func joinScene() {
-        syncManager.joinScene(sceneId: sceneId,
+        syncManager?.joinScene(sceneId: sceneId,
                               success: { [weak self](obj) in
             self?.show("success")
             self?.syncRef = obj
@@ -67,21 +65,34 @@ extension MainVC { /** 基础 **/
     func deleteScene() {
         syncRef.delete()
     }
+    
+    func subscribeSceneDelete() {
+        syncRef.subscribeScene {
+            print("scene was Deleted")
+        } fail: { error in
+            
+        }
+    }
+    
+    func unsubscribeSceneDelete() {
+        syncRef.unsubscribeScene { error in
+            print("取消订阅失败")
+        }
+    }
 }
 
 extension MainVC { /** 房间列表 **/
     func getScenes() {
-        syncManager.getScenes { [weak self](objs) in
+        syncManager?.getScenes { [weak self](objs) in
             self?.show("success")
             let strs = objs.compactMap({ $0.toJson() })
             print(strs)
         } fail: { [weak self](error) in
             self?.show("fail: " + error.description)
         }
-        syncManager = nil
     }
 }
-
+ 
 
 extension MainVC { /** 房间信息 key == roomInfo **/
     func updteRoomInfo2() {
@@ -206,6 +217,5 @@ extension MainVC { /** 成员信息 **/
         } fail: { [weak self](error) in
             self?.show("fail: " + error.description)
         }
-
     }
 }

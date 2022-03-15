@@ -10,7 +10,6 @@ import AgoraRtmKit
 import AgoraSyncKit // 如何做到这个文件不引用这里？
 
 extension RtmSyncManager: ISyncManager {
-    
     public func createScene(scene: Scene,
                             success: SuccessBlockVoid?,
                             fail: FailBlock?) {
@@ -383,4 +382,9 @@ extension RtmSyncManager: ISyncManager {
     public func createCollection(internalClassName: String) -> AgoraSyncCollection? {
         return nil
     }
+    
+    func subscribeScene(onDeleted: OnSubscribeBlockVoid?,
+                        fail: FailBlock?) {}
+    
+    func unsubscribeScene(fail: FailBlock?) {}
 }

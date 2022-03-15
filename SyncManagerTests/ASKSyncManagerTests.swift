@@ -23,6 +23,7 @@ class ASKSyncManagerTests: XCTestCase {
         promise = nil
         manager1 = nil
         manager2 = nil
+        syncRef1?.delete(success: nil, fail: nil)
         syncRef1 = nil
         syncRef2 = nil
     }
@@ -78,16 +79,29 @@ class ASKSyncManagerTests: XCTestCase {
     }
     
     func subscribe() {
+        print("subscribe start ---")
         syncRef2?.update(key: "test",
                          data: ["testdata" : "testdata \(Int.random(in: 0...100))"],
-                         success:nil,
-                         fail: nil)
+                         success:{ _ in
+            print("update first success")
+        },
+                         fail: { error in
+            XCTFail("update error \(error.description)")
+        })
         
         syncRef1?.subscribe(key: "test",
-                            onCreated: nil,
+                            onCreated: { (obj) in
+            print("- onCreated \(obj.toJson() ?? "")")
+        },
                             onUpdated: { [weak self](obj) in
-            print("onUpdated \(obj.toJson() ?? "")")
-            self?.promise?.fulfill()
+            print("- onUpdated \(obj.toJson() ?? "")")
+            let str = obj.toJson() ?? ""
+            if str.contains("testdata 555") {
+                self?.promise?.fulfill()
+            }
+            else {
+                print("-- not match data")
+            }
         },
                             onDeleted: nil,
                             onSubscribed: nil,
@@ -95,16 +109,15 @@ class ASKSyncManagerTests: XCTestCase {
     }
     
     func update() {
+        Thread.sleep(forTimeInterval: 3)
         promise = expectation(description: "update data check")
-        wait(for: [promise!], timeout: 5)
         syncRef2?.update(key: "test",
-                         data: ["testdata" : "testdata \(Int.random(in: 0...100))"],
+                         data: ["testdata" : "testdata 555"],
                          success: { objs in
         }, fail: { error in
             XCTFail("update error \(error.description)")
         })
-        
-        
+        wait(for: [promise!], timeout: 5)
     }
-
+    
 }

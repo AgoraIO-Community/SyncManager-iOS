@@ -352,8 +352,9 @@ extension AskSyncManager {
                        onSubscribed: OnSubscribeBlockVoid?,
                        fail: FailBlock?) {
         guard let sceneId = sceneName  else { fatalError("never call this") }
-        if reference.className == sceneName, let sceneDocument = roomDocument { /** 监听sceneRef 事件 **/
+        if reference.className == sceneName, let sceneDocument = roomsCollection.createDocument(withName: sceneId) { /** 监听sceneRef 事件 **/
             if key == "" { fatalError("key must not empty") }
+            subscribedSceneDoc[key] = sceneDocument
             sceneDocument.subscribe({ errorCode in
                 if errorCode != .codeNoError {
                     let e = SyncError.ask(message: "subscribe scene \(sceneId) fail", code: errorCode.rawValue)
@@ -372,18 +373,18 @@ extension AskSyncManager {
             }, eventCompletion: { (eventType, snapshot, details) in
                 Log.info(text: " scene eventCompletion", tag: "AskSyncManager.subscribe")
                 
-                guard let tempDetail = details else {
-                    Log.errorText(text: "not detail", tag: "AskSyncManager.subscribe")
-                    return
-                }
+//                guard let tempDetail = details else {
+//                    Log.errorText(text: "not detail", tag: "AskSyncManager.subscribe")
+//                    return
+//                }
                 
-                guard tempDetail.fieldsModified?.contains(key) ?? false ||
-                        tempDetail.fieldsAdded?.contains(key) ?? false ||
-                        tempDetail.fieldsRemoved?.contains(key) ?? false else {
-                            let string = "can not mach key:\(key) fieldsModified:\(tempDetail.fieldsModified ?? []) fieldsAdded:\(tempDetail.fieldsAdded ?? []) fieldsRemoved:\(tempDetail.fieldsRemoved ?? [])"
-                            Log.errorText(text: string, tag: "AskSyncManager.subscribe")
-                            return
-                        }
+//                guard tempDetail.fieldsModified?.contains(key) ?? false ||
+//                        tempDetail.fieldsAdded?.contains(key) ?? false ||
+//                        tempDetail.fieldsRemoved?.contains(key) ?? false else {
+//                            let string = "can not mach key:\(key) fieldsModified:\(tempDetail.fieldsModified ?? []) fieldsAdded:\(tempDetail.fieldsAdded ?? []) fieldsRemoved:\(tempDetail.fieldsRemoved ?? [])"
+//                            Log.errorText(text: string, tag: "AskSyncManager.subscribe")
+//                            return
+//                        }
                 
                 guard let value = snapshot?.data()?.getJsonString(field: key) else {
                     Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
@@ -392,6 +393,14 @@ extension AskSyncManager {
                 let attr = Attribute(key: sceneId, value: value)
                 switch eventType {
                 case .addDocumentEvent:
+                    if Thread.isMainThread {
+                        onCreated?(attr)
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            onCreated?(attr)
+                        }
+                    }
                     break
                 case .modifyDocumentEvent:
                     if Thread.isMainThread {
@@ -494,7 +503,7 @@ extension AskSyncManager {
             fatalError("never call this")
         }
         
-        if reference.className == sceneId, let sceneDocument = roomDocument { /** 取消监听sceneRef 事件 **/
+        if reference.className == sceneId, let sceneDocument = subscribedSceneDoc[key] { /** 取消监听sceneRef 事件 **/
             sceneDocument.unsubscribe { errorCode in
                 if errorCode == .codeNoError { return }
                 Log.errorText(text: "unsubscribeSync scene \(sceneId) errorCode: \(errorCode.rawValue)", tag: "AskSyncManager.unsubscribeSync")
@@ -514,4 +523,55 @@ extension AskSyncManager {
             Log.errorText(text: "unsubscribeSync collection \(name) errorCode: \(errorCode.rawValue)", tag: "AskSyncManager.unsubscribeSync")
         }
     }
+    
+    func subscribeSceneSync(onDeleted: OnSubscribeBlockVoid? = nil,
+                            fail: FailBlock? = nil) {
+        guard let sceneDocument = roomDocument, let sceneId = sceneName else {
+            return
+        }
+        sceneDocument.subscribe({ errorCode in
+            if errorCode != .codeNoError {
+                let e = SyncError.ask(message: "subscribe scene \(sceneId) fail", code: errorCode.rawValue)
+                fail?(e)
+                return
+            }
+            Log.info(text: "subscribe scene success", tag: "AskSyncManager.subscribeSceneSync")
+        }, eventCompletion: { (eventType, snapshot, details) in
+            Log.info(text: " scene eventCompletion", tag: "AskSyncManager.subscribeSceneSync")
+            switch eventType {
+            case .addDocumentEvent:
+                break
+            case .modifyDocumentEvent:
+                break
+            case .removeDocumentEvent:
+                if Thread.isMainThread {
+                    onDeleted?()
+                }
+                else {
+                    DispatchQueue.main.async {
+                        onDeleted?()
+                    }
+                }
+                break
+            @unknown default:
+                fatalError("never call this")
+            }
+        })
+    }
+    
+    func unsubscribeSceneSync(fail: FailBlock? = nil) {
+        guard let sceneDocument = roomDocument, let sceneId = sceneName else {
+            return
+        }
+        sceneDocument.unsubscribe { errorCode in
+            if errorCode != .codeNoError {
+                let e = SyncError.ask(message: "unsubscribe scene \(sceneId) fail", code: errorCode.rawValue)
+                fail?(e)
+                return
+            }
+            Log.info(text: "unsubscribe scene success", tag: "AskSyncManager.unsubscribeSceneSync")
+        }
+    }
 }
+
+

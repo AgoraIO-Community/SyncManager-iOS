@@ -12,12 +12,12 @@ import AgoraSyncKit
 
 class MainVC: UIViewController, AgoraRtmChannelDelegate {
     let sectionTitles = ["基础", "房间列表", "房间信息(key = roomInfo)", "成员信息"]
-    let list = [["初始化", "创建房间", "加入房间", "删除房间"],
+    let list = [["初始化", "创建房间", "加入房间", "删除房间", "订阅房间删除事件", "取消订阅房间删除事件"],
                 ["读取房间列表"],
                 ["更新房间信息", "获取房间信息", "订阅房间信息更新事件", "取消订阅房间信息更新事件"],
                 ["新增member", "更新member", "删除member", "获取member列表", "订阅member更新事件", "取消订阅memner更新事件", "删除所有member"]]
     let tableView = UITableView(frame: .zero, style: .grouped)
-    var syncManager: AgoraSyncManager!
+    var syncManager: AgoraSyncManager?
     var syncRef: SceneReference!
     let channelName = "testDefaultScene2"
     let sceneId = "sceneId2"
@@ -69,6 +69,14 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
             }
             if indexPath.row == 3 { /** 删除房间 **/
                 deleteScene()
+                return
+            }
+            if indexPath.row == 4 { /** 监听房间删除事件 **/
+                subscribeSceneDelete()
+                return
+            }
+            if indexPath.row == 5 { /** 取消订阅房间删除事件 **/
+                unsubscribeSceneDelete()
                 return
             }
         }

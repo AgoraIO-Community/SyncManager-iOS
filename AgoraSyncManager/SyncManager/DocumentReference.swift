@@ -58,6 +58,15 @@ public class SceneReference: DocumentReference {
             Log.error(error: error, tag: "SceneReference")
         })
     }
+    
+    public func subscribeScene(onDeleted: OnSubscribeBlockVoid? = nil,
+                               fail: FailBlock? = nil) {
+        manager.subscribeScene(onDeleted: onDeleted, fail: fail)
+    }
+    
+    public func unsubscribeScene(fail: FailBlock? = nil) {
+        manager.unsubscribeScene(fail: fail)
+    }
 }
 
 public class DocumentReference {

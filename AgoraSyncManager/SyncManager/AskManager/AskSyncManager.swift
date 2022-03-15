@@ -26,6 +26,7 @@ class AskSyncManager: NSObject {
     var onCreateBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
     var onUpdatedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
     var onDeletedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
+    var subscribedSceneDoc = [String : AgoraSyncDocument]()
     
     /// init
     /// - Parameters:
