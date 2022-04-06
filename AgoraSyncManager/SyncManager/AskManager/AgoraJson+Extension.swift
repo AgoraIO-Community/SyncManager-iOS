@@ -30,7 +30,7 @@ extension AgoraJson {
         var str: NSString = ""
         let ret = getString(&str)
         if ret != .noError {
-            Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getStringValue")
+            Log.errorText(text: "getString error \(ret.rawValue) \(str)", tag: "AgoraJson.getStringValue")
             return nil
         }
         return str as String

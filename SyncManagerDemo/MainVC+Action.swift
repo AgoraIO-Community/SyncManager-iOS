@@ -95,7 +95,7 @@ extension MainVC { /** 房间列表 **/
  
 
 extension MainVC { /** 房间信息 key == roomInfo **/
-    func updteRoomInfo2() {
+    func updteRoomInfo() {
         syncRef.update(key: "roomInfo",
                        data: ["memberName" : "zhang \(Int.random(in: 0...100))"],
                        success: { [weak self](objs) in
@@ -106,7 +106,7 @@ extension MainVC { /** 房间信息 key == roomInfo **/
         })
     }
     
-    func getRoomInfo2() {
+    func getRoomInfo() {
         syncRef.get(key: "roomInfo") { [weak self] obj in
             self?.show("success")
             if let str = obj?.toJson() { print(str) }
@@ -116,8 +116,48 @@ extension MainVC { /** 房间信息 key == roomInfo **/
         }
     }
     
-    func subscribeRoom2() {
+    func subscribeRoom() {
         syncRef.subscribe(key: "roomInfo",
+                          onCreated: { obj in
+            print("subscribeRoom onCreated \(obj.toJson() ?? "")")
+        },onUpdated: { obj in
+            print("subscribeRoom onUpdated \(obj.toJson() ?? "")")
+        },onDeleted: { obj in
+            print("subscribeRoom onDeleted \(obj.toJson() ?? "")")
+        },fail: { error in
+            print(error.description)
+        })
+    }
+    
+    func unsubscribeRoom() {
+        syncRef.unsubscribe(key: "roomInfo")
+    }
+}
+
+extension MainVC { /** 房间信息 key == roomInfo **/
+    func updteRoomInfo2() {
+        syncRef.update(key: "pkInfo",
+                       data: ["pkInfo" : "zhang \(Int.random(in: 0...100))"],
+                       success: { [weak self](objs) in
+            let string = "update success: " + "\(objs.first?.toJson() ?? "nil")"
+            self?.show(string)
+        }, fail: { [weak self] error in
+            self?.show("fail: " + error.description)
+        })
+    }
+    
+    func getRoomInfo2() {
+        syncRef.get(key: "pkInfo") { [weak self] obj in
+            self?.show("success")
+            if let str = obj?.toJson() { print(str) }
+            else { print("no value for key (getRoomInfo2)") }
+        } fail: { [weak self] error in
+            self?.show("fail: " + error.description)
+        }
+    }
+    
+    func subscribeRoom2() {
+        syncRef.subscribe(key: "pkInfo",
                           onCreated: { obj in
             print("subscribeRoom2 onCreated \(obj.toJson() ?? "")")
         },onUpdated: { obj in
@@ -130,7 +170,7 @@ extension MainVC { /** 房间信息 key == roomInfo **/
     }
     
     func unsubscribeRoom2() {
-        syncRef.unsubscribe(key: "roomInfo")
+        syncRef.unsubscribe(key: "pkInfo")
     }
 }
 

@@ -278,11 +278,12 @@ extension AskSyncManager {
         let json = AgoraJson()
         let value = Utils.getJson(dict: data as NSDictionary)
         json.setString(value)
+        let id = reference.id
         reference.internalDocument.set(field, json: json) { errorCode in
             if errorCode == .codeNoError {
                 let attr = Attribute(key: "", value: value)
                 DispatchQueue.main.async {
-                    Log.info(text: "updateSync success \(value)", tag: "AskSyncManager.updateSync(document)")
+                    Log.info(text: "updateSync success in scene:\(id) key:(\(field)) \(value)", tag: "AskSyncManager.updateSync(document)")
                     success?([attr])
                 }
             }
@@ -354,6 +355,7 @@ extension AskSyncManager {
         guard let sceneId = sceneName  else { fatalError("never call this") }
         if reference.className == sceneName, let sceneDocument = roomsCollection.createDocument(withName: sceneId) { /** 监听sceneRef 事件 **/
             if key == "" { fatalError("key must not empty") }
+            Log.info(text: "subscribe key: \(key)", tag: "AskSyncManager.subscribe")
             subscribedSceneDoc[key] = sceneDocument
             sceneDocument.subscribe({ errorCode in
                 if errorCode != .codeNoError {
@@ -369,22 +371,22 @@ extension AskSyncManager {
                         onSubscribed?()
                     }
                 }
-                Log.info(text: "subscribe scene success", tag: "AskSyncManager.subscribe")
+                Log.info(text: "subscribe scene success key: \(key) for scene:\(sceneId)", tag: "AskSyncManager.subscribe")
             }, eventCompletion: { (eventType, snapshot, details) in
                 Log.info(text: " scene eventCompletion", tag: "AskSyncManager.subscribe")
                 
-//                guard let tempDetail = details else {
-//                    Log.errorText(text: "not detail", tag: "AskSyncManager.subscribe")
-//                    return
-//                }
+                guard let tempDetail = details else {
+                    Log.errorText(text: "not detail", tag: "AskSyncManager.subscribe")
+                    return
+                }
                 
-//                guard tempDetail.fieldsModified?.contains(key) ?? false ||
-//                        tempDetail.fieldsAdded?.contains(key) ?? false ||
-//                        tempDetail.fieldsRemoved?.contains(key) ?? false else {
-//                            let string = "can not mach key:\(key) fieldsModified:\(tempDetail.fieldsModified ?? []) fieldsAdded:\(tempDetail.fieldsAdded ?? []) fieldsRemoved:\(tempDetail.fieldsRemoved ?? [])"
-//                            Log.errorText(text: string, tag: "AskSyncManager.subscribe")
-//                            return
-//                        }
+                guard tempDetail.fieldsModified?.contains(key) ?? false ||
+                        tempDetail.fieldsAdded?.contains(key) ?? false ||
+                        tempDetail.fieldsRemoved?.contains(key) ?? false else {
+                            let string = "can not mach key:\(key) fieldsModified:\(tempDetail.fieldsModified ?? []) fieldsAdded:\(tempDetail.fieldsAdded ?? []) fieldsRemoved:\(tempDetail.fieldsRemoved ?? [])"
+                            Log.errorText(text: string, tag: "AskSyncManager.subscribe")
+                            return
+                        }
                 
                 guard let value = snapshot?.data()?.getJsonString(field: key) else {
                     Log.errorText(text: "get snapshot data fail", tag: "AskSyncManager.subscribe")
@@ -508,6 +510,7 @@ extension AskSyncManager {
                 if errorCode == .codeNoError { return }
                 Log.errorText(text: "unsubscribeSync scene \(sceneId) errorCode: \(errorCode.rawValue)", tag: "AskSyncManager.unsubscribeSync")
             }
+            Log.info(text: "unsubscribe key: \(key)", tag: "AskSyncManager.unsubscribe")
             return
         }
         
@@ -529,6 +532,7 @@ extension AskSyncManager {
         guard let sceneDocument = roomDocument, let sceneId = sceneName else {
             return
         }
+        Log.info(text: "subscribeScene delete event", tag: "AskSyncManager.subscribeSceneSync")
         sceneDocument.subscribe({ errorCode in
             if errorCode != .codeNoError {
                 let e = SyncError.ask(message: "subscribe scene \(sceneId) fail", code: errorCode.rawValue)

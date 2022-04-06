@@ -18,7 +18,7 @@ class AskSyncManager: NSObject {
     var collections = [DocumentName : AgoraSyncCollection]()
     var roomDocument: AgoraSyncDocument?
     let roomListKey = "rooms"
-    let memberListKey = "members"
+    
     /// 保存在collection的doc
     var documentDict = [String : AgoraSyncDocument]()
     let queue = DispatchQueue(label: "AskManager.queue")
