@@ -8,20 +8,24 @@
 import Foundation
 import AgoraSyncKit
 
-class AskManager: NSObject {
+class AskSyncManager: NSObject {
+    typealias DocumentName = String
     var defaultChannelName: String!
-    var askKit: AgoraSyncKit!
+    var sceneName: String!
+    var askKit: AgoraSyncEngineKit!
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
-    var membersCollection: AgoraSyncCollection!
-    var roomDocument: AgoraSyncDocument?
+    var collections = [DocumentName : AgoraSyncCollection]()
     let roomListKey = "rooms"
-    let memberListKey = "members"
+    
+    /// 保存在collection的doc
     var documentDict = [String : AgoraSyncDocument]()
+    let queue = DispatchQueue(label: "AskManager.queue")
     
     var onCreateBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
     var onUpdatedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
     var onDeletedBlocks = [AgoraSyncDocument : OnSubscribeBlock]()
+    var subscribedSceneDoc = [String : AgoraSyncDocument]()
     
     /// init
     /// - Parameters:
@@ -30,7 +34,11 @@ class AskManager: NSObject {
          complete: SuccessBlockInt?) {
         super.init()
         self.defaultChannelName = config.channelName
-        askKit = AgoraSyncKit(appId: config.appId)
+        askKit = AgoraSyncEngineKit(appId: config.appId)
         askContext = askKit.createContext()
+        roomsCollection = askContext.createSlice(withName: defaultChannelName)?.createCollection(withName: roomListKey)
+        Log.info(text: "defaultChannelName = \(config.channelName)", tag: "AskSyncManager.init")
+        Log.info(text: "init ok", tag: "AskSyncManager.init")
+        complete?(0)
     }
 }

@@ -24,5 +24,17 @@ extension AgoraSyncManager {
         }
     }
     
-    public typealias AskConfig = RtmConfig
+    public struct AskConfig: ConfigProtocol {
+        let appId: String
+        let channelName: String
+        /// init for RtmConfig
+        /// - Parameters:
+        ///   - appId: appId
+        ///   - channelName: channelName
+        public init(appId: String,
+                    channelName: String) {
+            self.channelName = channelName
+            self.appId = appId
+        }
+    }
 }

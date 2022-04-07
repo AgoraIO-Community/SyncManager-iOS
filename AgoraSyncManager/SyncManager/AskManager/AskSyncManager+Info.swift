@@ -7,6 +7,6 @@
 
 import Foundation
 
-extension AskManager {
+extension AskSyncManager {
     typealias Config = RtmSyncManager.Config
 }

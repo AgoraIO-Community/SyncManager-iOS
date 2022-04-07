@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraSyncKit
 
 protocol ISyncManager {
     func createScene(scene: Scene,
@@ -21,7 +22,7 @@ protocol ISyncManager {
                       success: SuccessBlockVoid?,
                       fail: FailBlock?)
     func get(documentRef: DocumentReference,
-             key: String?,
+             key: String,
              success: SuccessBlockObjOptional?,
              fail: FailBlock?)
     func get(collectionRef: CollectionReference,
@@ -41,7 +42,7 @@ protocol ISyncManager {
                 success: SuccessBlockVoid?,
                 fail: FailBlock?)
     func update(reference: DocumentReference,
-                key: String?,
+                key: String,
                 data: [String: Any?],
                 success: SuccessBlock?,
                 fail: FailBlock?)
@@ -52,18 +53,21 @@ protocol ISyncManager {
                 success: SuccessBlock?,
                 fail: FailBlock?)
     func subscribe(reference: DocumentReference,
-                   key: String?,
+                   key: String,
                    onCreated: OnSubscribeBlock?,
                    onUpdated: OnSubscribeBlock?,
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?)
-    func unsubscribe(reference: DocumentReference, key: String?) -> Void
-}
-
-protocol IAgoraModel {
-    var sceneId: String { get set }
-    func toDictionary() -> [String: Any?]
+    func unsubscribe(reference: DocumentReference, key: String) -> Void
+    
+    func subscribeScene(reference: SceneReference,
+                        onDeleted: OnSubscribeBlockVoid?,
+                        fail: FailBlock?)
+    func unsubscribeScene(reference: SceneReference,
+                          fail: FailBlock?)
+    
+    func createCollection(reference: SceneReference, internalClassName: String) -> AgoraSyncCollection?
 }
 
 public protocol IObject {

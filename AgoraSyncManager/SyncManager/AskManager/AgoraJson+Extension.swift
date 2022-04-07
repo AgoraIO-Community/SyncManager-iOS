@@ -9,16 +9,29 @@ import Foundation
 import AgoraSyncKit
 
 extension AgoraJson {
-    func getJsonString() -> String {
+    /// 嵌套json的String
+    func getJsonString(field: String) -> String? {
         var str: NSString = ""
         var json = AgoraJson()
-        var ret = getField("", agoraJson: &json)
-        if ret != 0 {
-            Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
+        var ret = getField(field, agoraJson: &json)
+        if ret != .noError {
+            Log.errorText(text: "getString error \(ret.rawValue) \(str)", tag: "AgoraJson.getJsonString")
+            return nil
         }
         ret = json.getString(&str)
-        if ret != 0 {
-            Log.errorText(text: "getString error \(ret) \(str)", tag: "AgoraJson.getJsonString")
+        if ret != .noError {
+            Log.errorText(text: "getString error \(ret.rawValue) \(str)", tag: "AgoraJson.getJsonString")
+            return nil
+        }
+        return str as String
+    }
+    
+    func getStringValue() -> String? {
+        var str: NSString = ""
+        let ret = getString(&str)
+        if ret != .noError {
+            Log.errorText(text: "getString error \(ret.rawValue) \(str)", tag: "AgoraJson.getStringValue")
+            return nil
         }
         return str as String
     }
