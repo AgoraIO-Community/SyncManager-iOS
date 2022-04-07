@@ -16,7 +16,6 @@ class AskSyncManager: NSObject {
     var askContext: AgoraSyncContext!
     var roomsCollection: AgoraSyncCollection!
     var collections = [DocumentName : AgoraSyncCollection]()
-    var roomDocument: AgoraSyncDocument?
     let roomListKey = "rooms"
     
     /// 保存在collection的doc

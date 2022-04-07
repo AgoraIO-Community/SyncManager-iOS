@@ -206,16 +206,19 @@ public class AgoraSyncManager: NSObject {
         proxy.unsubscribe(reference: reference, key: key)
     }
     
-    func createCollection(internalClassName: String) -> AgoraSyncCollection? {
-        return proxy.createCollection(internalClassName: internalClassName)
+    func createCollection(reference: SceneReference, internalClassName: String) -> AgoraSyncCollection? {
+        return proxy.createCollection(reference: reference, internalClassName: internalClassName)
     }
     
-    func subscribeScene(onDeleted: OnSubscribeBlockVoid? = nil,
+    func subscribeScene(reference: SceneReference,
+                        onDeleted: OnSubscribeBlockVoid? = nil,
                         fail: FailBlock? = nil) {
-        proxy.subscribeScene(onDeleted: onDeleted, fail: fail)
+        proxy.subscribeScene(reference: reference,
+                             onDeleted: onDeleted,
+                             fail: fail)
     }
     
-    func unsubscribeScene(fail: FailBlock? = nil) {
-        proxy.unsubscribeScene(fail: fail)
+    func unsubscribeScene(reference: SceneReference, fail: FailBlock? = nil) {
+        proxy.unsubscribeScene(reference: reference, fail: fail)
     }
 }

@@ -15,8 +15,7 @@ extension AskSyncManager {
         ///  add room
         let ret = addScene(id: scene.id, data: scene.toJson())
         switch ret {
-        case .success(let document):
-            roomDocument = document
+        case .success(_):
             Log.info(text: "add scenne success: \(scene.toJson())", tag: "AskSyncManager.createSceneSync")
             Log.info(text: "createScene ok", tag: "AskSyncManager.createSceneSync")
             DispatchQueue.main.async {
@@ -36,16 +35,13 @@ extension AskSyncManager {
                        manager: AgoraSyncManager,
                        success: SuccessBlockObjSceneRef?,
                        fail: FailBlock?) {
-        if roomDocument == nil { /** get current room info while role is not a host **/
-            roomDocument = roomsCollection.createDocument(withName: sceneId)
-        }
-        
-        guard let sceneDocument = roomDocument else {
-            fatalError("never call this")
+        guard let roomDocument = roomsCollection.createDocument(withName: sceneId) else {
+            Log.errorText(text: "createDocument fail", tag: "AskSyncManager.joinSceneSync")
+            return
         }
         
         let sceneRef = SceneReference(manager: manager,
-                                      document: sceneDocument,
+                                      document: roomDocument,
                                       id: sceneId)
         self.sceneName = sceneId
         Log.info(text: "joinScene ok", tag: "AskSyncManager.joinSceneSync")
@@ -527,9 +523,11 @@ extension AskSyncManager {
         }
     }
     
-    func subscribeSceneSync(onDeleted: OnSubscribeBlockVoid? = nil,
+    func subscribeSceneSync(reference: SceneReference,
+                            onDeleted: OnSubscribeBlockVoid? = nil,
                             fail: FailBlock? = nil) {
-        guard let sceneDocument = roomDocument, let sceneId = sceneName else {
+        let sceneDocument = reference.internalDocument
+        guard let sceneId = sceneName else {
             return
         }
         Log.info(text: "subscribeScene delete event", tag: "AskSyncManager.subscribeSceneSync")
@@ -563,8 +561,10 @@ extension AskSyncManager {
         })
     }
     
-    func unsubscribeSceneSync(fail: FailBlock? = nil) {
-        guard let sceneDocument = roomDocument, let sceneId = sceneName else {
+    func unsubscribeSceneSync(reference: SceneReference,
+                              fail: FailBlock? = nil) {
+        let sceneDocument = reference.internalDocument
+        guard let sceneId = sceneName else {
             return
         }
         sceneDocument.unsubscribe { errorCode in

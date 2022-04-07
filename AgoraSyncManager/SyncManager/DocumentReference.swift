@@ -35,7 +35,7 @@ public class SceneReference: DocumentReference {
                                        parent: self,
                                        className: className)
         case .ask:
-            guard let collection = manager.createCollection(internalClassName: id + className) else {
+            guard let collection = manager.createCollection(reference: self, internalClassName: id + className) else {
                 fatalError("never call this")
             }
             return CollectionReference(manager: manager,
@@ -61,11 +61,12 @@ public class SceneReference: DocumentReference {
     
     public func subscribeScene(onDeleted: OnSubscribeBlockVoid? = nil,
                                fail: FailBlock? = nil) {
-        manager.subscribeScene(onDeleted: onDeleted, fail: fail)
+        manager.subscribeScene(reference: self,
+                               onDeleted: onDeleted,
+                               fail: fail)
     }
-    
     public func unsubscribeScene(fail: FailBlock? = nil) {
-        manager.unsubscribeScene(fail: fail)
+        manager.unsubscribeScene(reference: self, fail: fail)
     }
 }
 

@@ -61,11 +61,13 @@ protocol ISyncManager {
                    fail: FailBlock?)
     func unsubscribe(reference: DocumentReference, key: String) -> Void
     
-    func subscribeScene(onDeleted: OnSubscribeBlockVoid?,
+    func subscribeScene(reference: SceneReference,
+                        onDeleted: OnSubscribeBlockVoid?,
                         fail: FailBlock?)
-    func unsubscribeScene(fail: FailBlock?)
+    func unsubscribeScene(reference: SceneReference,
+                          fail: FailBlock?)
     
-    func createCollection(internalClassName: String) -> AgoraSyncCollection?
+    func createCollection(reference: SceneReference, internalClassName: String) -> AgoraSyncCollection?
 }
 
 public protocol IObject {

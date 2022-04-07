@@ -254,8 +254,6 @@ extension RtmSyncManager: ISyncManager {
         })
     }
     
-    
-    
     public func deleteScenes(sceneIds: [String],
                              success: SuccessBlockVoid?,
                              fail: FailBlock?) {
@@ -379,12 +377,13 @@ extension RtmSyncManager: ISyncManager {
         }
     }
     
-    public func createCollection(internalClassName: String) -> AgoraSyncCollection? {
+    public func createCollection(reference: SceneReference, internalClassName: String) -> AgoraSyncCollection? {
         return nil
     }
     
-    func subscribeScene(onDeleted: OnSubscribeBlockVoid?,
+    func subscribeScene(reference: SceneReference,
+                        onDeleted: OnSubscribeBlockVoid?,
                         fail: FailBlock?) {}
     
-    func unsubscribeScene(fail: FailBlock?) {}
+    func unsubscribeScene(reference: SceneReference, fail: FailBlock?) {}
 }

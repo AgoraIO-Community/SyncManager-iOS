@@ -79,6 +79,10 @@ extension MainVC { /** 基础 **/
             print("取消订阅失败")
         }
     }
+    
+    func deleteRef() {
+        syncRef = nil
+    }
 }
 
 extension MainVC { /** 房间列表 **/

@@ -163,29 +163,28 @@ extension AskSyncManager: ISyncManager {
         }
     }
     
-    func createCollection(internalClassName: String) -> AgoraSyncCollection? {
+    func createCollection(reference: SceneReference,
+                          internalClassName: String) -> AgoraSyncCollection? {
         if let collection = collections[internalClassName] {
             return collection
         }
-        guard let sceneDocument = roomDocument else {
-            fatalError("never call this")
-        }
-        
+        let sceneDocument = reference.internalDocument
         let collection = sceneDocument.createCollection(with: askContext, documentName: internalClassName)
         collections[internalClassName] = collection
         return collection
     }
     
-    func subscribeScene(onDeleted: OnSubscribeBlockVoid?,
+    func subscribeScene(reference: SceneReference,
+                        onDeleted: OnSubscribeBlockVoid?,
                         fail: FailBlock?) {
         queue.async { [weak self] in
-            self?.subscribeSceneSync(onDeleted: onDeleted, fail: fail)
+            self?.subscribeSceneSync(reference: reference, onDeleted: onDeleted, fail: fail)
         }
     }
     
-    func unsubscribeScene(fail: FailBlock?) {
+    func unsubscribeScene(reference: SceneReference, fail: FailBlock?) {
         queue.async { [weak self] in
-            self?.unsubscribeSceneSync(fail: fail)
+            self?.unsubscribeSceneSync(reference: reference, fail: fail)
         }
     }
 }
