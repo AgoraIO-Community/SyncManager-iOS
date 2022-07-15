@@ -10,10 +10,12 @@ import AgoraSyncManager
 
 extension MainVC { /** 基础 **/
     func initManager() {
-        let config = AgoraSyncManager.RtmConfig(appId: Config.appId,
-                                           channelName: channelName)
+//        let config = AgoraSyncManager.RtmConfig(appId: Config.appId,
+//                                           channelName: channelName)
+        let config = AgoraSyncManager.RethinkConfig(appId: Config.appId, channelName: channelName)
+        
         syncManager = AgoraSyncManager(config: config,
-                                  complete: { code in
+                                       complete: { code in
             if code == 0 {
                 self.show("success")
                 print("SyncManager init success")
@@ -26,11 +28,18 @@ extension MainVC { /** 基础 **/
     }
     
     func joinScene() {
-        let scene = Scene(id: sceneId, userId: "userid", property: nil)
-        syncRef = syncManager.joinScene(scene: scene) { [weak self](obj) in
-            self?.show("success")
-            if let str = obj.toJson() { print(str) }
-        }
+        let scene = Scene(id: sceneId, userId: "userid", property: ["sss": "aaaa", "bbbb": "bbbbb"])
+        syncManager.createScene(scene: scene, success: { [weak self] in
+            self?.syncManager.joinScene(sceneId: self?.sceneId ?? "") { syncRef in
+                self?.syncRef = syncRef
+                self?.show("success")
+            } fail: { error in
+                self?.show(error.localizedDescription)
+            }
+
+        }, fail: { [weak self] error in
+            self?.show(error.localizedDescription)
+        })
     }
     
     func deleteScene() {
@@ -52,17 +61,16 @@ extension MainVC { /** 房间列表 **/
 
 extension MainVC { /** 房间信息 key == nil **/
     func updteRoomInfo1() {
-        syncRef.update(data: ["color" : "red \(Int.random(in: 0...100))"],
-                       success: { [weak self](objs) in
+        syncRef.update(key: "", data: ["color" : "red \(Int.random(in: 0...100))"]) { [weak self] objs in
             let string = "update success: " + "\(objs.first?.toJson() ?? "nil")"
             self?.show(string)
-        }, fail: { [weak self] error in
+        } fail: { [weak self] error in
             self?.show("fail: " + error.description)
-        })
+        }
     }
     
     func getRoomInfo1() {
-        syncRef.get() { [weak self] obj in
+        syncRef.get(key: "") { [weak self] obj in
             self?.show("success")
             if let str = obj?.toJson() { print(str) }
             else { print("no value for key (getRoomInfo1)") }
@@ -72,21 +80,21 @@ extension MainVC { /** 房间信息 key == nil **/
     }
     
     func subscribeRoom1() {
-        syncRef.subscribe(onCreated: { obj in
+        syncRef.subscribe(key: "") { obj in
             print("subscribeRoom1-onCreated \(obj.toJson() ?? "")")
-        }, onUpdated: { obj in
+        } onUpdated: { obj in
             print("subscribeRoom1-onUpdated \(obj.toJson() ?? "")")
-        }, onDeleted: { obj in
+        } onDeleted: { obj in
             print("subscribeRoom1-onDeleted \(obj.toJson() ?? "")")
-        }, onSubscribed: {
+        } onSubscribed: {
             print("subscribeRoom1-onSubscribed")
-        }, fail: { error in
+        } fail: { error in
             print("subscribeRoom1 " + error.description)
-        })
+        }
     }
     
     func unsubscribeRoom1() {
-        syncRef.unsubscribe()
+        syncRef.unsubscribe(key: "")
     }
 }
 
@@ -188,7 +196,7 @@ extension MainVC { /** 成员信息 **/
     }
     
     func subscribeMember() {
-        syncRef.collection(className: "member").document().subscribe(key: nil,
+        syncRef.collection(className: "member").document().subscribe(key: "",
                                                                      onCreated: { obj in
             print("onCreated \(obj.toJson() ?? "")")
         }, onUpdated: { obj in
@@ -203,7 +211,7 @@ extension MainVC { /** 成员信息 **/
     }
     
     func unsubscribeMember() {
-        syncRef.collection(className: "member").document().unsubscribe(key: nil)
+        syncRef.collection(className: "member").document().unsubscribe(key: "")
     }
     
     func deleteAllMemners() {

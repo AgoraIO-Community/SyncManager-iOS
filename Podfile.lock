@@ -1,0 +1,28 @@
+PODS:
+  - AgoraRtm_iOS (1.4.9)
+  - CocoaAsyncSocket (7.6.5)
+  - SocketRocket (0.6.0)
+  - Toast-Swift (5.0.1)
+
+DEPENDENCIES:
+  - AgoraRtm_iOS (= 1.4.9)
+  - CocoaAsyncSocket
+  - SocketRocket
+  - Toast-Swift
+
+SPEC REPOS:
+  trunk:
+    - AgoraRtm_iOS
+    - CocoaAsyncSocket
+    - SocketRocket
+    - Toast-Swift
+
+SPEC CHECKSUMS:
+  AgoraRtm_iOS: b4bb9a431ce36f9b44cda423e66b2f96945ca2ab
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
+
+PODFILE CHECKSUM: 4cafd7f9d9378e7ccaf34c5711f7ed676b2a1220
+
+COCOAPODS: 1.11.2

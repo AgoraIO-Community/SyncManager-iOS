@@ -1,0 +1,6 @@
+framework module Pods_SyncManagerDemo {
+  umbrella header "Pods-SyncManagerDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}
