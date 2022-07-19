@@ -222,6 +222,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         let props = params?["props"] as? [String: Any]
         let propsDel = params?["propsDel"] as? [String]
+        let propsUpdate = params?["propsUpdate"] as? String
         let objects = props?.keys
         let attrs = objects?.compactMap { item -> Attribute? in
             let value = props?[item] as? String
@@ -232,8 +233,10 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             return Attribute(key: item, value: value ?? "")
         }
         if action == .subscribe {
-            if let onUpdateBlock = onUpdatedBlocks[channelName], realAction == .send {
-                attrs?.forEach({
+            if let onUpdateBlock = onUpdatedBlocks[channelName], realAction == .send, let propsUpdate = propsUpdate {
+                let params = Utils.toDictionary(jsonString: propsUpdate)
+                let attrs = params.map({ Attribute(key: $0.key, value: ($0.value as? String) ?? "")})
+                attrs.forEach({
                     onUpdateBlock($0)
                 })
             }
@@ -251,7 +254,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             if let successBlock = onSuccessBlock[channelName], action == .query {
                 successBlock(attrs ?? [])
             }
-            if let successBlockVoid = onSuccessBlockVoid[channelName], action == .query {
+            if let successBlockVoid = onSuccessBlockVoid[channelName], action == .query, realAction != .deleteProp {
                 successBlockVoid()
             }
             if let successBlockObjVoid = onSuccessBlockObjOptional[channelName], action == .query {

@@ -37,6 +37,7 @@ extension RethinkSyncManager: ISyncManager {
     
     func subscribe(reference: DocumentReference, key: String, onCreated: OnSubscribeBlock?, onUpdated: OnSubscribeBlock?, onDeleted: OnSubscribeBlock?, onSubscribed: OnSubscribeBlockVoid?, fail: FailBlock?) {
         let className = (reference.className + key) == sceneName ? channelName : reference.className + key
+        print("className == \(className)")
         onCreateBlocks[className] = onCreated
         onUpdatedBlocks[className] = onUpdated
         onDeletedBlocks[className] = onDeleted
