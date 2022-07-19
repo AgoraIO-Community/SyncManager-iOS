@@ -58,6 +58,9 @@ public class RethinkSyncManager: NSObject {
         self.channelName = config.channelName
         self.appId = config.appId
         reConnect(isRemove: true)
+        NotificationCenter.default.addObserver(self, selector: #selector(enterForegroundNotification),
+                                               name: UIApplication.willEnterForegroundNotification,
+                                               object: nil)
     }
     
     public func reConnect(isRemove: Bool = false) {
@@ -109,7 +112,7 @@ public class RethinkSyncManager: NSObject {
     public func write(channelName: String, data: [String: Any?], objectId: String? = nil, isAdd: Bool = false) {
         writeData(channelName: channelName,
                   params: data,
-                  objectId: isAdd ? UUID().uuid16string() : objectId,
+                  objectId: objectId,
                   type: .send,
                   isAdd: isAdd)
     }
@@ -144,10 +147,15 @@ public class RethinkSyncManager: NSObject {
         if type == .subscribe || type == .unsubscribe || type == .query {
             p.removeValue(forKey: "props")
         }
-        if isAdd, let onCreateBlock = onCreateBlocks[channelName] {
+        if isAdd {
             let attr = Attribute(key: propsId,
                                  value: value ?? "")
-             onCreateBlock(attr)
+            if let successBlockObj = onSuccessBlockObj[channelName] {
+                successBlockObj(attr)
+            }
+            if let onCreateBlock = onCreateBlocks[channelName] {
+                onCreateBlock(attr)
+            }
         }
         Log.debug(text: "send params == \(p)", tag: type.rawValue)
         let data = try? JSONSerialization.data(withJSONObject: p, options: [])
@@ -175,6 +183,12 @@ public class RethinkSyncManager: NSObject {
         Log.debug(text: "delete params == \(p)", tag: "delete")
         let data = try? JSONSerialization.data(withJSONObject: p, options: [])
         try? socket?.send(dataNoCopy: data)
+    }
+    
+    @objc
+    private func enterForegroundNotification() {
+        guard socket?.readyState != .OPEN else { return }
+        reConnect()
     }
 }
 
@@ -207,6 +221,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         }
         
         let props = params?["props"] as? [String: Any]
+        let propsDel = params?["propsDel"] as? [String]
         let objects = props?.keys
         let attrs = objects?.compactMap { item -> Attribute? in
             let value = props?[item] as? String
@@ -227,8 +242,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
                     onDeleteBlock(Attribute(key: "", value: ""))
                     return
                 }
-                attrs?.forEach({
-                    onDeleteBlock($0)
+                propsDel?.forEach({
+                    let attr = Attribute(key: $0, value: "")
+                    onDeleteBlock(attr)
                 })
             }
         } else {
@@ -240,10 +256,6 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             }
             if let successBlockObjVoid = onSuccessBlockObjOptional[channelName], action == .query {
                 successBlockObjVoid(attrs?.first)
-            }
-            if let successBlockObj = onSuccessBlockObj[channelName], action == .query {
-                guard let attr = attrs?.first else { return }
-                successBlockObj(attr)
             }
         }
         Log.info(text: "channelName == \(channelName) action == \(action.rawValue) realAction == \(realAction.rawValue) props == \(props ?? [:])", tag: "收到消息")
