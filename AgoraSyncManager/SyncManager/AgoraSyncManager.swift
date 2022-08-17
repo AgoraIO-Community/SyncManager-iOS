@@ -18,18 +18,6 @@ public class AgoraSyncManager: NSObject {
     /// - Parameters:
     ///   - config: config of rtm
     ///   - complete: `code = 0` is success, else error
-    public init(config: RtmConfig,
-                complete: @escaping SuccessBlockInt) {
-        let tempConfig = RtmSyncManager.Config(appId: config.appId,
-                                               channelName: config.channelName)
-        proxy = RtmSyncManager(config: tempConfig,
-                               complete: complete)
-    }
-    
-    /// init
-    /// - Parameters:
-    ///   - config: config of rtm
-    ///   - complete: `code = 0` is success, else error
     public init(config: RethinkConfig,
                 complete: @escaping SuccessBlockInt) {
         let tempConfig = RethinkSyncManager.Config(appId: config.appId,
