@@ -10,7 +10,6 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = "10.0"
   spec.source       = { :git => "https://github.com/AgoraIO-Community/SyncManager-iOS.git", :tag => spec.version }
   spec.source_files  = "AgoraSyncManager/**/*.swift"
-  spec.exclude_files = "AgoraSyncManager/SyncManager/RtmManager/*.swift"
   spec.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'DEFINES_MODULE' => 'YES' }
   spec.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'DEFINES_MODULE' => 'YES' }
   spec.ios.deployment_target = '11.0'

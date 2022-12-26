@@ -7,9 +7,8 @@
 
 import UIKit
 import AgoraSyncManager
-import AgoraRtmKit
 
-class MainVC: UIViewController, AgoraRtmChannelDelegate {
+class MainVC: UIViewController {
     let sectionTitles = ["基础", "房间列表", "房间信息(key = nil)", "房间信息(key = member)", "成员信息"]
     let list = [["初始化", "加入房间", "删除房间"],
                 ["读取房间列表"],
@@ -22,9 +21,6 @@ class MainVC: UIViewController, AgoraRtmChannelDelegate {
     let channelName = "testDefaultScene"
     let sceneId = "sceneId"
     var memberObjId: String?
-    var rtm: AgoraRtmKit!
-    var channel: AgoraRtmChannel!
-    var channel2: AgoraRtmChannel!
     
     override func viewDidLoad() {
         super.viewDidLoad()

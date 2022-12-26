@@ -14,10 +14,6 @@
 		263A8127274605890067E868 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8119274605890067E868 /* Models.swift */; };
 		263A8128274605890067E868 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A811A274605890067E868 /* Protocols.swift */; };
 		263A8129274605890067E868 /* SyncError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A811B274605890067E868 /* SyncError.swift */; };
-		263A812A274605890067E868 /* RtmSyncManager+Handle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A811D274605890067E868 /* RtmSyncManager+Handle.swift */; };
-		263A812B274605890067E868 /* RtmSyncManager+Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A811E274605890067E868 /* RtmSyncManager+Info.swift */; };
-		263A812D274605890067E868 /* RtmSyncManager+ISyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8120274605890067E868 /* RtmSyncManager+ISyncManager.swift */; };
-		263A812E274605890067E868 /* RtmSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8121274605890067E868 /* RtmSyncManager.swift */; };
 		263A812F274605890067E868 /* AgoraSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263A8122274605890067E868 /* AgoraSyncManager.swift */; };
 		265F4F15276B4FB2009A096B /* DocumentReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265F4F14276B4FB2009A096B /* DocumentReference.swift */; };
 		265F4F17276B5004009A096B /* CollectionReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265F4F16276B5004009A096B /* CollectionReference.swift */; };
@@ -81,10 +77,6 @@
 		263A8119274605890067E868 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		263A811A274605890067E868 /* Protocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		263A811B274605890067E868 /* SyncError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncError.swift; sourceTree = "<group>"; };
-		263A811D274605890067E868 /* RtmSyncManager+Handle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RtmSyncManager+Handle.swift"; sourceTree = "<group>"; };
-		263A811E274605890067E868 /* RtmSyncManager+Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RtmSyncManager+Info.swift"; sourceTree = "<group>"; };
-		263A8120274605890067E868 /* RtmSyncManager+ISyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RtmSyncManager+ISyncManager.swift"; sourceTree = "<group>"; };
-		263A8121274605890067E868 /* RtmSyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSyncManager.swift; sourceTree = "<group>"; };
 		263A8122274605890067E868 /* AgoraSyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgoraSyncManager.swift; sourceTree = "<group>"; };
 		265F4F14276B4FB2009A096B /* DocumentReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentReference.swift; sourceTree = "<group>"; };
 		265F4F16276B5004009A096B /* CollectionReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionReference.swift; sourceTree = "<group>"; };
@@ -173,17 +165,6 @@
 			path = Objects;
 			sourceTree = "<group>";
 		};
-		263A811C274605890067E868 /* RtmManager */ = {
-			isa = PBXGroup;
-			children = (
-				263A811D274605890067E868 /* RtmSyncManager+Handle.swift */,
-				263A811E274605890067E868 /* RtmSyncManager+Info.swift */,
-				263A8120274605890067E868 /* RtmSyncManager+ISyncManager.swift */,
-				263A8121274605890067E868 /* RtmSyncManager.swift */,
-			);
-			path = RtmManager;
-			sourceTree = "<group>";
-		};
 		265F4F13276B4F8A009A096B /* SyncManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -192,7 +173,6 @@
 				265F4F14276B4FB2009A096B /* DocumentReference.swift */,
 				265F4F16276B5004009A096B /* CollectionReference.swift */,
 				263A811A274605890067E868 /* Protocols.swift */,
-				263A811C274605890067E868 /* RtmManager */,
 				E7377D972873DBA9008F6C62 /* RethinkDB */,
 			);
 			path = SyncManager;
@@ -502,11 +482,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7377D992873DE92008F6C62 /* RethinkSyncManager.swift in Sources */,
-				263A812D274605890067E868 /* RtmSyncManager+ISyncManager.swift in Sources */,
 				263A812F274605890067E868 /* AgoraSyncManager.swift in Sources */,
-				263A812B274605890067E868 /* RtmSyncManager+Info.swift in Sources */,
-				263A812E274605890067E868 /* RtmSyncManager.swift in Sources */,
-				263A812A274605890067E868 /* RtmSyncManager+Handle.swift in Sources */,
 				265F4F29277495D0009A096B /* Log.swift in Sources */,
 				265F4F15276B4FB2009A096B /* DocumentReference.swift in Sources */,
 				263A8125274605890067E868 /* Blocks.swift in Sources */,

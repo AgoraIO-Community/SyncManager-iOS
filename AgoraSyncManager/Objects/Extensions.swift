@@ -6,14 +6,13 @@
 //
 
 import Foundation
-import AgoraRtmKit
 import CommonCrypto
 
-extension AgoraRtmChannelAttribute {
-    func toAttribute() -> IObject {
-        return Attribute(key: self.key, value: self.value)
-    }
-}
+//extension AgoraRtmChannelAttribute {
+//    func toAttribute() -> IObject {
+//        return Attribute(key: self.key, value: self.value)
+//    }
+//}
 
 extension UUID {
     func uuid16string() -> String {
