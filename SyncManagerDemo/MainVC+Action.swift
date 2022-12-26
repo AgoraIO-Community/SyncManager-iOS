@@ -172,7 +172,7 @@ extension MainVC { /** 成员信息 **/
         }
         syncRef.collection(className: "member")
             .delete(id: id,
-                    success: { [weak self] in
+                    success: { [weak self] _ in
                 self?.show("success")
             }, fail: { [weak self](error) in
                 self?.show("fail: " + error.description)

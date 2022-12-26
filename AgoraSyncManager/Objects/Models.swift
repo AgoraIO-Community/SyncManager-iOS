@@ -68,6 +68,12 @@ class Attribute: IObject, Equatable {
         return dict?[key]
     }
     
+    func toDict() -> [String : Any] {
+        var dict = Utils.toDictionary(jsonString: object)
+        dict["objectId"] = key
+        return dict
+    }
+    
     func toJson() -> String? {
         var dict = Utils.toDictionary(jsonString: object)
         dict["objectId"] = key
@@ -115,3 +121,6 @@ struct CollectionItem: Codable {
         return obj?.objectId
     }
 }
+
+
+
