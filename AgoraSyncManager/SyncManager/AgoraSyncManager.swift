@@ -221,4 +221,8 @@ public class AgoraSyncManager: NSObject {
     func unsubscribeScene(reference: SceneReference, fail: FailBlock? = nil) {
         proxy.unsubscribeScene(reference: reference, fail: fail)
     }
+    
+    public func subscribeConnectState(state: @escaping ConnectBlockState) {
+        proxy.subscribeConnectState(state: state)
+    }
 }
