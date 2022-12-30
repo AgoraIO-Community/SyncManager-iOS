@@ -29,6 +29,8 @@ enum SocketType: String {
     case query
     case deleteProp
     case ping
+    case syncRoom
+    case deleteRoom
 }
 
 public enum SocketConnectState: Int {
@@ -39,13 +41,12 @@ public enum SocketConnectState: Int {
 }
 
 public class RethinkSyncManager: NSObject {
-    private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
+    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
 //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
     private var timer: Timer?
     private var state: SRReadyState = .CLOSED
     private var socket: SRWebSocket?
     private var connectBlock: SuccessBlockInt?
-    private var completeBlock: SuccessBlockInt?
     var onSuccessBlock = [String: SuccessBlock]()
     var onSuccessBlockVoid = [String: SuccessBlockVoid]()
     var onDeleteBlockObjOptional = [String: SuccessBlockObjOptional?]()
@@ -101,7 +102,7 @@ public class RethinkSyncManager: NSObject {
     
     private func syncRoom() {
         guard !sceneName.isEmpty && !roomId.isEmpty else { return }
-        let params = ["action": SocketType.ping.rawValue,
+        let params = ["action": SocketType.syncRoom.rawValue,
                       "appId": appId,
                       "sceneName": sceneName,
                       "roomId": roomId,
@@ -220,7 +221,7 @@ public class RethinkSyncManager: NSObject {
     }
     
     public func getRoomList(channelName: String) {
-        let params = ["action": "getRoomList",
+        let params = ["action": SocketType.getRoomList.rawValue,
                       "appId": appId,
                       "sceneName": channelName,
                       "requestId": UUID().uuid16string()]
@@ -229,7 +230,7 @@ public class RethinkSyncManager: NSObject {
     }
     
     public func deleteRoom() {
-        let params = ["action": "deleteRoom",
+        let params = ["action": SocketType.deleteRoom.rawValue,
                       "appId": appId,
                       "sceneName": sceneName,
                       "roomId": roomId,
@@ -293,9 +294,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             connectStateBlock?(SocketConnectState(rawValue: webSocket.readyState.rawValue) ?? .closed)
         }
         state = webSocket.readyState
-        if let complete = completeBlock {
+        if let complete = connectBlock {
             complete(state == .OPEN ? 0 : -1)
-            completeBlock = nil
+            connectBlock = nil
         }
         
         guard socket?.readyState == .OPEN, !onUpdatedBlocks.isEmpty else { return }
@@ -309,7 +310,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         guard let data = message as? Data else { return }
         let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
         let action = SocketType(rawValue: dict?["action"] as? String ?? "") ?? .send
-        if action == .ping { return }
+        if action == .ping || action == .syncRoom { return }
         if let msg = dict?["msg"] as? String, msg == "success" {
             Log.info(text: "消息发送成功", tag: "socket")
         }
@@ -318,7 +319,6 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let sceneName = dict?["sceneName"] as? String ?? ""
         let channelName = objType.isEmpty ? sceneName : objType
         let realAction = SocketType(rawValue: dict?["action"] as? String ?? "") ?? .send
-
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
             let attrs = roomListHandler(data: params)
