@@ -49,12 +49,12 @@ extension RethinkSyncManager: ISyncManager {
                 data: [String: Any?],
                 success: SuccessBlock?,
                 fail: FailBlock?) {
-        let className = (reference.className + key) == roomId ? sceneName : reference.className + key
+        let className = (reference.className + key) == roomId ? "room" : reference.className + key
         onSuccessBlock[className] = success
         onFailBlock[className] = fail
         write(channelName: key,
               data: data,
-              roomId: reference.className,
+              roomId: roomId,
               objectId: data["objectId"] as? String,
               objType: className)
     }
@@ -66,21 +66,21 @@ extension RethinkSyncManager: ISyncManager {
                    onDeleted: OnSubscribeBlock?,
                    onSubscribed: OnSubscribeBlockVoid?,
                    fail: FailBlock?) {
-        let className = (reference.className + key) == roomId ? sceneName : reference.className + key
+        let className = (reference.className + key) == roomId ? "room" : reference.className + key
         print("className == \(className)")
         onCreateBlocks[className] = onCreated
         onUpdatedBlocks[className] = onUpdated
         onDeletedBlocks[className] = onDeleted
         subscribe(channelName: key,
-                  roomId: reference.className,
+                  roomId: roomId,
                   objType: className)
         onSubscribed?()
     }
 
     func unsubscribe(reference: DocumentReference, key: String) {
-        let className = (reference.className + key) == roomId ? sceneName : reference.className + key
+        let className = (reference.className + key) == roomId ? "room" : reference.className + key
         unsubscribe(channelName: key,
-                    roomId: reference.className,
+                    roomId: roomId,
                     objType: className)
         onCreateBlocks.removeValue(forKey: className)
         onUpdatedBlocks.removeValue(forKey: className)
@@ -133,7 +133,6 @@ extension RethinkSyncManager: ISyncManager {
              data: [String: Any?],
              success: SuccessBlockObj?,
              fail: FailBlock?) {
-        let roomId = reference.parent.className
         let className = reference.className.replacingOccurrences(of: roomId, with: "")
         onSuccessBlockObj[reference.className] = success
         onFailBlock[reference.className] = fail
@@ -153,7 +152,7 @@ extension RethinkSyncManager: ISyncManager {
                 data: [String: Any?],
                 success: SuccessBlockVoid?,
                 fail: FailBlock?) {
-        let className = reference.className == roomId ? sceneName : reference.className
+        let className = reference.className == roomId ? "room" : reference.className
         onSuccessBlockVoid[className] = success
         onFailBlock[className] = fail
         write(channelName: reference.className,
@@ -167,17 +166,25 @@ extension RethinkSyncManager: ISyncManager {
                 id: String,
                 success: SuccessBlockObjOptional?,
                 fail: FailBlock?) {
-        let className = reference.className == roomId ? sceneName : reference.className
+        let className = reference.className == roomId ? "room" : reference.className
         onDeleteBlockObjOptional[className] = success
         onFailBlock[className] = fail
+        if className == "room" {
+            deleteRoom()
+            return
+        }
         delete(channelName: className, data: ["objectId": id])
     }
 
     func delete(documentRef: DocumentReference, success: SuccessBlock?, fail: FailBlock?) {
         let keys = documentRef.id.isEmpty ? nil : [documentRef.id]
-        let className = documentRef.className == roomId ? sceneName : documentRef.className
+        let className = documentRef.className == roomId ? "room" : documentRef.className
         onSuccessBlock[className] = success
         onFailBlock[className] = fail
+        if className == "room" {
+            deleteRoom()
+            return
+        }
         if let keys = keys {
             let params = keys.map({ ["objectId": $0] })
             delete(channelName: className, data: params)
@@ -185,7 +192,7 @@ extension RethinkSyncManager: ISyncManager {
     }
 
     func delete(collectionRef: CollectionReference, success: SuccessBlock?, fail: FailBlock?) {
-        let className = collectionRef.className == roomId ? sceneName : collectionRef.className
+        let className = collectionRef.className == roomId ? "room" : collectionRef.className
         onSuccessBlock[className] = success
         onFailBlock[className] = fail
         delete(channelName: className, data: [])

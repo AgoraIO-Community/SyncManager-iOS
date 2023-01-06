@@ -42,6 +42,7 @@ public enum SocketConnectState: Int {
 
 public class RethinkSyncManager: NSObject {
     private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
+//    private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
 //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
     private var timer: Timer?
     private var state: SRReadyState = .CLOSED
@@ -60,6 +61,7 @@ public class RethinkSyncManager: NSObject {
     var appId: String = ""
     var roomId: String = ""
     var sceneName: String = ""
+    var isOwner: Bool = false
 
     /// init
     /// - Parameters:
@@ -94,7 +96,9 @@ public class RethinkSyncManager: NSObject {
                           "requestId": UUID().uuid16string()]
             let data = Utils.toJsonString(dict: params)?.data(using: .utf8)
             try? self?.socket?.send(dataNoCopy: data)
-            self?.syncRoom()
+            if self?.isOwner == true {
+                self?.syncRoom()
+            }
         })
         timer?.fire()
         RunLoop.main.add(timer!, forMode: .common)
@@ -309,7 +313,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
     public func webSocket(_ webSocket: SRWebSocket, didReceiveMessage message: Any) {
         guard let data = message as? Data else { return }
         let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        Log.info(text: "dict == \(dict ?? [:])", tag: "收到消息")
         let action = SocketType(rawValue: dict?["action"] as? String ?? "") ?? .send
+        Log.info(text: "action == \(action.rawValue)", tag: "action")
         if action == .ping || action == .syncRoom { return }
         if let msg = dict?["msg"] as? String, msg == "success" {
             Log.info(text: "消息发送成功", tag: "socket")
@@ -318,7 +324,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let objType = dict?["objType"] as? String ?? ""
         let sceneName = dict?["sceneName"] as? String ?? ""
         let channelName = objType.isEmpty ? sceneName : objType
-        let realAction = SocketType(rawValue: dict?["action"] as? String ?? "") ?? .send
+        let realAction = SocketType(rawValue: params?["action"] as? String ?? "") ?? .send
+        Log.info(text: "realAction == \(realAction.rawValue)", tag: "realAction")
+    
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
             let attrs = roomListHandler(data: params)
@@ -328,7 +336,8 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         if let code = dict?["code"] as? String, code != "0", let msg = dict?["msg"] as? String {
             let error = SyncError(message: "\(channelName) \(msg)", code: Int(code) ?? 0)
-            Log.errorText(text: "code == \(code)  action == \(realAction) channelName == \(channelName) msg == \(msg)", tag: "error")
+            Log.errorText(text: "code == \(code)  action == \(realAction) channelName == \(channelName) msg == \(msg)",
+                          tag: "error")
             onFailBlock[channelName]?(error)
             return
         }
@@ -338,13 +347,18 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let propsUpdate = params?["propsUpdate"] as? String
         let objects = props?.keys
         let attrs = attrsHandler(params: props)
+        let isDelete = (params?["isDeleted"] as? Bool) ?? false
+        if isDelete, let onDeleteBlock = onDeletedBlocks[channelName] {
+            onDeleteBlock(Attribute(key: roomId, value: ""))
+            return
+        }
         if action == .subscribe {
             if let onUpdateBlock = onUpdatedBlocks[channelName], let propsUpdate = propsUpdate {
                 let params = Utils.toDictionary(jsonString: propsUpdate)
                 let attrs = params.map({ Attribute(key: $0.key, value: ($0.value as? String) ?? "") })
                 attrs.forEach({ onUpdateBlock($0) })
             }
-            if let onDeleteBlock = onDeletedBlocks[channelName], realAction == .deleteProp {
+            if let onDeleteBlock = onDeletedBlocks[channelName], realAction == .deleteProp  {
                 if objects?.isEmpty ?? false {
                     onDeleteBlock(Attribute(key: propsDel?.first ?? "", value: ""))
                     return
@@ -368,7 +382,6 @@ extension RethinkSyncManager: SRWebSocketDelegate {
                 deleteBlock?(attrs?.first)
             }
         }
-        Log.info(text: "channelName == \(channelName) action == \(action.rawValue) realAction == \(realAction.rawValue) props == \(props ?? [:])", tag: "收到消息")
     }
 
     public func webSocket(_ webSocket: SRWebSocket, didFailWithError error: Error) {
