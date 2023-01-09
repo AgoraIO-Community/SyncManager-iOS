@@ -172,6 +172,11 @@ public class RethinkSyncManager: NSObject {
                            objType: String,
                            isAdd: Bool = false)
     {
+        if self.roomId.isEmpty {
+            Log.error(error: "请先createScene再joinScene后调用其它方法", tag: "SyncManager")
+            return
+        }
+        
         var newParams = params
         var propsId: String = objectId ?? UUID().uuid16string()
         if objectId == nil && params is [String: Any] {
