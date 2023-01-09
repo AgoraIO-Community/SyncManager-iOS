@@ -10,13 +10,16 @@ import Foundation
 public struct Scene: Codable {
     let id: String
     let userId: String
+    let isOwner: Bool
     let property: [String : Any]?
     
     public init(id: String,
                 userId: String,
+                isOwner: Bool,
                 property: [String : Any]?) {
         self.id = id
         self.userId = userId
+        self.isOwner = isOwner
         self.property = property
     }
     
@@ -33,6 +36,7 @@ public struct Scene: Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case userId
+        case isOwner
         case property
     }
     
@@ -40,6 +44,7 @@ public struct Scene: Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decode(String.self, forKey: .id)
         userId = try values.decode(String.self, forKey: .userId)
+        isOwner = try values.decode(Bool.self, forKey: .isOwner)
         let data = try values.decode(Data.self, forKey: .property)
         property = try JSONSerialization.jsonObject(with: data,
                                                     options: []) as? [String: Any]
@@ -49,6 +54,7 @@ public struct Scene: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(userId, forKey: .userId)
+        try container.encode(isOwner, forKey: .isOwner)
         let data = try JSONSerialization.data(withJSONObject: property ?? [:],
                                               options: [])
         try container.encode(data, forKey: .property)

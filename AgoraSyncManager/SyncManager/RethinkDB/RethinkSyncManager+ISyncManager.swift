@@ -16,6 +16,7 @@ extension RethinkSyncManager: ISyncManager {
         /** add room in list **/
         let attr = Attribute(key: scene.id, value: scene.toJson())
         roomId = scene.id
+        isOwner = scene.isOwner
         write(channelName: roomId,
               data: attr.toDict(),
               roomId: roomId,

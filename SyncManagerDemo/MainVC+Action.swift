@@ -28,7 +28,7 @@ extension MainVC { /** 基础 **/
     }
     
     func joinScene() {
-        let scene = Scene(id: sceneId, userId: "userid", property: ["sss": "aaaa", "bbbb": "bbbbb"])
+        let scene = Scene(id: sceneId, userId: "userid", isOwner: true, property: ["sss": "aaaa", "bbbb": "bbbbb"])
         syncManager.createScene(scene: scene, success: { [weak self] in
             self?.syncManager.joinScene(sceneId: self?.sceneId ?? "") { syncRef in
                 self?.syncRef = syncRef
