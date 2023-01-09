@@ -20,7 +20,7 @@ extension RethinkSyncManager: ISyncManager {
         write(channelName: roomId,
               data: attr.toDict(),
               roomId: roomId,
-              objectId: sceneName,
+              objectId: roomId,
               objType: "room")
         success?()
     }
