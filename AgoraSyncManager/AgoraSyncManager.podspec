@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "AgoraSyncManager"
-  spec.version      = "1.1.1"
+  spec.version      = "1.1.2"
   spec.summary      = "AgoraSyncManager"
   spec.description  = "AgoraSyncManager"
 

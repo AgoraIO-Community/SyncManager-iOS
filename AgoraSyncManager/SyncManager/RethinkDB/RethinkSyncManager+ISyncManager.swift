@@ -14,15 +14,35 @@ extension RethinkSyncManager: ISyncManager {
     
     func createScene(scene: Scene, success: SuccessBlockVoid?, fail: FailBlock?) {
         /** add room in list **/
+        
         let attr = Attribute(key: scene.id, value: scene.toJson())
         roomId = scene.id
         isOwner = scene.isOwner
-        write(channelName: roomId,
-              data: attr.toDict(),
-              roomId: roomId,
-              objectId: roomId,
-              objType: "room")
-        success?()
+        if isOwner {
+            write(channelName: scene.id,
+                  data: attr.toDict(),
+                  roomId: scene.id,
+                  objectId: scene.id,
+                  objType: "room")
+            success?()
+            return
+        }
+        queryRoom(channelName: roomId, roomId: roomId, objType: "room") { [weak self] object in
+            guard let self = self else { return }
+            if object == nil {
+                let error = SyncError(message: "房间不存在", code: -1)
+                fail?(error)
+                return
+            }
+            self.queryRoomCompletion = nil
+            
+            self.write(channelName: scene.id,
+                  data: attr.toDict(),
+                  roomId: scene.id,
+                  objectId: scene.id,
+                  objType: "room")
+            success?()
+        }
     }
 
     func joinScene(sceneId: String,

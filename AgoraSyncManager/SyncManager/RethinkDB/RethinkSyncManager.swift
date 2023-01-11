@@ -48,6 +48,7 @@ public class RethinkSyncManager: NSObject {
     private var state: SRReadyState = .CLOSED
     private var socket: SRWebSocket?
     private var connectBlock: SuccessBlockInt?
+    var queryRoomCompletion: SuccessBlockObjOptional?
     var onSuccessBlock = [String: SuccessBlock]()
     var onSuccessBlockVoid = [String: SuccessBlockVoid]()
     var onDeleteBlockObjOptional = [String: SuccessBlockObjOptional?]()
@@ -219,6 +220,18 @@ public class RethinkSyncManager: NSObject {
         }
     }
 
+    public func queryRoom(channelName: String,
+                          roomId: String,
+                          objType: String,
+                          completion: SuccessBlockObjOptional?) {
+        queryRoomCompletion = completion
+        writeData(channelName: channelName,
+                  params: [:],
+                  roomId: roomId,
+                  type: .query,
+                  objType: objType)
+    }
+    
     public func query(channelName: String,
                       roomId: String,
                       objType: String) {
@@ -352,6 +365,10 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let propsUpdate = params?["propsUpdate"] as? String
         let objects = props?.keys
         let attrs = attrsHandler(params: props)
+        
+        // 返回查询房间结果
+        queryRoomCompletion?(attrs?.first)
+        
         let isDelete = (params?["isDeleted"] as? Bool) ?? false
         if isDelete, let onDeleteBlock = onDeletedBlocks[channelName] {
             onDeleteBlock(Attribute(key: roomId, value: ""))
