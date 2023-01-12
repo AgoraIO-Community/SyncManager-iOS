@@ -100,6 +100,8 @@ public class RethinkSyncManager: NSObject {
             if self?.isOwner == true {
                 self?.syncRoom()
             }
+            //check connect status
+            self?._reConnectIfNeed()
         })
         timer?.fire()
         RunLoop.main.add(timer!, forMode: .common)
@@ -283,6 +285,10 @@ public class RethinkSyncManager: NSObject {
 
     @objc
     private func enterForegroundNotification() {
+        _reConnectIfNeed()
+    }
+    
+    private func _reConnectIfNeed() {
         guard socket?.readyState != .OPEN, socket?.readyState != .CONNECTING else { return }
         reConnect()
     }
