@@ -59,8 +59,8 @@ public class RethinkSyncManager: NSObject {
     var onUpdatedBlocks = [String: OnSubscribeBlock]()
     var onDeletedBlocks = [String: OnSubscribeBlock]()
     var connectStateBlock: ConnectBlockState?
+    var rooms = [String]()
     var appId: String = ""
-    var roomId: String = ""
     var sceneName: String = ""
     var isOwner: Bool = false
 
@@ -91,28 +91,29 @@ public class RethinkSyncManager: NSObject {
         timer = Timer.scheduledTimer(withTimeInterval: 10,
                                      repeats: true,
                                      block: { [weak self] _ in
-            let params = ["action": SocketType.ping.rawValue,
-                          "appId": self?.appId ?? "",
-                          "channelName": self?.roomId ?? "",
-                          "requestId": UUID().uuid16string()]
-            let data = Utils.toJsonString(dict: params)?.data(using: .utf8)
-            try? self?.socket?.send(dataNoCopy: data)
+            self?.rooms.forEach({
+                let params = ["action": SocketType.ping.rawValue,
+                              "appId": self?.appId ?? "",
+                              "channelName": $0,
+                              "requestId": UUID().uuid16string()]
+                let data = Utils.toJsonString(dict: params)?.data(using: .utf8)
+                try? self?.socket?.send(dataNoCopy: data)
+            })
+            
             if self?.isOwner == true {
                 self?.syncRoom()
             }
-            //check connect status
-            self?._reConnectIfNeed()
         })
         timer?.fire()
         RunLoop.main.add(timer!, forMode: .common)
     }
     
     private func syncRoom() {
-        guard !sceneName.isEmpty && !roomId.isEmpty else { return }
+        guard !sceneName.isEmpty && !rooms.isEmpty else { return }
         let params = ["action": SocketType.syncRoom.rawValue,
                       "appId": appId,
                       "sceneName": sceneName,
-                      "roomId": roomId,
+                      "roomId": rooms.first ?? "",
                       "requestId": UUID().uuid16string()]
         let data = Utils.toJsonString(dict: params)?.data(using: .utf8)
         try? socket?.send(dataNoCopy: data)
@@ -132,6 +133,7 @@ public class RethinkSyncManager: NSObject {
         onCreateBlocks.removeAll()
         onUpdatedBlocks.removeAll()
         onDeletedBlocks.removeAll()
+        rooms.removeAll()
     }
 
     public func write(channelName: String,
@@ -175,7 +177,7 @@ public class RethinkSyncManager: NSObject {
                            objType: String,
                            isAdd: Bool = false)
     {
-        if self.roomId.isEmpty {
+        if self.rooms.isEmpty {
             Log.error(error: "请先createScene再joinScene后调用其它方法", tag: "SyncManager")
             return
         }
@@ -257,13 +259,13 @@ public class RethinkSyncManager: NSObject {
         let params = ["action": SocketType.deleteRoom.rawValue,
                       "appId": appId,
                       "sceneName": sceneName,
-                      "roomId": roomId,
+                      "roomId": rooms.first ?? "",
                       "requestId": UUID().uuid16string()]
         let data = try? JSONSerialization.data(withJSONObject: params, options: [])
         try? socket?.send(dataNoCopy: data)
     }
 
-    public func delete(channelName: String, data: Any) {
+    public func delete(channelName: String, roomId: String, data: Any) {
         var objectIds: [Any] = []
         if let params = data as? [[String: Any]] {
             objectIds = params.compactMap({ $0["objectId"] })
@@ -282,13 +284,9 @@ public class RethinkSyncManager: NSObject {
         let data = try? JSONSerialization.data(withJSONObject: p, options: [])
         try? socket?.send(dataNoCopy: data)
     }
-
+    
     @objc
     private func enterForegroundNotification() {
-        _reConnectIfNeed()
-    }
-    
-    private func _reConnectIfNeed() {
         guard socket?.readyState != .OPEN, socket?.readyState != .CONNECTING else { return }
         reConnect()
     }
@@ -329,8 +327,10 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         guard socket?.readyState == .OPEN, !onUpdatedBlocks.isEmpty else { return }
         // 重连成功后重新订阅
-        onUpdatedBlocks.keys.forEach({
-            subscribe(channelName: $0, roomId: roomId, objType: $0)
+        onUpdatedBlocks.keys.forEach({ item in
+            rooms.forEach({
+                subscribe(channelName: item, roomId: $0, objType: item)
+            })
         })
     }
 
@@ -367,6 +367,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         }
 
         let props = params?["props"] as? [String: Any]
+        let roomId = params?["roomId"] as? String
         let propsDel = params?["propsDel"] as? [String]
         let propsUpdate = params?["propsUpdate"] as? String
         let objects = props?.keys
@@ -377,7 +378,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         let isDelete = (params?["isDeleted"] as? Bool) ?? false
         if isDelete, let onDeleteBlock = onDeletedBlocks[channelName] {
-            onDeleteBlock(Attribute(key: roomId, value: ""))
+            onDeleteBlock(Attribute(key: roomId ?? "", value: ""))
             return
         }
         if action == .subscribe {

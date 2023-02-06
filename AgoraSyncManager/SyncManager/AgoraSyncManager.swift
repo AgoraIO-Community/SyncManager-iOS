@@ -225,4 +225,8 @@ public class AgoraSyncManager: NSObject {
     public func subscribeConnectState(state: @escaping ConnectBlockState) {
         proxy.subscribeConnectState(state: state)
     }
+    
+    public func leaveScene(roomId: String) {
+        proxy.leaveScene(roomId: roomId)
+    }
 }

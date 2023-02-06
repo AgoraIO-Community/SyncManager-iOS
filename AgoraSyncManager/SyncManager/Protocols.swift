@@ -68,6 +68,8 @@ protocol ISyncManager {
                           fail: FailBlock?)
     
     func subscribeConnectState(state: @escaping  ConnectBlockState)
+    
+    func leaveScene(roomId: String)
 }
 
 public protocol IObject {
