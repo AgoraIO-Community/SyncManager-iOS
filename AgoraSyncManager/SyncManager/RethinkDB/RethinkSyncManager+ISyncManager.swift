@@ -193,7 +193,8 @@ extension RethinkSyncManager: ISyncManager {
               data: data,
               roomId: roomId,
               objectId: id,
-              objType: className)
+              objType: className,
+              isUpdate: true)
     }
 
     func delete(reference: CollectionReference,

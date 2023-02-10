@@ -141,14 +141,16 @@ public class RethinkSyncManager: NSObject {
                       roomId: String,
                       objectId: String? = nil,
                       objType: String,
-                      isAdd: Bool = false) {
+                      isAdd: Bool = false,
+                      isUpdate: Bool = false) {
         writeData(channelName: channelName,
                   params: data,
                   roomId: roomId,
                   objectId: objectId,
                   type: .send,
                   objType: objType,
-                  isAdd: isAdd)
+                  isAdd: isAdd,
+                  isUpdate: isUpdate)
     }
 
     public func subscribe(channelName: String,
@@ -175,7 +177,8 @@ public class RethinkSyncManager: NSObject {
                            objectId: String? = nil,
                            type: SocketType,
                            objType: String,
-                           isAdd: Bool = false)
+                           isAdd: Bool = false,
+                           isUpdate: Bool = false)
     {
         if self.rooms.isEmpty {
             Log.error(error: "请先createScene再joinScene后调用其它方法", tag: "SyncManager")
@@ -214,6 +217,9 @@ public class RethinkSyncManager: NSObject {
             if let onCreateBlock = onCreateBlocks[objType] {
                 onCreateBlock(attr)
             }
+        }
+        if isUpdate, let success = onSuccessBlockVoid[objType] {
+            success()
         }
         Log.debug(text: "send params == \(p)", tag: type.rawValue)
         let data = try? JSONSerialization.data(withJSONObject: p, options: [])
@@ -374,7 +380,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let attrs = attrsHandler(params: props)
         
         // 返回查询房间结果
-        queryRoomCompletion?(attrs?.first)
+        if action == .query {
+            queryRoomCompletion?(attrs?.first)
+        }
         
         let isDelete = (params?["isDeleted"] as? Bool) ?? false
         if isDelete, let onDeleteBlock = onDeletedBlocks[channelName] {
