@@ -50,6 +50,7 @@ public class RethinkSyncManager: NSObject {
     private var connectBlock: SuccessBlockInt?
     var queryRoomCompletion: SuccessBlockObjOptional?
     var onSuccessBlock = [String: SuccessBlock]()
+    var onUpdateBlock = [String: SuccessBlock]()
     var onSuccessBlockVoid = [String: SuccessBlockVoid]()
     var onDeleteBlockObjOptional = [String: SuccessBlockObjOptional?]()
     var onSuccessBlockObjOptional = [String: SuccessBlockObjOptional]()
@@ -125,6 +126,7 @@ public class RethinkSyncManager: NSObject {
         socket?.close()
         guard isRemove else { return }
         onSuccessBlock.removeAll()
+        onUpdateBlock.removeAll()
         onSuccessBlockVoid.removeAll()
         onDeleteBlockObjOptional.removeAll()
         onSuccessBlockObjOptional.removeAll()
@@ -208,9 +210,9 @@ public class RethinkSyncManager: NSObject {
         if type == .subscribe || type == .unsubscribe || type == .query {
             p.removeValue(forKey: "props")
         }
+        let attr = Attribute(key: propsId,
+                             value: value ?? "")
         if isAdd {
-            let attr = Attribute(key: propsId,
-                                 value: value ?? "")
             if let successBlockObj = onSuccessBlockObj[objType] {
                 successBlockObj(attr)
             }
@@ -218,8 +220,13 @@ public class RethinkSyncManager: NSObject {
                 onCreateBlock(attr)
             }
         }
-        if isUpdate, let success = onSuccessBlockVoid[objType] {
-            success()
+        if isUpdate {
+            if let success = onSuccessBlockVoid[objType] {
+                success()
+            }
+            if let success = onUpdateBlock[objType] {
+                success([attr])
+            }
         }
         Log.debug(text: "send params == \(p)", tag: type.rawValue)
         let data = try? JSONSerialization.data(withJSONObject: p, options: [])

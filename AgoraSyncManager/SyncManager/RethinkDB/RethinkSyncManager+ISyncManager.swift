@@ -77,13 +77,14 @@ extension RethinkSyncManager: ISyncManager {
                 fail: FailBlock?) {
         let roomId = (reference.parent == nil ? reference.className : reference.parent?.parent.className) ?? ""
         let className = rooms.contains(where: { $0 == reference.className + key }) ? "room" : reference.className + key
-        onSuccessBlock[className] = success
+        onUpdateBlock[className] = success
         onFailBlock[className] = fail
         write(channelName: key,
               data: data,
               roomId: roomId,
               objectId: data["objectId"] as? String,
-              objType: className)
+              objType: className,
+              isUpdate: true)
     }
 
     func subscribe(reference: DocumentReference,
