@@ -150,7 +150,7 @@ extension RethinkSyncManager: ISyncManager {
         let roomId = rooms.first ?? ""
         onDeleteBlockObjOptional[roomId] = success
         onFailBlock[roomId] = fail
-        deleteRoom()
+        deleteRoom(roomId: roomId)
     }
 
     func get(collectionRef: CollectionReference, success: SuccessBlock?, fail: FailBlock?) {
@@ -207,7 +207,7 @@ extension RethinkSyncManager: ISyncManager {
         onDeleteBlockObjOptional[className] = success
         onFailBlock[className] = fail
         if className == "room" {
-            deleteRoom()
+            deleteRoom(roomId: roomId)
             return
         }
         delete(channelName: className, roomId: roomId, data: ["objectId": id])
@@ -220,7 +220,7 @@ extension RethinkSyncManager: ISyncManager {
         onSuccessBlock[className] = success
         onFailBlock[className] = fail
         if className == "room" {
-            deleteRoom()
+            deleteRoom(roomId: roomId)
             return
         }
         if let keys = keys {
