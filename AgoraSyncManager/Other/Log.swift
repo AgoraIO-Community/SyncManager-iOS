@@ -148,10 +148,12 @@ class LogUtil {
     }
     
     func log(message: String) {
+        #if DEBUG
         let item = LogItem(message: message, dateTime: Date())
         logs.append(item)
         print(item.description)
         writeAppLogsToDisk()
+        #endif
     }
     
     func removeAll() {
