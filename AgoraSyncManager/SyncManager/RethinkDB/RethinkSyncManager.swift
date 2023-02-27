@@ -7,11 +7,13 @@
 
 import SocketRocket
 
+private let showSyncQueueID = "showSyncQueueID"
+
 extension RethinkSyncManager {
     struct Config {
         let appId: String
         let channelName: String
-
+        
         init(appId: String,
              channelName: String)
         {
@@ -42,8 +44,9 @@ public enum SocketConnectState: Int {
 
 public class RethinkSyncManager: NSObject {
     private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
-//    private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
-//    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
+    //    private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
+    //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
+    private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
     private var timer: Timer?
     private var state: SRReadyState = .CLOSED
     private var socket: SRWebSocket?
@@ -64,7 +67,7 @@ public class RethinkSyncManager: NSObject {
     var appId: String = ""
     var sceneName: String = ""
     var isOwner: Bool = false
-
+    
     /// init
     /// - Parameters:
     ///   - config: config
@@ -82,12 +85,13 @@ public class RethinkSyncManager: NSObject {
                                                name: UIApplication.willEnterForegroundNotification,
                                                object: nil)
     }
-
+    
     public func reConnect(isRemove: Bool = false) {
         guard let url = URL(string: SOCKET_URL) else { return }
         disConnect(isRemove: isRemove)
         socket = SRWebSocket(url: url)
         socket?.delegate = self
+        socket?.delegateDispatchQueue = serialQueue
         socket?.open()
         timer = Timer.scheduledTimer(withTimeInterval: 10,
                                      repeats: true,
@@ -104,6 +108,9 @@ public class RethinkSyncManager: NSObject {
             if self?.isOwner == true {
                 self?.syncRoom()
             }
+            
+            //TODO: retry if need
+            self?.enterForegroundNotification()
         })
         timer?.fire()
         RunLoop.main.add(timer!, forMode: .common)
@@ -119,7 +126,7 @@ public class RethinkSyncManager: NSObject {
         let data = Utils.toJsonString(dict: params)?.data(using: .utf8)
         try? socket?.send(dataNoCopy: data)
     }
-
+    
     public func disConnect(isRemove: Bool) {
         timer?.invalidate()
         timer = nil
@@ -137,7 +144,7 @@ public class RethinkSyncManager: NSObject {
         onDeletedBlocks.removeAll()
         rooms.removeAll()
     }
-
+    
     public func write(channelName: String,
                       data: [String: Any?],
                       roomId: String,
@@ -154,7 +161,7 @@ public class RethinkSyncManager: NSObject {
                   isAdd: isAdd,
                   isUpdate: isUpdate)
     }
-
+    
     public func subscribe(channelName: String,
                           roomId: String,
                           objType: String) {
@@ -164,7 +171,7 @@ public class RethinkSyncManager: NSObject {
                   type: .subscribe,
                   objType: objType)
     }
-
+    
     public func unsubscribe(channelName: String, roomId: String, objType: String) {
         writeData(channelName: channelName,
                   params: [:],
@@ -172,7 +179,7 @@ public class RethinkSyncManager: NSObject {
                   type: .unsubscribe,
                   objType: objType)
     }
-
+    
     private func writeData(channelName: String,
                            params: Any,
                            roomId: String,
@@ -182,61 +189,64 @@ public class RethinkSyncManager: NSObject {
                            isAdd: Bool = false,
                            isUpdate: Bool = false)
     {
-        if self.rooms.isEmpty {
-            Log.error(error: "请先createScene再joinScene后调用其它方法", tag: "SyncManager")
-            return
-        }
-        
-        var newParams = params
-        var propsId: String = objectId ?? UUID().uuid16string()
-        if objectId == nil && params is [String: Any] {
-            var params = params as? [String: Any]
-            if !(params?.keys.contains("objectId") ?? false) {
-                params?["objectId"] = channelName
-                propsId = channelName
+        serialQueue.async { [weak self] in
+            guard let self = self else {return}
+            if self.rooms.isEmpty {
+                Log.error(error: "请先createScene再joinScene后调用其它方法", tag: "SyncManager")
+                return
             }
-            newParams = params ?? [:]
-        }
-
-        let value = Utils.toJsonString(dict: newParams as? [String: Any])
-        var p = ["appId": appId,
-                 "sceneName": sceneName,
-                 "action": type.rawValue,
-                 "roomId": roomId,
-                 "objVal": "",
-                 "objType": objType,
-                 "requestId": UUID().uuid16string(),
-                 "props": [propsId: value ?? ""]] as [String: Any]
-        if type == .subscribe || type == .unsubscribe || type == .query {
-            p.removeValue(forKey: "props")
-        }
-        let attr = Attribute(key: propsId,
-                             value: value ?? "")
-        if isAdd {
-            if let successBlockObj = onSuccessBlockObj[objType] {
-                successBlockObj(attr)
+            
+            var newParams = params
+            var propsId: String = objectId ?? UUID().uuid16string()
+            if objectId == nil && params is [String: Any] {
+                var params = params as? [String: Any]
+                if !(params?.keys.contains("objectId") ?? false) {
+                    params?["objectId"] = channelName
+                    propsId = channelName
+                }
+                newParams = params ?? [:]
             }
-            if let onCreateBlock = onCreateBlocks[objType] {
-                onCreateBlock(attr)
+            let value = Utils.toJsonString(dict: newParams as? [String: Any])
+            var p = ["appId": self.appId,
+                     "sceneName": self.sceneName,
+                     "action": type.rawValue,
+                     "roomId": roomId,
+                     "objVal": "",
+                     "objType": objType,
+                     "requestId": UUID().uuid16string(),
+                     "props": [propsId: value ?? ""]] as [String: Any]
+            if type == .subscribe || type == .unsubscribe || type == .query {
+                p.removeValue(forKey: "props")
             }
-        }
-        if isUpdate {
-            if let success = onSuccessBlockVoid[objType] {
-                success()
+            Log.debug(text: "props ======== \(p["props"])", tag: "syncManager")
+            let attr = Attribute(key: propsId,
+                                 value: value ?? "")
+            if isAdd {
+                if let successBlockObj = self.onSuccessBlockObj[objType] {
+                    successBlockObj(attr)
+                }
+                if let onCreateBlock = self.onCreateBlocks[objType] {
+                    onCreateBlock(attr)
+                }
             }
-            if let success = onUpdateBlock[objType] {
-                success([attr])
+            if isUpdate {
+                if let success = self.onSuccessBlockVoid[objType] {
+                    success()
+                }
+                if let success = self.onUpdateBlock[objType] {
+                    success([attr])
+                }
             }
-        }
-        Log.debug(text: "send params == \(p)", tag: type.rawValue)
-        let data = try? JSONSerialization.data(withJSONObject: p, options: [])
-        do {
-            try socket?.send(dataNoCopy: data)
-        } catch {
-            Log.errorText(text: error.localizedDescription, tag: "error")
+            Log.debug(text: "send params == \(p)", tag: type.rawValue)
+            let data = try? JSONSerialization.data(withJSONObject: p, options: [])
+            do {
+                try self.socket?.send(dataNoCopy: data)
+            } catch {
+                Log.errorText(text: error.localizedDescription, tag: "error")
+            }
         }
     }
-
+    
     public func queryRoom(channelName: String,
                           roomId: String,
                           objType: String,
@@ -278,7 +288,7 @@ public class RethinkSyncManager: NSObject {
         try? socket?.send(dataNoCopy: data)
         rooms.removeFirst()
     }
-
+    
     public func delete(channelName: String, roomId: String, data: Any) {
         var objectIds: [Any] = []
         if let params = data as? [[String: Any]] {
@@ -347,8 +357,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             })
         })
     }
-
+    
     public func webSocket(_ webSocket: SRWebSocket, didReceiveMessage message: Any) {
+        
         guard let data = message as? Data else { return }
         let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
         Log.info(text: "dict == \(dict ?? [:])", tag: "收到消息")
@@ -364,11 +375,13 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let channelName = objType.isEmpty ? sceneName : objType
         let realAction = SocketType(rawValue: params?["action"] as? String ?? "") ?? .send
         Log.info(text: "realAction == \(realAction.rawValue)", tag: "realAction")
-    
+        
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
             let attrs = roomListHandler(data: params)
-            successBlock(attrs ?? [])
+            DispatchQueue.main.async {
+                successBlock(attrs ?? [])
+            }
             return
         }
         
@@ -376,10 +389,12 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             let error = SyncError(message: "\(channelName) \(msg)", code: Int(code) ?? 0)
             Log.errorText(text: "code == \(code)  action == \(realAction) channelName == \(channelName) msg == \(msg)",
                           tag: "error")
-            onFailBlock[channelName]?(error)
+            DispatchQueue.main.async {[weak self] in
+                self?.onFailBlock[channelName]?(error)
+            }
             return
         }
-
+        
         let props = params?["props"] as? [String: Any]
         let roomId = params?["roomId"] as? String
         let propsDel = params?["propsDel"] as? [String]
@@ -389,56 +404,79 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         // 返回查询房间结果
         if action == .query {
-            queryRoomCompletion?(attrs?.first)
+            DispatchQueue.main.async {[weak self] in
+                self?.queryRoomCompletion?(attrs?.first)
+            }
         }
         
         let isDelete = (params?["isDeleted"] as? Bool) ?? false
         if isDelete, let onDeleteBlock = onDeletedBlocks[channelName] {
-            onDeleteBlock(Attribute(key: roomId ?? "", value: ""))
+            DispatchQueue.main.async {
+                onDeleteBlock(Attribute(key: roomId ?? "", value: ""))
+            }
             return
         }
         if action == .subscribe {
             if let onUpdateBlock = onUpdatedBlocks[channelName], let propsUpdate = propsUpdate {
                 let params = Utils.toDictionary(jsonString: propsUpdate)
                 let attrs = params.map({ Attribute(key: $0.key, value: ($0.value as? String) ?? "") })
-                attrs.forEach({ onUpdateBlock($0) })
+                DispatchQueue.main.async {
+                    attrs.forEach({ onUpdateBlock($0) })
+                }
             }
             if let onDeleteBlock = onDeletedBlocks[channelName], realAction == .deleteProp  {
                 if objects?.isEmpty ?? false {
-                    onDeleteBlock(Attribute(key: propsDel?.first ?? "", value: ""))
+                    DispatchQueue.main.async {
+                        onDeleteBlock(Attribute(key: propsDel?.first ?? "", value: ""))
+                    }
                     return
                 }
                 propsDel?.forEach({
                     let attr = Attribute(key: $0, value: "")
-                    onDeleteBlock(attr)
+                    DispatchQueue.main.async {
+                        onDeleteBlock(attr)
+                    }
                 })
             }
         } else {
             if let successBlock = onSuccessBlock[channelName], action == .query || action == .getRoomList {
-                successBlock(attrs ?? [])
+                DispatchQueue.main.async {
+                    successBlock(attrs ?? [])
+                }
             }
             if let successBlockVoid = onSuccessBlockVoid[channelName], action == .query, realAction != .deleteProp {
-                successBlockVoid()
+                DispatchQueue.main.async {
+                    successBlockVoid()
+                }
             }
             if let successBlockObjVoid = onSuccessBlockObjOptional[channelName], action == .query {
-                successBlockObjVoid(attrs?.first)
+                DispatchQueue.main.async {
+                    successBlockObjVoid(attrs?.first)
+                }
             }
             if let deleteBlock = onDeleteBlockObjOptional[channelName], action == .deleteProp {
-                deleteBlock?(attrs?.first)
+                DispatchQueue.main.async {
+                    deleteBlock?(attrs?.first)
+                }
             }
         }
+        
     }
-
+    
     public func webSocket(_ webSocket: SRWebSocket, didFailWithError error: Error) {
         Log.errorText(text: error.localizedDescription, tag: "error")
         state = webSocket.readyState
-        connectStateBlock?(.fail)
+        DispatchQueue.main.async { [weak self] in
+            self?.connectStateBlock?(.fail)
+        }
     }
-
+    
     public func webSocket(_ webSocket: SRWebSocket, didCloseWithCode code: Int, reason: String?, wasClean: Bool) {
         Log.warning(text: "socket closed == \(reason ?? "")", tag: "closed")
         state = webSocket.readyState
-        connectStateBlock?(.closed)
-        reConnect()
+        DispatchQueue.main.async { [weak self] in
+            self?.connectStateBlock?(.closed)
+            self?.reConnect()
+        }
     }
 }
