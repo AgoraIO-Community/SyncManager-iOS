@@ -218,23 +218,31 @@ public class RethinkSyncManager: NSObject {
             if type == .subscribe || type == .unsubscribe || type == .query {
                 p.removeValue(forKey: "props")
             }
-            Log.debug(text: "props ======== \(p["props"])", tag: "syncManager")
+            Log.debug(text: "props ======== \(p)", tag: "syncManager")
             let attr = Attribute(key: propsId,
                                  value: value ?? "")
             if isAdd {
                 if let successBlockObj = self.onSuccessBlockObj[objType] {
-                    successBlockObj(attr)
+                    DispatchQueue.main.async {
+                        successBlockObj(attr)
+                    }
                 }
                 if let onCreateBlock = self.onCreateBlocks[objType] {
-                    onCreateBlock(attr)
+                    DispatchQueue.main.async {
+                        onCreateBlock(attr)
+                    }
                 }
             }
             if isUpdate {
                 if let success = self.onSuccessBlockVoid[objType] {
-                    success()
+                    DispatchQueue.main.async {
+                        success()
+                    }
                 }
                 if let success = self.onUpdateBlock[objType] {
-                    success([attr])
+                    DispatchQueue.main.async {
+                        success([attr])
+                    }
                 }
             }
             Log.debug(text: "send params == \(p)", tag: type.rawValue)
