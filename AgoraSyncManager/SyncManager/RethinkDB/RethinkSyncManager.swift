@@ -294,7 +294,9 @@ public class RethinkSyncManager: NSObject {
                       "requestId": UUID().uuid16string()]
         let data = try? JSONSerialization.data(withJSONObject: params, options: [])
         try? socket?.send(dataNoCopy: data)
-        rooms.removeFirst()
+        if rooms.isEmpty == false {
+            rooms.removeFirst()
+        }
     }
     
     public func delete(channelName: String, roomId: String, data: Any) {
