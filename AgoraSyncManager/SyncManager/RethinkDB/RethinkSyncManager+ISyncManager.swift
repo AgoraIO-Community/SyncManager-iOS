@@ -19,6 +19,7 @@ extension RethinkSyncManager: ISyncManager {
         isOwner = scene.isOwner
         rooms.append(scene.id)
         if isOwner {
+            ownerRoomId = scene.id
             write(channelName: scene.id,
                   data: attr.toDict(),
                   roomId: scene.id,
@@ -147,7 +148,7 @@ extension RethinkSyncManager: ISyncManager {
     func deleteScenes(sceneIds: [String],
                       success: SuccessBlockObjOptional?,
                       fail: FailBlock?) {
-        let roomId = rooms.first ?? ""
+        let roomId = sceneIds.first ?? ""
         onDeleteBlockObjOptional[roomId] = success
         onFailBlock[roomId] = fail
         deleteRoom(roomId: roomId)

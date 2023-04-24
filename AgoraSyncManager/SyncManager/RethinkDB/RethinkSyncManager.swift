@@ -67,6 +67,7 @@ public class RethinkSyncManager: NSObject {
     var appId: String = ""
     var sceneName: String = ""
     var isOwner: Bool = false
+    var ownerRoomId: String = ""
     
     /// init
     /// - Parameters:
@@ -117,11 +118,11 @@ public class RethinkSyncManager: NSObject {
     }
     
     private func syncRoom() {
-        guard !sceneName.isEmpty && !rooms.isEmpty else { return }
+        guard !sceneName.isEmpty && !rooms.isEmpty, !ownerRoomId.isEmpty else { return }
         let params = ["action": SocketType.syncRoom.rawValue,
                       "appId": appId,
                       "sceneName": sceneName,
-                      "roomId": rooms.first ?? "",
+                      "roomId": ownerRoomId,
                       "requestId": UUID().uuid16string()]
         let data = Utils.toJsonString(dict: params)?.data(using: .utf8)
         try? socket?.send(dataNoCopy: data)
@@ -189,6 +190,7 @@ public class RethinkSyncManager: NSObject {
                            isAdd: Bool = false,
                            isUpdate: Bool = false)
     {
+        guard !roomId.isEmpty else { return }
         serialQueue.async { [weak self] in
             guard let self = self else {return}
             if self.rooms.isEmpty {
@@ -294,8 +296,11 @@ public class RethinkSyncManager: NSObject {
                       "requestId": UUID().uuid16string()]
         let data = try? JSONSerialization.data(withJSONObject: params, options: [])
         try? socket?.send(dataNoCopy: data)
-        if rooms.isEmpty == false {
-            rooms.removeFirst()
+        if let index = rooms.firstIndex(where: { $0 == roomId }) {
+            rooms.remove(at: index)
+        }
+        if isOwner {
+            ownerRoomId = ""
         }
     }
     
@@ -388,7 +393,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
-            let attrs = roomListHandler(data: params)
+            let attrs = roomListHandler(data: params)?.filter({ !$0.key.isEmpty })
             DispatchQueue.main.async {
                 successBlock(attrs ?? [])
             }
@@ -406,7 +411,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         }
         
         let props = params?["props"] as? [String: Any]
-        let roomId = params?["roomId"] as? String
+        let roomId = (params?["roomId"] as? String) ?? ""
         let propsDel = params?["propsDel"] as? [String]
         let propsUpdate = params?["propsUpdate"] as? String
         let objects = props?.keys
