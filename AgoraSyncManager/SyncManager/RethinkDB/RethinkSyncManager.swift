@@ -341,6 +341,7 @@ public class RethinkSyncManager: NSObject {
     private func attrsHandler(params: [String: Any]?) -> [Attribute]? {
         let objects = params?.keys
         let attrs = objects?.compactMap { item -> Attribute? in
+            guard !item.isEmpty else { return nil }
             let value = params?[item] as? String
             let json = Utils.toDictionary(jsonString: value ?? "")
             if json.isEmpty { // 过滤掉不是json的数据
@@ -393,7 +394,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
-            let attrs = roomListHandler(data: params)?.filter({ !$0.key.isEmpty })
+            let attrs = roomListHandler(data: params)
             DispatchQueue.main.async {
                 successBlock(attrs ?? [])
             }
