@@ -51,6 +51,7 @@ public class RethinkSyncManager: NSObject {
     private var state: SRReadyState = .CLOSED
     private var socket: SRWebSocket?
     private var connectBlock: SuccessBlockInt?
+    private var lastKey: String?
     var queryRoomCompletion: SuccessBlockObjOptional?
     var onSuccessBlock = [String: SuccessBlock]()
     var onUpdateBlock = [String: SuccessBlock]()
@@ -77,6 +78,7 @@ public class RethinkSyncManager: NSObject {
          complete: SuccessBlockInt?)
     {
         super.init()
+        lastKey = config.channelName
         connectBlock = complete
         sceneName = config.channelName
         appId = config.appId
@@ -191,6 +193,7 @@ public class RethinkSyncManager: NSObject {
                            isUpdate: Bool = false)
     {
         guard !roomId.isEmpty else { return }
+        lastKey = objType
         serialQueue.async { [weak self] in
             guard let self = self else {return}
             if self.rooms.isEmpty {
@@ -280,6 +283,13 @@ public class RethinkSyncManager: NSObject {
     }
     
     public func getRoomList(channelName: String) {
+        lastKey = channelName
+        if socket?.readyState != .OPEN, let successBlock = onSuccessBlock[channelName] {
+            DispatchQueue.main.async {
+                successBlock([])
+            }
+            return
+        }
         let params = ["action": SocketType.getRoomList.rawValue,
                       "appId": appId,
                       "sceneName": channelName,
@@ -289,6 +299,13 @@ public class RethinkSyncManager: NSObject {
     }
     
     public func deleteRoom(roomId: String) {
+        lastKey = roomId
+        if socket?.readyState != .OPEN, let onDeleteBlock = onDeleteBlockObjOptional[roomId] {
+            DispatchQueue.main.async {
+                onDeleteBlock?(Attribute(key: "", value: "not networking"))
+            }
+            return
+        }
         let params = ["action": SocketType.deleteRoom.rawValue,
                       "appId": appId,
                       "sceneName": sceneName,
@@ -305,6 +322,13 @@ public class RethinkSyncManager: NSObject {
     }
     
     public func delete(channelName: String, roomId: String, data: Any) {
+        lastKey = channelName
+        if socket?.readyState != .OPEN, let onUpdateBlock = onDeletedBlocks[channelName] {
+            DispatchQueue.main.async {
+                onUpdateBlock(Attribute(key: "", value: "not networking"))
+            }
+            return
+        }
         var objectIds: [Any] = []
         if let params = data as? [[String: Any]] {
             objectIds = params.compactMap({ $0["objectId"] })
@@ -350,6 +374,47 @@ public class RethinkSyncManager: NSObject {
             return Attribute(key: item, value: value ?? "")
         }
         return attrs
+    }
+    
+    private func notNetworkingHandler() {
+        guard let lastKey = lastKey else { return }
+        connectBlock?(SocketConnectState.closed.rawValue)
+        if let successBlockObj = onSuccessBlockObj[lastKey] {
+            DispatchQueue.main.async {
+                successBlockObj(Attribute(key: "", value: "\(SocketConnectState.closed.rawValue)"))
+            }
+        }
+        if let failBlockObj = onFailBlock[lastKey] {
+            DispatchQueue.main.async {
+                failBlockObj(SyncError(message: "not networking", code: SocketConnectState.closed.rawValue))
+            }
+        }
+        if let onCreateBlock = onCreateBlocks[lastKey] {
+            DispatchQueue.main.async {
+                onCreateBlock(Attribute(key: "", value: "\(SocketConnectState.closed.rawValue)"))
+            }
+        }
+        if let success = onUpdateBlock[lastKey] {
+            DispatchQueue.main.async {
+                success([Attribute(key: "", value: "\(SocketConnectState.closed.rawValue)")])
+            }
+        }
+        if let successBlock = onSuccessBlock[lastKey] {
+            DispatchQueue.main.async {
+                successBlock([Attribute(key: "", value: "\(SocketConnectState.closed.rawValue)")])
+            }
+        }
+        if let onDeleteBlock = onDeleteBlockObjOptional[lastKey] {
+            DispatchQueue.main.async {
+                onDeleteBlock?(Attribute(key: "", value: "\(SocketConnectState.closed.rawValue)"))
+            }
+        }
+        if let onDeleteBlock = onDeletedBlocks[lastKey] {
+            DispatchQueue.main.async {
+                onDeleteBlock(Attribute(key: "", value: "\(SocketConnectState.closed.rawValue)"))
+            }
+        }
+        self.lastKey = nil
     }
 }
 
@@ -428,7 +493,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let isDelete = (params?["isDeleted"] as? Bool) ?? false
         if isDelete, let onDeleteBlock = onDeletedBlocks[channelName] {
             DispatchQueue.main.async {
-                onDeleteBlock(Attribute(key: roomId ?? "", value: ""))
+                onDeleteBlock(Attribute(key: roomId, value: ""))
             }
             return
         }
@@ -481,18 +546,25 @@ extension RethinkSyncManager: SRWebSocketDelegate {
     
     public func webSocket(_ webSocket: SRWebSocket, didFailWithError error: Error) {
         Log.errorText(text: error.localizedDescription, tag: "error")
-        state = webSocket.readyState
-        DispatchQueue.main.async { [weak self] in
-            self?.connectStateBlock?(.fail)
+        notNetworkingHandler()
+        if state != webSocket.readyState {
+            DispatchQueue.main.async { [weak self] in
+                self?.connectStateBlock?(.fail)
+            }
         }
+        state = webSocket.readyState
     }
     
     public func webSocket(_ webSocket: SRWebSocket, didCloseWithCode code: Int, reason: String?, wasClean: Bool) {
         Log.warning(text: "socket closed == \(reason ?? "")", tag: "closed")
-        state = webSocket.readyState
+        notNetworkingHandler()
         DispatchQueue.main.async { [weak self] in
-            self?.connectStateBlock?(.closed)
-            self?.reConnect()
+            guard let self = self else { return }
+            if state != webSocket.readyState {
+                self.connectStateBlock?(.closed)
+            }
+            self.reConnect()
         }
+        state = webSocket.readyState
     }
 }
