@@ -91,6 +91,9 @@ public class RethinkSyncManager: NSObject {
     
     public func reConnect(isRemove: Bool = false) {
         guard let url = URL(string: SOCKET_URL) else { return }
+        if let socket = socket, socket.readyState == .CONNECTING {
+            return
+        }
         disConnect(isRemove: isRemove)
         socket = SRWebSocket(url: url)
         socket?.delegate = self
