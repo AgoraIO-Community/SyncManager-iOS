@@ -560,7 +560,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         notNetworkingHandler()
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            if state != webSocket.readyState {
+            if self.state != webSocket.readyState {
                 self.connectStateBlock?(.closed)
             }
             self.reConnect()
