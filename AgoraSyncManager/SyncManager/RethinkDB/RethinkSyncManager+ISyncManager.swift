@@ -14,7 +14,8 @@ extension RethinkSyncManager: ISyncManager {
     
     func createScene(scene: Scene, success: SuccessBlockVoid?, fail: FailBlock?) {
         /** add room in list **/
-        
+        createRoomSuccess = success
+        createRoomFail = fail
         let attr = Attribute(key: scene.id, value: scene.toJson())
         isOwner = scene.isOwner
         rooms.append(scene.id)
@@ -25,7 +26,6 @@ extension RethinkSyncManager: ISyncManager {
                   roomId: scene.id,
                   objectId: scene.id,
                   objType: "room")
-            success?()
             return
         }
         queryRoom(channelName: scene.id, roomId: scene.id, objType: "room") { [weak self] object in
@@ -42,7 +42,6 @@ extension RethinkSyncManager: ISyncManager {
                   roomId: scene.id,
                   objectId: scene.id,
                   objType: "room")
-            success?()
         }
     }
 

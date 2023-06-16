@@ -44,7 +44,7 @@ public enum SocketConnectState: Int {
 
 public class RethinkSyncManager: NSObject {
     private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
-    //    private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
+//        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
     private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
     private var timer: Timer?
@@ -64,6 +64,8 @@ public class RethinkSyncManager: NSObject {
     var onUpdatedBlocks = [String: OnSubscribeBlock]()
     var onDeletedBlocks = [String: OnSubscribeBlock]()
     var connectStateBlock: ConnectBlockState?
+    var createRoomSuccess: SuccessBlockVoid?
+    var createRoomFail: FailBlock?
     var rooms = [String]()
     var appId: String = ""
     var sceneName: String = ""
@@ -474,9 +476,19 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             Log.errorText(text: "code == \(code)  action == \(realAction) channelName == \(channelName) msg == \(msg)",
                           tag: "error")
             DispatchQueue.main.async {[weak self] in
-                self?.onFailBlock[channelName]?(error)
+                if objType == "room" {
+                    self?.createRoomFail?(error)
+                    self?.createRoomFail = nil
+                } else {
+                    self?.onFailBlock[channelName]?(error)
+                }
             }
             return
+        } else {
+            if objType == "room" {
+                createRoomSuccess?()
+                createRoomSuccess = nil
+            }
         }
         
         let props = params?["props"] as? [String: Any]
