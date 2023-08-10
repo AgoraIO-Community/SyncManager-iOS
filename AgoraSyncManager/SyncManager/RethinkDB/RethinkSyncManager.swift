@@ -43,9 +43,10 @@ public enum SocketConnectState: Int {
 }
 
 public class RethinkSyncManager: NSObject {
-    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
+//    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
 //        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
+    private let SKOCKET_URL: String = "wss://rethinkdb-msg-overseas-prod.sg3.agoralab.co"
     private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
     private var timer: Timer?
     private var state: SRReadyState = .CLOSED
