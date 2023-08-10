@@ -1,12 +1,12 @@
 Pod::Spec.new do |spec|
   spec.name         = "AgoraSyncManager-overseas"
   spec.version      = "3.0.0"
-  spec.summary      = "AgoraSyncManager"
-  spec.description  = "AgoraSyncManager"
+  spec.summary      = "AgoraSyncManager-overseas"
+  spec.description  = "AgoraSyncManager overseas"
 
   spec.homepage     = "https://www.agora.io"
   spec.license      = "MIT"
-  spec.author       = { "ZYP" => "zhuyuping@agora.io" }
+  spec.author       = { "ZYQ" => "zhaoyongqiang@agora.io" }
   spec.ios.deployment_target = "10.0"
   spec.source       = { :git => "https://github.com/AgoraIO-Community/SyncManager-iOS.git", :tag => spec.version }
   spec.source_files  = "AgoraSyncManager/**/*.swift"
