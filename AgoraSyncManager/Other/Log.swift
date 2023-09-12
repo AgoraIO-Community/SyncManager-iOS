@@ -134,7 +134,7 @@ extension LogProvider {
 }
 
 class LogUtil {
-    private var logs = [LogItem]()
+    private var logs = SafeArray<LogItem>()
     private let logFolder: String
     private var appLogPath: String
     
@@ -163,7 +163,7 @@ class LogUtil {
     func writeAppLogsToDisk() {
         if let outputStream = OutputStream(url: URL(fileURLWithPath: appLogPath), append: true) {
             outputStream.open()
-            for log in logs {
+            for log in logs.getAll() {
                 let msg = log.description + "\n"
                 let bytesWritten = outputStream.write(msg, maxLength: msg.count)
                 if bytesWritten < 0 { print("write failure") }
@@ -178,6 +178,61 @@ class LogUtil {
     func cleanUp() {
         let url = URL(fileURLWithPath: logFolder, isDirectory: true)
         try? FileManager.default.removeItem(at: url)
+    }
+}
+
+class SafeArray<T> {
+    private var array: [T]
+    private let queue = DispatchQueue(label: "com.example.queue.safeArray", attributes: .concurrent)
+    
+    init() {
+        array = [T]()
+    }
+    
+    func append(_ element: T) {
+        queue.async(flags: .barrier) {
+            self.array.append(element)
+        }
+    }
+    
+    func getAll() -> [T] {
+        var result: [T]?
+        queue.sync(flags: .barrier) {
+            result = self.array
+        }
+        return result ?? []
+    }
+    
+    func removeLast() -> T? {
+        var result: T?
+        queue.sync(flags: .barrier) {
+            result = self.array.popLast()
+        }
+        return result
+    }
+    func removeAll() {
+        queue.sync(flags: .barrier) {
+            self.array.removeAll()
+        }
+    }
+
+    subscript(index: Int) -> T? {
+        set {
+            queue.async(flags: .barrier) {
+                if let newValue = newValue, self.array.indices.contains(index) {
+                    self.array[index] = newValue
+                }
+            }
+        }
+        get {
+            var result: T?
+            queue.async {
+                if self.array.indices.contains(index) {
+                    result = self.array[index]
+                }
+            }
+            return result
+        }
     }
 }
 
