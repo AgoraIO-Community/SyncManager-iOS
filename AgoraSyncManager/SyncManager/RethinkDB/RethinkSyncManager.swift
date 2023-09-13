@@ -44,7 +44,7 @@ public enum SocketConnectState: Int {
 
 public class RethinkSyncManager: NSObject {
     private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
-//        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
+    //        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
     private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
     private var timer: Timer?
@@ -535,12 +535,15 @@ extension RethinkSyncManager: SRWebSocketDelegate {
                 })
             }
         } else {
-            if let successBlock = onSuccessBlock[channelName], action == .query || action == .getRoomList {
+            if let successBlock = onSuccessBlock[channelName],
+               action == .query || action == .getRoomList || action == .deleteProp {
                 DispatchQueue.main.async {
                     successBlock(attrs ?? [])
                 }
             }
-            if let successBlockVoid = onSuccessBlockVoid[channelName], action == .query, realAction != .deleteProp {
+            if let successBlockVoid = onSuccessBlockVoid[channelName],
+               action == .query,
+               realAction != .deleteProp {
                 DispatchQueue.main.async {
                     successBlockVoid()
                 }
