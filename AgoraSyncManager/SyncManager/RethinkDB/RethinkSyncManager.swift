@@ -48,6 +48,8 @@ public class RethinkSyncManager: NSObject {
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
     private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
     private var timer: Timer?
+    private var isResponse: Bool = false
+    private var responseTimeout: TimeInterval = 20
     private var state: SRReadyState = .CLOSED
     private var socket: SRWebSocket?
     private var connectBlock: SuccessBlockInt?
@@ -116,7 +118,12 @@ public class RethinkSyncManager: NSObject {
             if self?.isOwner == true {
                 self?.syncRoom()
             }
-            
+            if self?.isResponse == false {
+                if self?.responseTimeout == 0 {
+                    self?.notNetworkingHandler()
+                }
+                self?.responseTimeout -= 10
+            }
             //TODO: retry if need
             self?.enterForegroundNotification()
         })
@@ -199,6 +206,7 @@ public class RethinkSyncManager: NSObject {
     {
         guard !roomId.isEmpty else { return }
         lastKey = objType
+        isResponse = false
         serialQueue.async { [weak self] in
             guard let self = self else {return}
             if self.rooms.isEmpty {
@@ -289,6 +297,7 @@ public class RethinkSyncManager: NSObject {
     
     public func getRoomList(channelName: String) {
         lastKey = channelName
+        isResponse = false
         if socket?.readyState != .OPEN, let successBlock = onSuccessBlock[channelName] {
             DispatchQueue.main.async {
                 successBlock([])
@@ -305,6 +314,7 @@ public class RethinkSyncManager: NSObject {
     
     public func deleteRoom(roomId: String) {
         lastKey = roomId
+        isResponse = false
         if socket?.readyState != .OPEN, let onDeleteBlock = onDeleteBlockObjOptional[roomId] {
             DispatchQueue.main.async {
                 onDeleteBlock?(Attribute(key: "", value: "not networking"))
@@ -328,6 +338,7 @@ public class RethinkSyncManager: NSObject {
     
     public func delete(channelName: String, roomId: String, data: Any) {
         lastKey = channelName
+        isResponse = false
         if socket?.readyState != .OPEN, let onUpdateBlock = onDeletedBlocks[channelName] {
             DispatchQueue.main.async {
                 onUpdateBlock(Attribute(key: "", value: "not networking"))
@@ -382,7 +393,11 @@ public class RethinkSyncManager: NSObject {
     }
     
     private func notNetworkingHandler() {
-        guard let lastKey = lastKey else { return }
+        guard let lastKey = lastKey else {
+            isResponse = false
+            responseTimeout = 20
+            return
+        }
         connectBlock?(SocketConnectState.closed.rawValue)
         if let successBlockObj = onSuccessBlockObj[lastKey] {
             DispatchQueue.main.async {
@@ -420,6 +435,8 @@ public class RethinkSyncManager: NSObject {
             }
         }
         self.lastKey = nil
+        isResponse = false
+        responseTimeout = 20
     }
 }
 
@@ -461,7 +478,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let channelName = objType.isEmpty ? sceneName : objType
         let realAction = SocketType(rawValue: params?["action"] as? String ?? "") ?? .send
         Log.info(text: "realAction == \(realAction.rawValue)", tag: "realAction")
-        
+        if channelName == lastKey {
+            isResponse = true
+        }
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
             let attrs = roomListHandler(data: params)
@@ -548,12 +567,14 @@ extension RethinkSyncManager: SRWebSocketDelegate {
                     successBlockVoid()
                 }
             }
-            if let successBlockObjVoid = onSuccessBlockObjOptional[channelName], action == .query {
+            if let successBlockObjVoid = onSuccessBlockObjOptional[channelName],
+               action == .query {
                 DispatchQueue.main.async {
                     successBlockObjVoid(attrs?.first)
                 }
             }
-            if let deleteBlock = onDeleteBlockObjOptional[channelName], action == .deleteProp {
+            if let deleteBlock = onDeleteBlockObjOptional[channelName],
+               action == .deleteProp {
                 DispatchQueue.main.async {
                     deleteBlock?(attrs?.first)
                 }
