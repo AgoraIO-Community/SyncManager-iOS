@@ -43,8 +43,8 @@ public enum SocketConnectState: Int {
 }
 
 public class RethinkSyncManager: NSObject {
-//    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
-//        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
+    //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
+    //        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
     private let SOCKET_URL: String = "wss://rethinkdb-msg-overseas.agora.io/v2"
     private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
@@ -536,22 +536,27 @@ extension RethinkSyncManager: SRWebSocketDelegate {
                 })
             }
         } else {
-            if let successBlock = onSuccessBlock[channelName], action == .query || action == .getRoomList {
+            if let successBlock = onSuccessBlock[channelName],
+               action == .query || action == .getRoomList || action == .deleteProp {
                 DispatchQueue.main.async {
                     successBlock(attrs ?? [])
                 }
             }
-            if let successBlockVoid = onSuccessBlockVoid[channelName], action == .query, realAction != .deleteProp {
+            if let successBlockVoid = onSuccessBlockVoid[channelName],
+               action == .query,
+               realAction != .deleteProp {
                 DispatchQueue.main.async {
                     successBlockVoid()
                 }
             }
-            if let successBlockObjVoid = onSuccessBlockObjOptional[channelName], action == .query {
+            if let successBlockObjVoid = onSuccessBlockObjOptional[channelName],
+               action == .query {
                 DispatchQueue.main.async {
                     successBlockObjVoid(attrs?.first)
                 }
             }
-            if let deleteBlock = onDeleteBlockObjOptional[channelName], action == .deleteProp {
+            if let deleteBlock = onDeleteBlockObjOptional[channelName],
+               action == .deleteProp {
                 DispatchQueue.main.async {
                     deleteBlock?(attrs?.first)
                 }
