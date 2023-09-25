@@ -1,20 +1,16 @@
 PODS:
   - SocketRocket (0.6.0)
-  - Toast-Swift (5.0.1)
 
 DEPENDENCIES:
   - SocketRocket
-  - Toast-Swift
 
 SPEC REPOS:
   trunk:
     - SocketRocket
-    - Toast-Swift
 
 SPEC CHECKSUMS:
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
 
-PODFILE CHECKSUM: 145be3d50cce26893816dd86abb77f901013e933
+PODFILE CHECKSUM: 3b8c2869fd1bbb5b08750110b06e4d22d88581c7
 
 COCOAPODS: 1.11.2
