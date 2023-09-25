@@ -46,6 +46,7 @@ public class RethinkSyncManager: NSObject {
     private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
     //        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
+//    private let SOCKET_URL: String = "wss://rethinkdb-msg-overseas.agora.io/v2"
     private lazy var serialQueue = DispatchQueue(label: showSyncQueueID)
     private var timer: Timer?
     private var isResponse: Bool = false
@@ -55,16 +56,16 @@ public class RethinkSyncManager: NSObject {
     private var connectBlock: SuccessBlockInt?
     private var lastKey: String?
     var queryRoomCompletion: SuccessBlockObjOptional?
-    var onSuccessBlock = [String: SuccessBlock]()
-    var onUpdateBlock = [String: SuccessBlock]()
-    var onSuccessBlockVoid = [String: SuccessBlockVoid]()
-    var onDeleteBlockObjOptional = [String: SuccessBlockObjOptional?]()
-    var onSuccessBlockObjOptional = [String: SuccessBlockObjOptional]()
-    var onSuccessBlockObj = [String: SuccessBlockObj]()
-    var onFailBlock = [String: FailBlock]()
-    var onCreateBlocks = [String: OnSubscribeBlock]()
-    var onUpdatedBlocks = [String: OnSubscribeBlock]()
-    var onDeletedBlocks = [String: OnSubscribeBlock]()
+    var onSuccessBlock = SafeDictionary<String, SuccessBlock>()
+    var onUpdateBlock = SafeDictionary<String, SuccessBlock>()
+    var onSuccessBlockVoid = SafeDictionary<String, SuccessBlockVoid>()
+    var onDeleteBlockObjOptional = SafeDictionary<String, SuccessBlockObjOptional?>()
+    var onSuccessBlockObjOptional = SafeDictionary<String, SuccessBlockObjOptional>()
+    var onSuccessBlockObj = SafeDictionary<String, SuccessBlockObj>()
+    var onFailBlock = SafeDictionary<String, FailBlock>()
+    var onCreateBlocks = SafeDictionary<String, OnSubscribeBlock>()
+    var onUpdatedBlocks = SafeDictionary<String, OnSubscribeBlock>()
+    var onDeletedBlocks = SafeDictionary<String, OnSubscribeBlock>()
     var connectStateBlock: ConnectBlockState?
     var createRoomSuccess: SuccessBlockVoid?
     var createRoomFail: FailBlock?
@@ -451,10 +452,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
             complete(state == .OPEN ? 0 : -1)
             connectBlock = nil
         }
-        
         guard socket?.readyState == .OPEN, !onUpdatedBlocks.isEmpty else { return }
         // 重连成功后重新订阅
-        onUpdatedBlocks.keys.forEach({ item in
+        onUpdatedBlocks.keys?.forEach({ item in
             rooms.forEach({
                 subscribe(channelName: item, roomId: $0, objType: item)
             })
