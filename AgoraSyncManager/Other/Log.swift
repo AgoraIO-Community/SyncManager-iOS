@@ -181,61 +181,6 @@ class LogUtil {
     }
 }
 
-class SafeArray<T> {
-    private var array: [T]
-    private let queue = DispatchQueue(label: "com.example.queue.safeArray", attributes: .concurrent)
-    
-    init() {
-        array = [T]()
-    }
-    
-    func append(_ element: T) {
-        queue.async(flags: .barrier) {
-            self.array.append(element)
-        }
-    }
-    
-    func getAll() -> [T] {
-        var result: [T]?
-        queue.sync(flags: .barrier) {
-            result = self.array
-        }
-        return result ?? []
-    }
-    
-    func removeLast() -> T? {
-        var result: T?
-        queue.sync(flags: .barrier) {
-            result = self.array.popLast()
-        }
-        return result
-    }
-    func removeAll() {
-        queue.sync(flags: .barrier) {
-            self.array.removeAll()
-        }
-    }
-
-    subscript(index: Int) -> T? {
-        set {
-            queue.async(flags: .barrier) {
-                if let newValue = newValue, self.array.indices.contains(index) {
-                    self.array[index] = newValue
-                }
-            }
-        }
-        get {
-            var result: T?
-            queue.async {
-                if self.array.indices.contains(index) {
-                    result = self.array[index]
-                }
-            }
-            return result
-        }
-    }
-}
-
 extension LogUtil {
     struct LogItem: CustomStringConvertible {
         var message: String
