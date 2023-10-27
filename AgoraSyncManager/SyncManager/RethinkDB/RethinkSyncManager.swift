@@ -480,6 +480,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         Log.info(text: "realAction == \(realAction.rawValue)", tag: "realAction")
         if channelName == lastKey {
             isResponse = true
+            lastKey = nil
         }
         if action == .getRoomList, let successBlock = onSuccessBlock[channelName] {
             let params = dict?["data"] as? [[String: Any]]
