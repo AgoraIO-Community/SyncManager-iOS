@@ -55,7 +55,7 @@ public class RethinkSyncManager: NSObject {
     private var socket: SRWebSocket?
     private var connectBlock: SuccessBlockInt?
     private var lastKey: String?
-    var queryRoomCompletion: SuccessBlockObjOptional?
+    var queryRoomCompletion = SafeDictionary<String, SuccessBlockObjOptional?>()
     var onSuccessBlock = SafeDictionary<String, SuccessBlock>()
     var onUpdateBlock = SafeDictionary<String, SuccessBlock>()
     var onSuccessBlockVoid = SafeDictionary<String, SuccessBlockVoid>()
@@ -278,7 +278,7 @@ public class RethinkSyncManager: NSObject {
                           roomId: String,
                           objType: String,
                           completion: SuccessBlockObjOptional?) {
-        queryRoomCompletion = completion
+        queryRoomCompletion[roomId] = completion
         writeData(channelName: channelName,
                   params: [:],
                   roomId: roomId,
@@ -519,9 +519,9 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         let attrs = attrsHandler(params: props)
         
         // 返回查询房间结果
-        if action == .query {
-            DispatchQueue.main.async {[weak self] in
-                self?.queryRoomCompletion?(attrs?.first)
+        if action == .query, let completion = queryRoomCompletion[roomId] {
+            DispatchQueue.main.async { [weak self] in
+                completion?(attrs?.first)
             }
         }
         
