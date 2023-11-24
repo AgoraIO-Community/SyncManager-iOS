@@ -35,7 +35,7 @@ extension RethinkSyncManager: ISyncManager {
                 fail?(error)
                 return
             }
-            self.queryRoomCompletion = nil
+            self.queryRoomCompletion.removeValue(forKey: scene.id)
             
             self.write(channelName: scene.id,
                   data: attr.toDict(),
