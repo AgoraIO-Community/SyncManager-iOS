@@ -512,7 +512,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         }
         
         let props = params?["props"] as? [String: Any]
-        let roomId = (params?["roomId"] as? String) ?? ""
+        let roomId = (dict?["roomId"] as? String) ?? ""//(params?["roomId"] as? String) ?? ""
         let propsDel = params?["propsDel"] as? [String]
         let propsUpdate = params?["propsUpdate"] as? String
         let objects = props?.keys
@@ -520,7 +520,7 @@ extension RethinkSyncManager: SRWebSocketDelegate {
         
         // 返回查询房间结果
         if action == .query, let completion = queryRoomCompletion[roomId] {
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 completion?(attrs?.first)
             }
         }
