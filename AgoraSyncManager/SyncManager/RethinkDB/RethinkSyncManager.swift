@@ -43,7 +43,7 @@ public enum SocketConnectState: Int {
 }
 
 public class RethinkSyncManager: NSObject {
-    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co/v2"
+    private let SOCKET_URL: String = "wss://rethinkdb-msg.shengwang.cn/v2"
     //        private let SOCKET_URL: String = "wss://test-rethinkdb-msg.bj2.agoralab.co/v2"
     //    private let SOCKET_URL: String = "wss://rethinkdb-msg.bj2.agoralab.co"
 //    private let SOCKET_URL: String = "wss://rethinkdb-msg-overseas.agora.io/v2"
